@@ -1,4 +1,3 @@
-import 'package:example/src/domain/entities/user.dart';
 import 'package:example/src/domain/usecases/get_user_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
@@ -18,7 +17,6 @@ class HomePresenter extends Presenter {
   void dispose() {
     getUserUseCase.dispose();
   }
-  
 }
 
 class _GetUserUseCaseObserver extends Observer<GetUserUseCaseResponse> {
@@ -42,5 +40,4 @@ class _GetUserUseCaseObserver extends Observer<GetUserUseCaseResponse> {
     assert(presenter.getUserOnNext != null);
     presenter.getUserOnNext(response.user);
   }
-  
 }

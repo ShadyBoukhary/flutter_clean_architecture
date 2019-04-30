@@ -33,6 +33,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         title: Text(widget.title),
       ),
       body: Scaffold(
+        key: globalKey,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +45,22 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                 controller.user == null ? '' : '${controller.user}',
                 style: Theme.of(context).textTheme.display1,
               ),
-              RaisedButton(onPressed: controller.getUser, child: Text('Get User', style: TextStyle(color: Colors.white),), color: Colors.blue,)
+              RaisedButton(
+                onPressed: controller.getUser,
+                child: Text(
+                  'Get User',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.blue,
+              ),
+              RaisedButton(
+                onPressed: controller.getUserwithError,
+                child: Text(
+                  'Get User Error',
+                  style: TextStyle(color: Colors.white),
+                ),
+                color: Colors.blue,
+              )
             ],
           ),
         ),

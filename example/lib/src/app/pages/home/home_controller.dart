@@ -26,14 +26,23 @@ class HomeController extends Controller {
     homePresenter.getUserOnError = (e) { 
       print('Could not retrieve user.');
       ScaffoldState state = getState();
-      state.showSnackBar(SnackBar(content: Text(e)));
+      state.showSnackBar(SnackBar(content: Text(e.message)));
+      _user = null;
+      refreshUI();
     };
   }
 
   void getUser() => homePresenter.getUser('test-uid');
+  void getUserwithError() => homePresenter.getUser('test-uid231243');
 
   void buttonPressed() {
     _counter++;
+  }
+  
+  @override
+  void dispose() {
+    homePresenter.dispose();
+    super.dispose();
   }
   
 }
