@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  meta: ^1.1.7
+  meta: ^1.1.6
   rxdart: ^0.20.0
   logging: ^0.11.3+2
 dev_dependencies:

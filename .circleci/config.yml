@@ -1,0 +1,15 @@
+version: 2
+jobs:  
+  test:
+    docker:
+      - image: cirrusci/flutter
+    steps:
+      - checkout
+      - run: flutter test
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
+
