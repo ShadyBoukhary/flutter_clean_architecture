@@ -8,7 +8,7 @@ class HomeController extends Controller {
   int _counter;
   User _user;
   int get counter => _counter;
-  User get user => _user;
+  User get user => _user; // data used by the View
   final HomePresenter homePresenter;
   HomeController(usersRepo): _counter = 0, homePresenter = HomePresenter(usersRepo), super();
 
@@ -17,18 +17,19 @@ class HomeController extends Controller {
     homePresenter.getUserOnNext = (User user) { 
       print(user.toString());
       _user = user;
-      refreshUI();
+      refreshUI();  // Refreshes the UI manually
     };
     homePresenter.getUserOnComplete = () { 
       print('User retrieved');
     };
 
+    // On error, show a snackbar, remove the user, and refresh the UI
     homePresenter.getUserOnError = (e) { 
       print('Could not retrieve user.');
       ScaffoldState state = getState();
       state.showSnackBar(SnackBar(content: Text(e.message)));
       _user = null;
-      refreshUI();
+      refreshUI();  // Refreshes the UI manually
     };
   }
 

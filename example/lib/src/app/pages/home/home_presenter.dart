@@ -10,6 +10,7 @@ class HomePresenter extends Presenter {
   HomePresenter(usersRepo): getUserUseCase = GetUserUseCase(usersRepo);
 
   void getUser(String uid) {
+    // execute getUseruserCase
     getUserUseCase.execute(_GetUserUseCaseObserver(this), GetUserUseCaseParams(uid));
   }
 

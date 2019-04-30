@@ -5,6 +5,7 @@ import 'package:example/src/domain/repositories/users_repository.dart';
 class DataUsersRepository extends UsersRepository {
 
   List<User> users;
+  // sigleton
   static DataUsersRepository _instance = DataUsersRepository._internal();
   DataUsersRepository._internal() {
     users = List<User>();
@@ -14,11 +15,14 @@ class DataUsersRepository extends UsersRepository {
 
   @override
   Future<List<User>> getAllUsers() async {
+    // Here, do some heavy work lke http requests, async tasks, etc to get data
     return users;
   }
 
   @override
   Future<User> getUser(String uid) async {
+    // Here, do some heavy work lke http requests, async tasks, etc to get data
+
     return users.firstWhere((user) => user.uid == uid);
   }
   
