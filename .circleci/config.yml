@@ -6,24 +6,10 @@ jobs:
     steps:
       - checkout
       - run: flutter test
-  deploy:
-    docker:
-      - image: cirrusci/flutter
-    steps:
-      - checkout
-      - run:
-             name: Deploy
-             command: if flutter packages pub publish --dry-run ; then
-                        flutter packages pub publish
-                      fi
-
 workflows:
   version: 2
   test:
     jobs:
       - test
-      - deploy:
-          requires:
-            - test
 
 
