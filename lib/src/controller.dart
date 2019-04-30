@@ -4,33 +4,33 @@ import 'package:meta/meta.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
 /// a `View`. However, it is preferable to be contained inside the `View` for readibility
-/// and maintainability. 
-/// 
+/// and maintainability.
+///
 /// The [Controller] hadnles the events triggered by the `View`. For example, it handles
 /// the click events of buttons, lifecycle, data-sourcing, etc...
-/// 
+///
 /// The [Controller] is also route aware. However, in order to use it,
-/// it has to be initialzied separately. 
-/// 
+/// it has to be initialzied separately.
+///
 /// Usage of a [Controller]:
-/// 
+///
 /// ```dart
 ///     // ***************** Controller *****************
 ///     class CounterController extends Controller {
 ///       int counter;
 ///       final MyPresenter presenter;
 ///       CounterController() : counter = 0, presenter = MyPresenter(), super();
-///     
+///
 ///       void increment() {
 ///         counter++;
 ///       }
-///     
+///
 ///       /// Shows a snackbar
 ///       void showSnackBar() {
 ///         ScaffoldState scaffoldState = getState(); // get the state, in this case, the scaffold
 ///         scaffoldState.showSnackBar(SnackBar(content: Text('Hi')));
 ///       }
-///     
+///
 ///       @override
 ///       void initListeners() {
 ///         // Initialize presenter listeners here
@@ -38,18 +38,18 @@ import 'package:meta/meta.dart';
 ///         // see [initListeners]
 ///       }
 ///     }
-/// 
+///
 ///     // ***************** View *****************
 ///     class CounterPage extends View {
 ///       @override
 ///       // you can inject dependencies for the controller and the state in here
 ///       State<StatefulWidget> createState() => CounterState(CounterController());
 ///     }
-///     
+///
 ///     // ***************** ViewState *****************
 ///     class CounterState extends ViewState<CounterPage, CounterController> {
 ///       CounterState(CounterController controller) : super(controller);
-///     
+///
 ///       @override
 ///       Widget build(BuildContext context) {
 ///         return MaterialApp(
@@ -74,7 +74,7 @@ import 'package:meta/meta.dart';
 ///         );
 ///       }
 ///     }
-/// 
+///
 /// ```
 abstract class Controller with WidgetsBindingObserver, RouteAware {
   Function refresh; // callback function for refreshing the UI
@@ -114,13 +114,12 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   @protected
   void dismissLoading() {
     assert(refresh != null,
-     '''The `refresh callback is somehow null. This might be because `dismissLoading()` was called
+        '''The `refresh callback is somehow null. This might be because `dismissLoading()` was called
      before the `View` called `controller.initController()`.
      Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error. As a workaround, you can try setting the `refresh` callback manually inside the your `ViewState`
      like so: `controller.refresh = callHandler;`''');
-    if (_isMounted)
-      refresh(() => isLoading = false);
+    if (_isMounted) refresh(() => isLoading = false);
   }
 
   /// Sets the loading to true. The `View` body should be wrapped in a loader.
@@ -137,7 +136,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   @protected
   void showLoading() {
     assert(refresh != null,
-     '''The `refresh callback is somehow null. This might be because `showLoading()` was called
+        '''The `refresh callback is somehow null. This might be because `showLoading()` was called
      before the `View` called `controller.initController()`.
      Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error. As a workaround, you can try setting the `refresh` callback manually inside the your `ViewState`
@@ -149,14 +148,14 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   @protected
   void refreshUI() {
     assert(refresh != null,
-     '''The `refresh callback is somehow null. This might be because `refreshUI()` was called
+        '''The `refresh callback is somehow null. This might be because `refreshUI()` was called
      before the `View` called `controller.initController()`.
      Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error. As a workaround, you can try setting the `refresh` callback manually inside the your `ViewState`
      like so: `controller.refresh = callHandler;`''');
-    if (_isMounted)
-      refresh((){});
+    if (_isMounted) refresh(() {});
   }
+
   /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
   /// Any cleaning, disposing should go in here.
   @mustCallSuper
@@ -171,14 +170,14 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// by the [View]
   @protected
   State<StatefulWidget> getState() {
-    assert(_globalKey != null, 
-    '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
+    assert(_globalKey != null,
+        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
     This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
     bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
-    assert(_globalKey.currentState != null, 
-    '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
+    assert(_globalKey.currentState != null,
+        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
     This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
     bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
@@ -191,8 +190,8 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// by the [View]
   @protected
   GlobalKey<State<StatefulWidget>> getStateKey() {
-    assert(_globalKey != null, 
-    '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
+    assert(_globalKey != null,
+        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
     This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
     bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
@@ -210,14 +209,14 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
   @protected
   BuildContext getContext() {
-    assert(_globalKey != null, 
-    '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
+    assert(_globalKey != null,
+        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
     This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
     bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
-    assert(_globalKey.currentContext != null, 
-    '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
+    assert(_globalKey.currentContext != null,
+        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
     This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
     bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
@@ -225,25 +224,24 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
     return _globalKey.currentContext;
   }
 
-
   /// Intialize the listeners inside the the [Controller]'s [Presenter]. This method is called automatically inside the
   /// [Controller] constuctor and must be overridden. For example:
   /// ```dart
   ///     class MyController extends Controller {
   ///       final MyPresenter presenter;
   ///       MyController(): presenter = MyPresenter(), super();
-  /// 
+  ///
   ///       @override
   ///       void initListeners() {
   ///         presenter.loginOnComplete = () {
   ///           print('Login is successful');
-  ///         }  
+  ///         }
   ///         presenter.loginOnError = (e) {
   ///           print('Login is unsuccessful: $e.message');
   ///         }
   ///       }
   ///     }
-  /// 
+  ///
   /// ```
   void initListeners();
 
@@ -256,7 +254,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// the foreground inactive state. Apps transition to this state when another
   /// activity is focused, such as a split-screen app, a phone call, a
   /// picture-in-picture app, a system dialog, or another window.
-  /// 
+  ///
   /// Apps in this state should assume that they may be [onPaused] at any time.
   /// ```dart
   ///     class MyController extends Controller {
@@ -288,7 +286,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
 
   /// Called before the application is suspended.
   /// When the application is in this state, the engine will not call the [Window.onBeginFrame] and [Window.onDrawFrame] callbacks.
-  /// 
+  ///
   /// On iOS, this state is currently unused.
   /// ```dart
   ///     class MyController extends Controller {

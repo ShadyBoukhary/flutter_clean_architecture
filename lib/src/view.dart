@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/controller.dart';
 
-
 /// The [ViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
 /// page. The [ViewState] requires a [Controller] to handle its events and provide its data.
-/// 
+///
 /// The [ViewState] also has a default [globalKey] that can be used inside its `build()` function
 /// in a widget to grant easy access to the [Controller], which could then use it to display
 /// snackbars, dialogs, and so on.
-/// 
+///
 /// The [ViewState] lifecycle is also handled by the [Controller].
 /// ```dart
 ///     class CounterState extends ViewState<CounterPage, CounterController> {
 ///       CounterState(CounterController controller) : super(controller);
-///     
+///
 ///       @override
 ///       Widget build(BuildContext context) {
 ///         return MaterialApp(
@@ -38,10 +37,12 @@ import 'package:flutter_clean_architecture/src/controller.dart';
 ///         );
 ///       }
 ///     }
-/// 
+///
 /// ```
-abstract class ViewState<Page extends View, Con extends Controller> extends State<Page> {
-  final GlobalKey<State<StatefulWidget>> globalKey =  GlobalKey<State<StatefulWidget>>();
+abstract class ViewState<Page extends View, Con extends Controller>
+    extends State<Page> {
+  final GlobalKey<State<StatefulWidget>> globalKey =
+      GlobalKey<State<StatefulWidget>>();
   final Con controller;
 
   ViewState(this.controller) {
@@ -60,8 +61,8 @@ abstract class ViewState<Page extends View, Con extends Controller> extends Stat
 
   /// A wrapper around a [Function] of the [Controller]. This method can be used to handle
   /// button press events that always refresh the state. This method calls the the [fn] provided
-  /// then refreshes the state of the widget. 
-  /// 
+  /// then refreshes the state of the widget.
+  ///
   /// Any optional [params] are also passed to the [fn] as a [Map].
   /// ```dart
   ///     MaterialButton(onPressed: () => callHandler(controller.increment)),
