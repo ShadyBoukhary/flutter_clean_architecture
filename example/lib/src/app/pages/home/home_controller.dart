@@ -1,5 +1,5 @@
-import 'package:example/src/app/pages/home/home_presenter.dart';
-import 'package:example/src/domain/entities/user.dart';
+import './home_presenter.dart';
+import '../../../domain/entities/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 

@@ -1,6 +1,6 @@
 
-import 'package:example/src/domain/entities/user.dart';
-import 'package:example/src/domain/repositories/users_repository.dart';
+import '../../domain/entities/user.dart';
+import '../../domain/repositories/users_repository.dart';
 
 class DataUsersRepository extends UsersRepository {
 

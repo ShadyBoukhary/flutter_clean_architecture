@@ -1,4 +1,4 @@
-import 'package:example/src/domain/entities/user.dart';
+import '../entities/user.dart';
 
 abstract class UsersRepository {
   Future<User> getUser(String uid);

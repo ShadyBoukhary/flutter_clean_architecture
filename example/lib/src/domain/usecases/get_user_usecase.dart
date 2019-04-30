@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:example/src/domain/entities/user.dart';
-import 'package:example/src/domain/repositories/users_repository.dart';
+import '../entities/user.dart';
+import '../repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:rxdart/src/observables/observable.dart';
+import 'package:rxdart/rxdart.dart';
 
 class GetUserUseCase extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParams> {
   final UsersRepository usersRepository;
