@@ -10,5 +10,4 @@ ios/.generated/
 android/
 ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
-
-example/
+.vscode/
