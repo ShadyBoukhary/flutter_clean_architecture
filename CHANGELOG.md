@@ -1,3 +1,7 @@
+## [1.0.1] - Tuesday, April 30th, 2019
+
+* Fixed documentation typos
+
 ## [1.0.0] - Tuesday, April 30th, 2019
 
 * Added example application
