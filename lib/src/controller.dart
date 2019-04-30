@@ -7,7 +7,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   bool isLoading; // indicates whether a loading dialog is present
   bool _isMounted = true;
   Logger logger;
-  GlobalKey<ScaffoldState> _scaffoldKey;
+  GlobalKey<State<StatefulWidget>> _scaffoldKey;
   Controller() {
     logger = Logger('${this.runtimeType}');
     isLoading = false;
@@ -77,7 +77,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// Should only be called if the [Controller] was given the [ScaffoldKey]
   /// by the [View]
   @protected
-  ScaffoldState getScaffold() {
+  State<StatefulWidget> getState() {
     assert(_scaffoldKey != null, 'ScaffoldKey must be passed to the Controller via initController() from the View before this can be called.');
     assert(_scaffoldKey.currentState != null, 'ScaffoldKey must be passed to the Controller via initController() from the View before this can be called.');
     return _scaffoldKey.currentState;
@@ -87,14 +87,14 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// Should only be called if the [Controller] was given the [ScaffoldKey]
   /// by the [View]
   @protected
-  GlobalKey<ScaffoldState> getScaffoldKey() {
+  GlobalKey<State<StatefulWidget>> getStateKey() {
     assert(_scaffoldKey != null, 'ScaffoldKey must be passed to the Controller via initController() from the View before this can be called.');
     return _scaffoldKey;
   }
 
   /// Initializes optional [Controller] variables that can be used for refreshing and error displaying.
   /// Must be called in order to be able to implement loading, refreshing, and error displaying e.g. [Snackbar].
-  void initController(GlobalKey<ScaffoldState> key, Function refresh) {
+  void initController(GlobalKey<State<StatefulWidget>> key, Function refresh) {
     _scaffoldKey = key;
     this.refresh = refresh;
   }

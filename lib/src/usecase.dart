@@ -2,7 +2,6 @@ import 'package:flutter_clean_architecture/src/observer.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:logging/logging.dart';
 import 'dart:async';
-
 /// The abstract [UseCase] to be implemented by all usecases.
 /// [T] Is the type to be returned by the usecase to the presenter
 /// [Params] Is the object passed to the usecase containing all the needed parameters
@@ -20,7 +19,6 @@ abstract class UseCase<T, Params> {
   /// Builds the [Observable] to be subscribed to. [Params] is required
   /// by the [UseCase] to retrieve the appropraite data from the repository
   Future<Observable<T>> buildUseCaseObservable(Params params);
-
   /// Subscribes to the [Observerable] with the [Observer] callback functions.
   void execute(Observer<T> observer, [Params params]) async {
     final StreamSubscription subscription =

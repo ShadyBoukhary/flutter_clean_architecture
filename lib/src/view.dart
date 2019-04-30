@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/controller.dart';
 
 abstract class ViewState<Page extends View, Con extends Controller> extends State<Page> {
-  final GlobalKey<ScaffoldState> globalKey = GlobalKey<State<StatefulWidget>>();
+  final GlobalKey<State<StatefulWidget>> globalKey = GlobalKey<State<StatefulWidget>>();
   final Con controller;
 
   ViewState(this.controller) {
