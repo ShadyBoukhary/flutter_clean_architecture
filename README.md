@@ -39,7 +39,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 It is architecture based on the book and blog by Uncle Bob. It is a combination of concepts taken from the Onion Architecture and other architectures. The main focus of the architecture is separation of concerns and scalability. It consists of four main modules: `App`, `Domain`, `Data`, and `Device`.
 
 ### The Dependency Rule
-**Source code dependencies only point inwards**. This means inward modules are neither aware nor dependent on outer modules. However, outer modules are both aware and dependednt on inner modules. Outer modules represent the mechanisms by which the business rules and policies (inner modules) operate. The more you move inward, the more abstraction is present. The outer you move the more concrete implementations are present. Inner modules are not aware of any classes, functions, names, libraries, etc.. present in the outer modules. They simply represent **rules** and are completely independent from the implementations.
+**Source code dependencies only point inwards**. This means inward modules are neither aware of nor dependent on outer modules. However, outer modules are both aware of and dependent on inner modules. Outer modules represent the mechanisms by which the business rules and policies (inner modules) operate. The more you move inward, the more abstraction is present. The outer you move the more concrete implementations are present. Inner modules are not aware of any classes, functions, names, libraries, etc.. present in the outer modules. They simply represent **rules** and are completely independent from the implementations.
 
 ### Layers
 
@@ -100,7 +100,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
   * The `Controller` **has-a** `Presenter`. The `Controller` will pass the `Repository` to the `Presenter`, which it communicate later with the `Usecase`. The `Controller` will specify what listeners the `Presenter` should call for all success and error events as mentioned previously. Only the `Controller` is allowed to obtain instances of a `Repository` from the `Data` or `Device` module in the outermost layer.
   * The `Controller` has access to the `View`'s state and can refresh the UI via `refreshUI()`. Alternatively, handlers can be wrapped in `callHandler()` which automatically refreshes the UI after it's completed.
 * **Presenter**
-  * Every `Controller` **has-a** `Presenter`. The `Presenter` communicates with the `Usecase` as mentioned at the beginning of the `App` layer. The `Presenter` will have members that are functions, whicha optionally set by the `Controller` and will be called if set upon the `Usecase` sending back data, completing, or erroring.
+  * Every `Controller` **has-a** `Presenter`. The `Presenter` communicates with the `Usecase` as mentioned at the beginning of the `App` layer. The `Presenter` will have members that are functions, which are optionally set by the `Controller` and will be called if set upon the `Usecase` sending back data, completing, or erroring.
   * The `Presenter` is comprised of two classes
     * `Presenter` e.g. `LoginPresenter`
       * Contains the event-handlers set by the `Controller`
