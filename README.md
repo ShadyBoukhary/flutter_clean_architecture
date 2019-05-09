@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^1.0.1
+  flutter_clean_architecture: ^1.0.2
 
 ```
 
@@ -78,17 +78,17 @@ Since `App` is the presentation layer of the application, it is the most framewo
   * Represents only the UI of the page. The `View` builds the page's UI, styles it, and depends on the `Controller` to handle its events. The `View` **has-a** `Controller`.
   * In the case of Flutter
     * The `View` is comprised of 2 classes
-      * One that extends `StatefulWidget`, which would be the root `Widget` representing the `View`
-      * One that extends `State` with the template specialization of the other class. 
-    * The `State` contains the `build` method, which is technically the UI
+      * One that extends `View`, which would be the root `Widget` representing the `View`
+      * One that extends `ViewState` with the template specialization of the other class and its `Controller`. 
+    * The `ViewState` contains the `build` method, which is technically the UI
     * `StatefulWidget` contains the `State` as per `Flutter`
-    * The `StatefulWidget` only serves to pass arguments to the `State` from other pages such as a title etc.. It only instantiates the `State` object (the `View`) and provides it with the `Controller` it needs.
-    * The `StatefulWidget`  **has-a** `State` object (the `View`) which **has-a** `Controller`
-    * In summary, both the `StatefulWidget` and the `State` together represent the `View` of the page.
+    * The `StatefulWidget` only serves to pass arguments to the `State` from other pages such as a title etc.. It only instantiates the `State` object (the `ViewState`) and provides it with the `Controller` it needs.
+    * The `StatefulWidget`  **has-a** `State` object (the `ViewState`) which **has-a** `Controller`
+    * In summary, both the `StatefulWidget` and the `State` are represented by a  `View` and `ViewState` of the page.
     * The `ViewState` class maintains a `GlobalKey` that can be used as a key in its scaffold. If used, the `Controller` can easily access it via `getState()` in order to show snackbars and other dialogs. This is helpful but optional.
     * 
 * **Controller**
-  * Every `View` **has-a** `Controller`. The `Controller` provides the needed member data of the `View` i.e. dynamic data. The `Controller` also implements the event-handlers of the `View` widgets, but has no access to the `Widgets` themselves. The `View` uses the `Controller`, not the other way around. When the `View` calls a handler from the `Controller`, it wraps it with a `callHandler(fn)` function if the `View` (the scaffhold) needs to be rebuilt by calling `setState()` before calling the event-handler.
+  * Every `ViewState` **has-a** `Controller`. The `Controller` provides the needed member data of the `ViewState` i.e. dynamic data. The `Controller` also implements the event-handlers of the `ViewState` widgets, but has no access to the `Widgets` themselves. The `ViewState` uses the `Controller`, not the other way around. When the `ViewState` calls a handler from the `Controller`, it wraps it with a `callHandler(fn)` function if the `ViewState` needs to be rebuilt by calling `setState()` before calling the event-handler. The `callHandler(fn)` method will handle refreshing the state.
   * Every `Controller` extends the `Controller` abstract class, which implements `WidgetsBindingObserver`. Every `Controller` class is responsible for handling lifecycle events for the `View` and can override:
     * **void onInActive()**
     * **void onPaused()** 
@@ -98,28 +98,28 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * etc..
   * Also, every `Controller` **has** to implement **initListeners()** that initializes the listeners for the `Presenter` for consistency.
   * The `Controller` **has-a** `Presenter`. The `Controller` will pass the `Repository` to the `Presenter`, which it communicate later with the `Usecase`. The `Controller` will specify what listeners the `Presenter` should call for all success and error events as mentioned previously. Only the `Controller` is allowed to obtain instances of a `Repository` from the `Data` or `Device` module in the outermost layer.
-  * The `Controller` has access to the `View`'s state and can refresh the UI via `refreshUI()`. Alternatively, handlers can be wrapped in `callHandler()` which automatically refreshes the UI after it's completed.
+  * The `Controller` has access to the `ViewState` and can refresh the UI via `refreshUI()`. Alternatively, handlers can be wrapped in `callHandler()` which automatically refreshes the UI after it's completed.
 * **Presenter**
   * Every `Controller` **has-a** `Presenter`. The `Presenter` communicates with the `Usecase` as mentioned at the beginning of the `App` layer. The `Presenter` will have members that are functions, which are optionally set by the `Controller` and will be called if set upon the `Usecase` sending back data, completing, or erroring.
   * The `Presenter` is comprised of two classes
     * `Presenter` e.g. `LoginPresenter`
       * Contains the event-handlers set by the `Controller`
       * Contains the `Usecase` to be used
-      * Intitializes and executes the usecase with the `Observer` class and the appropriate arguments. E.g. with `username` and `password` in the case of a `LoginPresenter`
+      * Intitializes and executes the usecase with the `Observer<T>` class and the appropriate arguments. E.g. with `username` and `password` in the case of a `LoginPresenter`
     * A class that implements `Observer<T>`
-      * Has reference to the `Presenter` class.
+      * Has reference to the `Presenter` class. Ideally, this should be an inner class but `Dart` does not yet support them.
       * Implements 3 functions
         * **onNext(T)**
         * **onComplete()**
         * **onError()**
       * These 3 methods represent all possible outputs of the `Usecase`
-        * If the `Usecase` returns an object, it will be passed to `onNext(dynamic)`. 
-        * If it errors, it will call `onError()`. 
+        * If the `Usecase` returns an object, it will be passed to `onNext(T)`. 
+        * If it errors, it will call `onError(e)`. 
         * Once it completes, it will call `onComplete()`. 
-       * These methods will then call the corresponding methods of the `Presenter` that are set by the `Controller`. This way, the event is passed to the `Controller`, which can then manipulate data and update the `View`
+       * These methods will then call the corresponding methods of the `Presenter` that are set by the `Controller`. This way, the event is passed to the `Controller`, which can then manipulate data and update the `ViewState`
 * Extra
-  * `Utility` classes
-  * `Constants` classes
+  * `Utility` classes (any commonly used functions like timestamp getters etc..)
+  * `Constants` classes (`const` strings for convenience)
   * `Navigator` (if needed)
   
 #### Data
@@ -128,7 +128,7 @@ Represents the data-layer of the application. The `Data` module, which is a part
 ##### Contents of Data
 * **Repositories**
   * Every `Repository` **should** implement `Repository` from the **Domain** layer.
-  * Using `polymorphism`, these repositories from the data layer can be passed accross the bounderies of layers, starting from the `Controller` down to the `Usecases` through the `Presenter`.
+  * Using `polymorphism`, these repositories from the data layer can be passed accross the bounderies of layers, starting from the `View` down to the `Usecases` through the `Controller` and `Presenter`.
   * Retrieve data from databases or other methods. 
   * Responsible for any API calls and high-level data manipulation such as
     * Registering a user with a database
@@ -137,12 +137,12 @@ Represents the data-layer of the application. The `Data` module, which is a part
     * Handling local storage
     * Calling an API
 * **Models** (not a must depending on the applicaiton)
-  * Duplicates of `Entities` with the addition of extra members that might be platform-dependent. For example, in the case of local databases, this can be manifested as an `isDeleted` or an `isDirty` entry in the local database. Such entries cannot be present in the `Entities` as that would violate the **Dependency Rule** since **Domain** should not be aware of the implementation.
+  * Extensions of `Entities` with the addition of extra members that might be platform-dependent. For example, in the case of local databases, this can be manifested as an `isDeleted` or an `isDirty` entry in the local database. Such entries cannot be present in the `Entities` as that would violate the **Dependency Rule** since **Domain** should not be aware of the implementation.
   * In the case of our application, models in the `Data` layer will not be necessary as we do not have a local database. Therefore, it is unlikely that we will need extra entries in the `Entities` that are platform-dependent.
 * **Mappers**
   * Map `Entity` objects to `Models` and vice-versa.
   * Static classes with static methods that receive either an `Entity` or a `Model` and return the other.
-  * Only necessary in the presence of `Models`, which are not present in our case.
+  * Only necessary in the presence of `Models`
 * Extra
   * `Utility` classes if needed
   * `Constants` classes if needed
@@ -163,23 +163,31 @@ Part of the outermost layer, `Device` communicates directly with the platform i.
 
 ```
 lib/
-    app/                <--- application layer
-        pages/              <-- pages or screens
-        widgets/            <-- custom widgets
-        utils/              <-- utility functions/classes/constants
-        navigator.dart      <-- optional application navigator
-    data/               <--- data layer
-        repositories/       <-- repositories (retrieve data, heavy processing etc..)
-        helpers/            <-- any helpers e.g. http helper
-        constants.dart      <-- constants such as API keys, routes, urls, etc..
-    device/             <--- device layer
-        repositories/       <--- repositories that communicate with the platform e.g. GPS
-        utils/              <--- any utility classes/functions
-    domain/             <--- domain layer (business and enterprise) PURE DART
-        entities/       <--- enterprise entities (core classes of the app)
-        usecases/       <--- business processes e.g. Login, Logout, GetUser, etc..
-        repositories/   <--- abstract classes that define functionality for data and device layers
-    main.dart           <--- entry point
+    app/                          <--- application layer
+        pages/                        <-- pages or screens
+          login/                        <-- some page in the app
+            login_controller.dart         <-- login controller extends `Controller`
+            login_presenter.dart          <-- login presenter extends `Presenter`
+            login_view.dart               <-- login view, 2 classes extend `View` and `ViewState` resp.
+        widgets/                      <-- custom widgets
+        utils/                        <-- utility functions/classes/constants
+        navigator.dart                <-- optional application navigator
+    data/                         <--- data layer
+        repositories/                 <-- repositories (retrieve data, heavy processing etc..)
+          data_auth_repo.dart           <-- example repo: handles all authentication
+        helpers/                      <-- any helpers e.g. http helper
+        constants.dart                <-- constants such as API keys, routes, urls, etc..
+    device/                       <--- device layer
+        repositories/                 <--- repositories that communicate with the platform e.g. GPS
+        utils/                        <--- any utility classes/functions
+    domain/                       <--- domain layer (business and enterprise) PURE DART
+        entities/                   <--- enterprise entities (core classes of the app)
+          user.dart                   <-- example entity
+          manager.dart                <-- example entity
+        usecases/                   <--- business processes e.g. Login, Logout, GetUser, etc..
+          login_usecase.dart          <-- example usecase extends `UseCase` or `CompletableUseCase`
+        repositories/               <--- abstract classes that define functionality for data and device layers
+    main.dart                     <--- entry point
 
 ```
 
@@ -193,7 +201,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 class CounterPage extends View {
     @override
      // Dependencies can be injected here
-     State<StatefulWidget> createState() => CounterState(Controller());
+     State<StatefulWidget> createState() => CounterState(CounterState());
 }
 
 class CounterState extends ViewState<CounterPage, CounterController> {
@@ -205,7 +213,7 @@ class CounterState extends ViewState<CounterPage, CounterController> {
          title: 'Flutter Demo',
       home: Scaffold(
         key: globalKey, // using the built-in global key of the `View` for the scaffold or any other
-                        // widget provides the controller with a way to access them via getContext(),                                 //getState(), getStateKey()
+                        // widget provides the controller with a way to access them via getContext(), getState(), getStateKey()
         body: Column(
           children: <Widget>[
             Center(
@@ -249,6 +257,7 @@ class CounterController extends Controller {
   @override
   void initListeners() {
     // Initialize presenter listeners here
+    // These will be called upon success, failure, or data retrieval after usecase execution
      presenter.loginOnComplete = () => print('Login Successful');
      presenter.loginOnError = (e) => print(e);
      presenter.loginOnNext = () => print("onNext");
@@ -395,6 +404,11 @@ This repository should be implemented in **Data** layer
 ```dart
 
 class DataAuthenticationRepository extends AuthenticationRepository {
+  // singleton
+  static DataAuthenticationRepository _instance = DataAuthenticationRepository._internal();
+  DataAuthenticationRepository._internal();
+  factory DataAuthenticationRepository() => _instance;
+
     @override
   Future<void> register(
       {@required String firstName,
