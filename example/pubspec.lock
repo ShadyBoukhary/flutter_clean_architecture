@@ -47,7 +47,7 @@ packages:
       name: flutter_clean_architecture
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter

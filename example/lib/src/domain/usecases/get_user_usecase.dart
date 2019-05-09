@@ -30,11 +30,13 @@ class GetUserUseCase extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParam
   }
 }
 
+/// Wrapping params inside an object makes it easier to change later
 class GetUserUseCaseParams {
   final String uid;
   GetUserUseCaseParams(this.uid);
 }
 
+/// Wrapping response inside an object makes it easier to change later
 class GetUserUseCaseResponse {
   final User user;
   GetUserUseCaseResponse(this.user);

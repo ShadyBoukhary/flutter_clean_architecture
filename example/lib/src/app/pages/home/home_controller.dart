@@ -10,9 +10,11 @@ class HomeController extends Controller {
   int get counter => _counter;
   User get user => _user; // data used by the View
   final HomePresenter homePresenter;
+  // Presenter should always be initialized this way
   HomeController(usersRepo): _counter = 0, homePresenter = HomePresenter(usersRepo), super();
 
   @override
+  // this is called automatically by the parent class
   void initListeners() {
     homePresenter.getUserOnNext = (User user) { 
       print(user.toString());
@@ -42,7 +44,7 @@ class HomeController extends Controller {
   
   @override
   void dispose() {
-    homePresenter.dispose();
+    homePresenter.dispose();  // don't forget to dispose of the presenter
     super.dispose();
   }
   

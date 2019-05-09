@@ -25,7 +25,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         title: Text(widget.title),
       ),
       body: Scaffold(
-        key: globalKey,
+        key: globalKey, // built in global key for the ViewState for easy access in the controller
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
