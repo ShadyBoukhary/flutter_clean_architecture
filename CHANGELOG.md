@@ -1,3 +1,9 @@
+## [1.0.2] - Thursday, May 9th, 2019
+
+* Fixed documentation typos
+* Changed misleading assertion messages
+* Cleaned documentation
+
 ## [1.0.1] - Tuesday, April 30th, 2019
 
 * Fixed documentation typos
@@ -6,7 +12,6 @@
 
 * Added example application
 * Addded documentation
-
 
 ## [0.0.1] - Tuesday, April 30th, 2019
 
@@ -17,4 +22,3 @@
   * UseCase class
   * Observer class
 * Can be used to set up a Flutter project using the Clean Architecture
-* 
