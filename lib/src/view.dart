@@ -94,6 +94,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
 /// a subscriber, which provides the ability to listen to push and pop route events.
 /// ```dart
 ///   class CounterPage extends View {
+///     CounterPage({RouteObserver observer, Key key}): super(routeObserver: routeObserver, key: key);
 ///     @override
 ///     // Dependencies can be injected here
 ///     State<StatefulWidget> createState() => CounterState(Controller());

@@ -77,7 +77,7 @@ import 'package:meta/meta.dart';
 ///
 /// ```
 abstract class Controller with WidgetsBindingObserver, RouteAware {
-  Function refresh; // callback function for refreshing the UI
+  Function _refresh; // callback function for refreshing the UI
   bool isLoading; // indicates whether a loading dialog is present
   bool _isMounted = true;
   Logger logger;
@@ -113,13 +113,12 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// have no impact.
   @protected
   void dismissLoading() {
-    assert(refresh != null,
+    assert(_refresh != null,
         '''The `refresh callback is somehow null. This might be because `dismissLoading()` was called
      before the `View` called `controller.initController()`.
      Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error. As a workaround, you can try setting the `refresh` callback manually inside the your `ViewState`
-     like so: `controller.refresh = callHandler;`''');
-    if (_isMounted) refresh(() => isLoading = false);
+     the error.''');
+    if (_isMounted) _refresh(() => isLoading = false);
   }
 
   /// Sets the loading to true. The `View` body should be wrapped in a loader.
@@ -135,25 +134,23 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// Does not work if called inside the [Controller] constructor.
   @protected
   void showLoading() {
-    assert(refresh != null,
-        '''The `refresh callback is somehow null. This might be because `showLoading()` was called
+    assert(_refresh != null,
+        '''The `_refresh callback is somehow null. This might be because `showLoading()` was called
      before the `View` called `controller.initController()`.
      Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error. As a workaround, you can try setting the `refresh` callback manually inside the your `ViewState`
-     like so: `controller.refresh = callHandler;`''');
-    refresh(() => isLoading = true);
+     the error.''');
+    _refresh(() => isLoading = true);
   }
 
-  /// Refreshes the [View] associated with the [Controller] if it is still mounted.
+  /// _refreshes the [View] associated with the [Controller] if it is still mounted.
   @protected
   void refreshUI() {
-    assert(refresh != null,
-        '''The `refresh callback is somehow null. This might be because `refreshUI()` was called
+    assert(_refresh != null,
+        '''The `_refresh callback is somehow null. This might be because `refreshUI()` was called
      before the `View` called `controller.initController()`.
      Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error. As a workaround, you can try setting the `refresh` callback manually inside the your `ViewState`
-     like so: `controller.refresh = callHandler;`''');
-    if (_isMounted) refresh(() {});
+     the error.''');
+    if (_isMounted) _refresh(() {});
   }
 
   /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
@@ -166,8 +163,6 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   }
 
   /// Retrieves the [State<StatefulWidget>] associated with the [View]
-  /// Should only be called if the [Controller] was given the [ScaffoldKey]
-  /// by the [View]
   @protected
   State<StatefulWidget> getState() {
     assert(_globalKey != null,
@@ -177,17 +172,16 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
      the error.''');
 
     assert(_globalKey.currentState != null,
-        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
-    This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
-    bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
+        '''Make sure you are using the `globalKey` that is built into the `ViewState` inside your `build()` method.
+        For example:
+        `key: globalKey,` Otherwise, there is no state that the `Controller` could access.
+        If this does not solve the issue, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
     return _globalKey.currentState;
   }
 
   /// Retrieves the [GlobalKey<State<StatefulWidget>>] associated with the [View]
-  /// Should only be called if the [Controller] was given the [ScaffoldKey]
-  /// by the [View]
   @protected
   GlobalKey<State<StatefulWidget>> getStateKey() {
     assert(_globalKey != null,
@@ -199,11 +193,11 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
     return _globalKey;
   }
 
-  /// Initializes optional [Controller] variables that can be used for refreshing and error displaying.
-  /// Must be called in order to be able to implement loading, refreshing, and error displaying e.g. [Snackbar].
+  /// Initializes optional [Controller] variables that can be used for _refreshing and error displaying.
+  /// This method is called automatically by the mounted `View`. Do not call.
   void initController(GlobalKey<State<StatefulWidget>> key, Function refresh) {
     _globalKey = key;
-    this.refresh = refresh;
+    this._refresh = refresh;
   }
 
   /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
@@ -216,9 +210,10 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
      the error.''');
 
     assert(_globalKey.currentContext != null,
-        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
-    This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
-    bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
+        '''Make sure you are using the `globalKey` that is built into the `ViewState` inside your `build()` method.
+        For example:
+        `key: globalKey,` Otherwise, there is no context that the `Controller` could access.
+        If this does not solve the issue, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
     return _globalKey.currentContext;
@@ -243,6 +238,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   ///     }
   ///
   /// ```
+  @protected
   void initListeners();
 
   /// Called when the application is in an inactive state and is not receiving user input.
