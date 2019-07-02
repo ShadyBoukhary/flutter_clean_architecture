@@ -1,3 +1,7 @@
+## [1.0.3] - Tuesday, July 2nd, 2019
+
+* Add missing files to example
+
 ## [1.0.2] - Thursday, May 9th, 2019
 
 * Fixed documentation typos
