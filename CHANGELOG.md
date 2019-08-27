@@ -1,3 +1,7 @@
+## [1.0.4] - Tuesday, August 27th, 2019
+
+* Updated dependencies
+
 ## [1.0.3] - Tuesday, July 2nd, 2019
 
 * Add missing files to example
