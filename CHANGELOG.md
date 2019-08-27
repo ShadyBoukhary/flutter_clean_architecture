@@ -1,3 +1,7 @@
+## [1.0.5] - Tuesday, August 27th, 2019
+
+* Updated dependencies
+
 ## [1.0.4] - Tuesday, August 27th, 2019
 
 * Updated dependencies
