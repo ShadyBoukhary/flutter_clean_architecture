@@ -201,7 +201,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 class CounterPage extends View {
     @override
      // Dependencies can be injected here
-     State<StatefulWidget> createState() => CounterState(CounterState());
+     State<StatefulWidget> createState() => CounterState(CounterController());
 }
 
 class CounterState extends ViewState<CounterPage, CounterController> {
