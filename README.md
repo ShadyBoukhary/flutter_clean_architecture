@@ -69,7 +69,7 @@ The `Domain` module defines the business logic of the application. It is a modul
 `Domain` represents the inner-most layer. Therefore, it the most abstract layer in the architecture.
 
 #### App
-`App` is the layer outside `Domain`. `App` crosses the bounderies of the layers to communicate with `Domain`. However, the **Dependency Rule** is never violated. Using `polymorphism`, `App` communicates with `Domain` using inherited class: classes that implement or extend the `Repositories` present in the `Domain` layer. Since `polymorphism` is used, the `Repositories` passed to `Domain` still adhere to the **Dependency Rule** since as far as `Domain` is concerned, they are abstract. The implementation is hidden behind the `polymorphism`.
+`App` is the layer outside `Domain`. `App` crosses the boundaries of the layers to communicate with `Domain`. However, the **Dependency Rule** is never violated. Using `polymorphism`, `App` communicates with `Domain` using inherited class: classes that implement or extend the `Repositories` present in the `Domain` layer. Since `polymorphism` is used, the `Repositories` passed to `Domain` still adhere to the **Dependency Rule** since as far as `Domain` is concerned, they are abstract. The implementation is hidden behind the `polymorphism`.
 
 ##### Contents of App
 Since `App` is the presentation layer of the application, it is the most framework-dependent layer, as it contains the UI and the event handlers of the UI. For every page in the application, `App` defines at least 3 classes: a `Controller`, a `Presenter`, and a `View`.
@@ -105,7 +105,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * `Presenter` e.g. `LoginPresenter`
       * Contains the event-handlers set by the `Controller`
       * Contains the `Usecase` to be used
-      * Intitializes and executes the usecase with the `Observer<T>` class and the appropriate arguments. E.g. with `username` and `password` in the case of a `LoginPresenter`
+      * Initializes and executes the usecase with the `Observer<T>` class and the appropriate arguments. E.g. with `username` and `password` in the case of a `LoginPresenter`
     * A class that implements `Observer<T>`
       * Has reference to the `Presenter` class. Ideally, this should be an inner class but `Dart` does not yet support them.
       * Implements 3 functions
@@ -128,7 +128,7 @@ Represents the data-layer of the application. The `Data` module, which is a part
 ##### Contents of Data
 * **Repositories**
   * Every `Repository` **should** implement `Repository` from the **Domain** layer.
-  * Using `polymorphism`, these repositories from the data layer can be passed accross the bounderies of layers, starting from the `View` down to the `Usecases` through the `Controller` and `Presenter`.
+  * Using `polymorphism`, these repositories from the data layer can be passed across the boundaries of layers, starting from the `View` down to the `Usecases` through the `Controller` and `Presenter`.
   * Retrieve data from databases or other methods. 
   * Responsible for any API calls and high-level data manipulation such as
     * Registering a user with a database
@@ -136,7 +136,7 @@ Represents the data-layer of the application. The `Data` module, which is a part
     * Downloading data
     * Handling local storage
     * Calling an API
-* **Models** (not a must depending on the applicaiton)
+* **Models** (not a must depending on the application)
   * Extensions of `Entities` with the addition of extra members that might be platform-dependent. For example, in the case of local databases, this can be manifested as an `isDeleted` or an `isDirty` entry in the local database. Such entries cannot be present in the `Entities` as that would violate the **Dependency Rule** since **Domain** should not be aware of the implementation.
   * In the case of our application, models in the `Data` layer will not be necessary as we do not have a local database. Therefore, it is unlikely that we will need extra entries in the `Entities` that are platform-dependent.
 * **Mappers**
@@ -153,7 +153,7 @@ Part of the outermost layer, `Device` communicates directly with the platform i.
 ##### Contents of Data
 * **Devices**
   * Similar to `Repositories` in `Data`, `Devices` are classes that communicate with a specific functionality in the platform.
-  * Passed through the layers the same way `Repositories` are pass across the bounderies of the layer: using polymorphism between the `App` and `Domain` layer. That means the `Controller` passes it to the `Presenter` then the `Presenter` passes it polymorphically to the `Usecase`, which recieves it as an abstract class.
+  * Passed through the layers the same way `Repositories` are pass across the boundaries of the layer: using polymorphism between the `App` and `Domain` layer. That means the `Controller` passes it to the `Presenter` then the `Presenter` passes it polymorphically to the `Usecase`, which receives it as an abstract class.
 * Extra
   * `Utility` classes if needed
   * `Constants` classes if needed
@@ -311,7 +311,7 @@ class _LoginUseCaseObserver implements Observer<void> {
   // in this case, unnecessary
   void onNext(_) {}
 
-  /// Login is successfull, trigger event in [LoginController]
+  /// Login is successful, trigger event in [LoginController]
   void onComplete() {
     // any cleaning or preparation goes here
     assert(loginPresenter.loginOnComplete != null);
@@ -348,7 +348,7 @@ class LoginUseCase extends CompletableUseCase<LoginUseCaseParams> {
   Future<Observable<void>> buildUseCaseObservable(params) async {
     final StreamController controller = StreamController();
     try {
-        // assuming you pass credenntials here
+        // assuming you pass credentials here
       await _authenticationRepository.authenticate(email: params.email, password: params.password);
       logger.finest('LoginUseCase successful.');
       // triggers onComplete
