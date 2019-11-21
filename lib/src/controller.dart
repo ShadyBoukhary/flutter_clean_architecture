@@ -102,8 +102,8 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
       case AppLifecycleState.resumed:
         onResumed();
         break;
-      case AppLifecycleState.suspending:
-        onSuspending();
+      case AppLifecycleState.detached:
+        onDetached();
         break;
     }
   }
@@ -280,15 +280,14 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// ```
   void onResumed() {}
 
-  /// Called before the application is suspended.
-  /// When the application is in this state, the engine will not call the [Window.onBeginFrame] and [Window.onDrawFrame] callbacks.
-  ///
-  /// On iOS, this state is currently unused.
+  /// Called before the application is detached.
+  /// When the application is in this state, the engine still runing but not attached to any view.
+  /// 
   /// ```dart
   ///     class MyController extends Controller {
   ///       @override
-  ///       void onSuspending() => print('App is about to suspend.');
+  ///       void onDetached() => print('App is about to suspend.');
   ///     }
   /// ```
-  void onSuspending() {}
+  void onDetached() {}
 }
