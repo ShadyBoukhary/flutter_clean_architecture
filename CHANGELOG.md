@@ -1,3 +1,8 @@
+## [1.0.6] - Tuesday, August 27th, 2019
+
+* Flutter v1.12.5 compatibility
+* Changed onSuspending to onDetatched
+
 ## [1.0.5] - Tuesday, August 27th, 2019
 
 * Updated dependencies

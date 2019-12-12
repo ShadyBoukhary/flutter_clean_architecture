@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^1.0.5
+  flutter_clean_architecture: ^1.0.6
 
 ```
 
@@ -93,7 +93,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * **void onInActive()**
     * **void onPaused()** 
     * **void onResumed()** 
-    * **void onSuspending()**
+    * **void onDetatched()**
     * **void onDidPop()**
     * etc..
   * Also, every `Controller` **has** to implement **initListeners()** that initializes the listeners for the `Presenter` for consistency.
