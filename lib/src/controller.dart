@@ -102,7 +102,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
       case AppLifecycleState.resumed:
         onResumed();
         break;
-      case AppLifecycleState.detached:
+      case AppLifecycleState.suspending:
         onDetached();
         break;
     }

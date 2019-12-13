@@ -1,3 +1,7 @@
+## [1.0.7] - Tuesday, August 27th, 2019
+
+* Bug fix
+
 ## [1.0.6] - Tuesday, August 27th, 2019
 
 * Flutter v1.12.5 compatibility
