@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^1.0.7
+  flutter_clean_architecture: ^1.0.8
 
 ```
 

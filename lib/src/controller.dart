@@ -102,7 +102,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
       case AppLifecycleState.resumed:
         onResumed();
         break;
-      case AppLifecycleState.suspending:
+      case AppLifecycleState.detached:
         onDetached();
         break;
     }
@@ -262,7 +262,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
 
   /// Called when the application is not currently visible to the user, not responding to user input, and running in the background.
   /// When the application is in this state, the engine will not call the [Window.onBeginFrame] and [Window.onDrawFrame] callbacks.
-  /// Android apps in this state should assume that they may enter the [suspending] state at any time.
+  /// Android apps in this state should assume that they may enter the [detached] state at any time.
   /// ```dart
   ///     class MyController extends Controller {
   ///       @override
@@ -286,7 +286,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// ```dart
   ///     class MyController extends Controller {
   ///       @override
-  ///       void onDetached() => print('App is about to suspend.');
+  ///       void onDetached() => print('App is about to detach.');
   ///     }
   /// ```
   void onDetached() {}
