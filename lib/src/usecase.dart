@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/observer.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:logging/logging.dart';
@@ -116,7 +117,7 @@ abstract class UseCase<T, Params> {
     final StreamSubscription subscription =
         (await buildUseCaseObservable(params)).listen(observer.onNext,
             onDone: observer.onComplete, onError: observer.onError);
-    _addSubscription(subscription);
+    addSubscription(subscription);
   }
 
   /// Disposes (unsubscribes) from the [Observable]
@@ -128,7 +129,8 @@ abstract class UseCase<T, Params> {
 
   /// Adds a [StreamSubscription] i.e. the subscription to the
   /// [Observable] to the [CompositeSubscription] list of subscriptions.
-  void _addSubscription(StreamSubscription subscription) {
+  @protected
+  void addSubscription(StreamSubscription subscription) {
     if (_disposables.isDisposed) {
       _disposables = CompositeSubscription();
     }
