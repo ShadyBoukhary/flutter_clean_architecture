@@ -5,3 +5,4 @@ export 'package:flutter_clean_architecture/src/observer.dart';
 export 'package:flutter_clean_architecture/src/presenter.dart';
 export 'package:flutter_clean_architecture/src/usecase.dart';
 export 'package:flutter_clean_architecture/src/view.dart';
+export 'package:flutter_clean_architecture/src/background_usecase.dart';
