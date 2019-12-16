@@ -4,4 +4,4 @@ linter:
     library_names: true
     avoid_empty_else: true
     unecessary_const: true
-    unawaited_futures: true
+    unawaited_futures: false
