@@ -1,15 +1,29 @@
 version: 2
-jobs:  
-  test:
+jobs:
+  analyze:
     docker:
-      - image: cirrusci/flutter
+      - image: cirrusci/flutter:latest
+
     steps:
       - checkout
-      - run: flutter test
+      - run:
+          name: Analyze files
+          command: flutter analyze
+
+  test:
+    docker:
+      - image: cirrusci/flutter:latest
+
+    steps:
+      - checkout
+      - run:
+          name: Test code
+          command: flutter test
+
 workflows:
   version: 2
-  test:
+  lint_and_test:
     jobs:
+      - analyze
       - test
-
 
