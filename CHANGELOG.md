@@ -1,3 +1,20 @@
+## [1.1.0] - Tuesday, December 17th, 2019
+
+* Added the ability to create a usecase that executes on a different isolate.
+    * `BackgroundUseCase`
+        * Usecase class that executes on a different isolate
+        * Create a static method in the class that conforms to `UseCaseTask` signature
+        * Return the reference to that method inside the `buildUseCaseTask` method
+    * `BackgroundUseCaseParameters`
+        * Contains the input data provided to to the isolate
+        * Passed to the static method as a parameter
+    * `BackgroundUseCaseMessage`
+        * Provides output data and information such as completion status and errors
+    * The usecase usage in the presenter does not change, this class can be used identically
+    * Check `README.md` for more details
+* Added and improved documentation
+* Updated README.md
+
 ## [1.0.8] - Tuesday, December 12th, 2019
 
 * Bug fix

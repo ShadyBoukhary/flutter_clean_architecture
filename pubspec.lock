@@ -262,7 +262,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.22.2"
+    version: "0.22.6"
   shelf:
     dependency: transitive
     description:
