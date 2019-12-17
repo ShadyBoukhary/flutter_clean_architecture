@@ -6,7 +6,7 @@ void main() {
     test('BackgroundUseCase onNext and onDone.', () async {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
       CounterUseCase().execute(observer);
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(Duration(milliseconds: 500));
       expect(observer.number, 2);
       expect(observer.done, true);
       expect(observer.error, false);
@@ -25,9 +25,9 @@ void main() {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
       CounterUseCaseCancelled usecase = CounterUseCaseCancelled()
         ..execute(observer);
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(Duration(milliseconds: 500));
       usecase.dispose();
-      await Future.delayed(Duration(milliseconds: 40));
+      await Future.delayed(Duration(milliseconds: 300));
       expect(observer.number, 0);
       expect(observer.done, false);
       expect(observer.error, false);
@@ -37,18 +37,17 @@ void main() {
       MatMulUseCaseObserver observer = MatMulUseCaseObserver();
       MatMulUseCase()..execute(observer, MatMulUseCaseParams.random());
       await Future.delayed(Duration(milliseconds: 400));
-
     });
   });
 }
 
 class CounterUseCase extends BackgroundUseCase<int, void> {
   @override
-  buildUseCaseTask(void params) {
-    return hi;
+  buildUseCaseTask() {
+    return complete;
   }
 
-  static hi(BackgroundUseCaseParams params) {
+  static complete(BackgroundUseCaseParams params) {
     for (int i = 0; i < 3; i++) {
       BackgroundUseCaseMessage<int> message = BackgroundUseCaseMessage(data: i);
       params.port.send(message);
@@ -61,7 +60,7 @@ class CounterUseCase extends BackgroundUseCase<int, void> {
 
 class CounterUseCaseError extends BackgroundUseCase<int, void> {
   @override
-  buildUseCaseTask(void params) {
+  buildUseCaseTask() {
     return hi;
   }
 
@@ -75,15 +74,15 @@ class CounterUseCaseError extends BackgroundUseCase<int, void> {
 
 class CounterUseCaseCancelled extends BackgroundUseCase<int, void> {
   @override
-  buildUseCaseTask(void params) {
-    return hi;
+  buildUseCaseTask() {
+    return cancel;
   }
 
-  static hi(BackgroundUseCaseParams params) async {
+  static cancel(BackgroundUseCaseParams params) async {
     BackgroundUseCaseMessage<int> message = BackgroundUseCaseMessage(data: 0);
     params.port.send(message);
-    await Future.delayed(Duration(seconds: 1));
-    message = BackgroundUseCaseMessage(error: Error());
+    await Future.delayed(Duration(milliseconds: 500));
+    message = BackgroundUseCaseMessage(data: 1);
     params.port.send(message);
   }
 }
@@ -111,7 +110,7 @@ class CounterUseCaseObserver extends Observer<int> {
 
 class MatMulUseCase extends BackgroundUseCase<List<List<double>>, MatMulUseCaseParams> {
   @override
-  buildUseCaseTask(void params) {
+  buildUseCaseTask() {
     return matmul;
   }
 
@@ -123,12 +122,11 @@ class MatMulUseCase extends BackgroundUseCase<List<List<double>>, MatMulUseCaseP
     for (int i = 0; i < matMulParams.mat1.length; i++) {
       for (int j = 0; j < matMulParams.mat1.length; j++) {
         for (int k = 0; k < matMulParams.mat1.length; k++) {
-          result[i][j] += matMulParams.mat1[i][k] * matMulParams.mat2[k][i];
+          result[i][j] += matMulParams.mat1[i][k] * matMulParams.mat2[k][j];
         }
       }
     }
     params.port.send(BackgroundUseCaseMessage(data: result));
-
   }
 }
 
@@ -147,14 +145,11 @@ class MatMulUseCaseParams {
 }
 
 class MatMulUseCaseObserver extends Observer<List<List<double>>> {
+  @override
+  void onComplete() {}
 
   @override
-  void onComplete() {
-  }
-
-  @override
-  void onError(e) {
-  }
+  void onError(e) {}
 
   @override
   void onNext(List<List<double>> mat) {
