@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^1.0.8
+  flutter_clean_architecture: ^1.1.0
 
 ```
 
@@ -367,6 +367,64 @@ class LoginUseCaseParams {
     final String email;
     final String password;
     LoginUseCaseParams(this.email, this.password);
+}
+```
+##### Background UseCase
+A usecase can be made to run on a separate isolate using the `BackgroundUseCase` class. 
+Implementing this kind of usecase is a little different than a regular usecase due to the constraints of an isolate.
+In order to create a `BackgroundUseCase`, simply extend the class and override the `buildUseCaseTask` method.
+This method should return a `UseCaseTask`, which is just a function that has a void return type and takes a
+`BackgroundUseCaseParameters` parameter. This method should be static and will contain all the code you wish to run
+on a separate isolate. This method should communicate with the main isolate using the `port` provided in the `BackgroundUseCaseParameters`
+as follows. This example is of a `BackgroundUseCase` that performs matrix multiplication.
+
+```dart
+
+class MatMulUseCase extends BackgroundUseCase<List<List<double>>, MatMulUseCaseParams> {
+
+  // must be overridden
+  @override
+  buildUseCaseTask() {
+    return matmul;  // returns the static method that contains the code to be run on an isolate
+  }
+
+  /// This method will be executed on a separate isolate. The [params] contain all the data and the sendPort 
+  /// needed
+  static void matmul(BackgroundUseCaseParams params) async {
+    MatMulUseCaseParams matMulParams = params.params as MatMulUseCaseParams;
+    List<List<double>> result = List<List<double>>.generate(
+        10, (i) => List<double>.generate(10, (j) => 0));
+
+    for (int i = 0; i < matMulParams.mat1.length; i++) {
+      for (int j = 0; j < matMulParams.mat1.length; j++) {
+        for (int k = 0; k < matMulParams.mat1.length; k++) {
+          result[i][j] += matMulParams.mat1[i][k] * matMulParams.mat2[k][j];
+        }
+      }
+    }
+    // send the result back to the main isolate
+    // this will be forwarded to the observer listneres
+    params.port.send(BackgroundUseCaseMessage(data: result));
+
+  }
+}
+```
+Just like a regular [UseCase], a parameter class is recommended for any [BackgroundUseCase].
+An example corresponding to the above example would be
+
+ ```dart
+class MatMulUseCaseParams {
+  List<List<double>> mat1;
+  List<List<double>> mat2;
+  MatMulUseCaseParams(this.mat1, this.mat2);
+  MatMulUseCaseParams.random() {
+    var size = 10;
+    mat1 = List<List<double>>.generate(size,
+        (i) => List<double>.generate(size, (j) => i.toDouble() * size + j));
+
+    mat2 = List<List<double>>.generate(size,
+        (i) => List<double>.generate(size, (j) => i.toDouble() * size + j));
+  }
 }
 ```
 
