@@ -345,7 +345,7 @@ class LoginUseCase extends CompletableUseCase<LoginUseCaseParams> {
   @override
   // Since the parameter type is void, `_` ignores the parameter. Change according to the type
   // used in the template.
-  Future<Observable<void>> buildUseCaseObservable(params) async {
+  Future<Observable<void>> buildUseCaseStream(params) async {
     final StreamController controller = StreamController();
     try {
         // assuming you pass credentials here

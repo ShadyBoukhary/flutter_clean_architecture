@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:rxdart/src/observables/observable.dart';
 
 void main() {
   group('Domain modules', () {
@@ -39,15 +38,15 @@ void main() {
 
 class CounterUseCase extends UseCase<int, void> {
   @override
-  Future<Observable<int>> buildUseCaseObservable(void params) async {
-    return Observable.periodic(Duration(milliseconds: 10), (i) => i).take(3);
+  Future<Stream<int>> buildUseCaseStream(void params) async {
+    return Stream.periodic(Duration(milliseconds: 10), (i) => i).take(3);
   }
 }
 
 class CounterUseCaseError extends UseCase<int, void> {
   @override
-  Future<Observable<int>> buildUseCaseObservable(void params) async {
-    return Observable.error(Error());
+  Future<Stream<int>> buildUseCaseStream(void params) async {
+    return Stream.error(Error());
   }
 }
 

@@ -127,7 +127,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
 
   @override
   @nonVirtual
-  Future<Observable<T>> buildUseCaseObservable(_) => null;
+  Future<Stream<T>> buildUseCaseStream(_) => null;
 
   /// Provides a [UseCaseTask] to be executed on a different isolate.
   /// Must be overridden.
