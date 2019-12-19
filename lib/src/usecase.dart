@@ -113,8 +113,8 @@ abstract class UseCase<T, Params> {
 
   /// Subscribes to the [Observerable] with the [Observer] callback functions.
   void execute(Observer<T> observer, [Params params]) async {
-    final StreamSubscription subscription =
-        (await buildUseCaseStream(params)).listen(observer.onNext,
+    final StreamSubscription subscription = (await buildUseCaseStream(params))
+        .listen(observer.onNext,
             onDone: observer.onComplete, onError: observer.onError);
     _addSubscription(subscription);
   }
