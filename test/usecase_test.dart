@@ -26,8 +26,7 @@ void main() {
 
     test('UseCase .dispose cancels the subscription', () async {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
-      CounterUseCase usecase = CounterUseCase()
-      ..execute(observer);
+      CounterUseCase usecase = CounterUseCase()..execute(observer);
       await Future.delayed(Duration(milliseconds: 15), () {
         usecase.dispose();
         expect(observer.number, 0);

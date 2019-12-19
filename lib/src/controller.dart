@@ -282,7 +282,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
 
   /// Called before the application is detached.
   /// When the application is in this state, the engine still runing but not attached to any view.
-  /// 
+  ///
   /// ```dart
   ///     class MyController extends Controller {
   ///       @override

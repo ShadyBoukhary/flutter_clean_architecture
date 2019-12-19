@@ -7,11 +7,12 @@ class HomePresenter extends Presenter {
   Function getUserOnError;
 
   final GetUserUseCase getUserUseCase;
-  HomePresenter(usersRepo): getUserUseCase = GetUserUseCase(usersRepo);
+  HomePresenter(usersRepo) : getUserUseCase = GetUserUseCase(usersRepo);
 
   void getUser(String uid) {
     // execute getUseruserCase
-    getUserUseCase.execute(_GetUserUseCaseObserver(this), GetUserUseCaseParams(uid));
+    getUserUseCase.execute(
+        _GetUserUseCaseObserver(this), GetUserUseCaseParams(uid));
   }
 
   @override
@@ -21,7 +22,6 @@ class HomePresenter extends Presenter {
 }
 
 class _GetUserUseCaseObserver extends Observer<GetUserUseCaseResponse> {
-
   final HomePresenter presenter;
   _GetUserUseCaseObserver(this.presenter);
   @override
