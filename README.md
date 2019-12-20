@@ -297,7 +297,7 @@ class LoginPresenter() {
    }
 }
 
-/// The [Observer] used to observe the `Observable` of the [LoginUseCase]
+/// The [Observer] used to observe the `Stream` of the [LoginUseCase]
 class _LoginUseCaseObserver implements Observer<void> {
 
   // The above presenter
@@ -307,7 +307,7 @@ class _LoginUseCaseObserver implements Observer<void> {
 
   _LoginUseCaseObserver(this.loginPresenter);
 
-  /// implement if the `Observable` emits a value
+  /// implement if the `Stream` emits a value
   // in this case, unnecessary
   void onNext(_) {}
 
@@ -345,7 +345,7 @@ class LoginUseCase extends CompletableUseCase<LoginUseCaseParams> {
   @override
   // Since the parameter type is void, `_` ignores the parameter. Change according to the type
   // used in the template.
-  Future<Observable<void>> buildUseCaseObservable(params) async {
+  Future<Stream<void>> buildUseCaseStream(params) async {
     final StreamController controller = StreamController();
     try {
         // assuming you pass credentials here
@@ -359,7 +359,7 @@ class LoginUseCase extends CompletableUseCase<LoginUseCaseParams> {
       // Trigger .onError
       controller.addError(e);
     }
-    return Observable(controller.stream);
+    return Stream(controller.stream);
   }
 }
 

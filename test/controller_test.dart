@@ -31,10 +31,8 @@ void main() {
     controller.showSnackBar();
     await tester.pump();
     expect(find.text('Hi'), findsOneWidget);
-
   });
 }
-
 
 class CounterController extends Controller {
   int counter;

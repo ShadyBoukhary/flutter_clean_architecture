@@ -3,16 +3,17 @@ import 'dart:async';
 import '../entities/user.dart';
 import '../repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:rxdart/rxdart.dart';
 
-class GetUserUseCase extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParams> {
+class GetUserUseCase
+    extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParams> {
   final UsersRepository usersRepository;
   GetUserUseCase(this.usersRepository);
 
   @override
-  Future<Observable<GetUserUseCaseResponse>> buildUseCaseObservable(
+  Future<Stream<GetUserUseCaseResponse>> buildUseCaseStream(
       GetUserUseCaseParams params) async {
-    final StreamController<GetUserUseCaseResponse> controller = StreamController();
+    final StreamController<GetUserUseCaseResponse> controller =
+        StreamController();
     try {
       // get user
       User user = await usersRepository.getUser(params.uid);
@@ -26,7 +27,7 @@ class GetUserUseCase extends UseCase<GetUserUseCaseResponse, GetUserUseCaseParam
       // Trigger .onError
       controller.addError(e);
     }
-    return Observable(controller.stream);
+    return controller.stream;
   }
 }
 
@@ -41,4 +42,3 @@ class GetUserUseCaseResponse {
   final User user;
   GetUserUseCaseResponse(this.user);
 }
-

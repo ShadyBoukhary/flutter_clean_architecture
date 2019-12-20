@@ -108,7 +108,8 @@ class CounterUseCaseObserver extends Observer<int> {
   }
 }
 
-class MatMulUseCase extends BackgroundUseCase<List<List<double>>, MatMulUseCaseParams> {
+class MatMulUseCase
+    extends BackgroundUseCase<List<List<double>>, MatMulUseCaseParams> {
   @override
   buildUseCaseTask() {
     return matmul;

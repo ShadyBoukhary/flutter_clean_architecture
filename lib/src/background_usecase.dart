@@ -5,7 +5,8 @@ import 'package:rxdart/rxdart.dart';
 import 'dart:async';
 
 enum BackgroundUseCaseState { idle, loading, calculating }
-typedef UseCaseTask = void Function(BackgroundUseCaseParams backgroundUseCaseParams);
+typedef UseCaseTask = void Function(
+    BackgroundUseCaseParams backgroundUseCaseParams);
 
 /// Data structure sent from the isolate back to the main isolate
 class BackgroundUseCaseMessage<T> {
@@ -126,7 +127,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
 
   @override
   @nonVirtual
-  Future<Observable<T>> buildUseCaseObservable(_) => null;
+  Future<Stream<T>> buildUseCaseStream(_) => null;
 
   /// Provides a [UseCaseTask] to be executed on a different isolate.
   /// Must be overridden.

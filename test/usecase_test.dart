@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:rxdart/src/observables/observable.dart';
 
 void main() {
   group('Domain modules', () {
@@ -26,8 +25,7 @@ void main() {
 
     test('UseCase .dispose cancels the subscription', () async {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
-      CounterUseCase usecase = CounterUseCase()
-      ..execute(observer);
+      CounterUseCase usecase = CounterUseCase()..execute(observer);
       await Future.delayed(Duration(milliseconds: 15), () {
         usecase.dispose();
         expect(observer.number, 0);
@@ -40,15 +38,15 @@ void main() {
 
 class CounterUseCase extends UseCase<int, void> {
   @override
-  Future<Observable<int>> buildUseCaseObservable(void params) async {
-    return Observable.periodic(Duration(milliseconds: 10), (i) => i).take(3);
+  Future<Stream<int>> buildUseCaseStream(void params) async {
+    return Stream.periodic(Duration(milliseconds: 10), (i) => i).take(3);
   }
 }
 
 class CounterUseCaseError extends UseCase<int, void> {
   @override
-  Future<Observable<int>> buildUseCaseObservable(void params) async {
-    return Observable.error(Error());
+  Future<Stream<int>> buildUseCaseStream(void params) async {
+    return Stream.error(Error());
   }
 }
 
