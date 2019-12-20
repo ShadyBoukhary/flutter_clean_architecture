@@ -13,13 +13,13 @@ import 'dart:async';
 /// of the `Domain` module of the application in the `Clean Architecture`.
 ///
 /// Dependencies used by the [UseCase] must be injected by the [Presenter]. The [UseCase]
-/// is essentially an `Observable` managing class. When the [execute()] function is triggered
-/// by the [UseCase], an `Observable` is built using the `buildUseCaseStream()` method, subscribed to
+/// is essentially an `Stream` managing class. When the [execute()] function is triggered
+/// by the [UseCase], an `Stream` is built using the `buildUseCaseStream()` method, subscribed to
 /// by the [Observer] passed, and passed any required [params]. The [StreamSubscription] is then added
 /// to a [CompositeSubscription]. This is later disposed when `dispose()` is called.
 ///
 /// When extended, the extending class should override [buildUseCaseStream()], where the behavior and functionality
-/// of the [UseCase] are defined. This method will return the `Observable` to be subscribed to, and will fire events to
+/// of the [UseCase] are defined. This method will return the `Stream` to be subscribed to, and will fire events to
 /// the `Observer` in the [Presenter].
 ///
 /// Get a list of `User` example:
@@ -39,7 +39,7 @@ import 'dart:async';
 ///     @override
 ///     // Since the parameter type is void, `_` ignores the parameter. Change according to the type
 ///     // used in the template.
-///     Future<Observable<GetSponsorsUseCaseResponse>> buildUseCaseStream(_) async {
+///     Future<Stream<GetSponsorsUseCaseResponse>> buildUseCaseStream(_) async {
 ///       final StreamController<GetSponsorsUseCaseResponse> controller = StreamController();
 ///       try {
 ///         // get users
@@ -55,7 +55,7 @@ import 'dart:async';
 ///         // Trigger .onError
 ///         controller.addError(e);
 ///       }
-///       return Observable(controller.stream);
+///       return Stream(controller.stream);
 ///     }
 ///   }
 ///
@@ -147,7 +147,7 @@ abstract class UseCase<T, Params> {
 ///       LogoutUseCase(this._authenticationRepository);
 ///
 ///       @override
-///       Future<Observable<User>> buildUseCaseStream(void ignore) async {
+///       Future<Stream<User>> buildUseCaseStream(void ignore) async {
 ///         final StreamController<User> controller = StreamController();
 ///         try {
 ///           await _authenticationRepository.logout();
@@ -155,7 +155,7 @@ abstract class UseCase<T, Params> {
 ///         } catch (e) {
 ///           controller.addError(e);
 ///         }
-///         return Observable(controller.stream);
+///         return Stream(controller.stream);
 ///       }
 ///     }
 ///
