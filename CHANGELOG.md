@@ -1,3 +1,10 @@
+## [2.0.0] - Thursday, December 26th, 2019
+
+* Updated RxDart dependency
+* Breaking changes
+** All Observable return types are now changed to Streams
+* Updated documentation
+
 ## [1.1.0] - Tuesday, December 17th, 2019
 
 * Added the ability to create a usecase that executes on a different isolate.
