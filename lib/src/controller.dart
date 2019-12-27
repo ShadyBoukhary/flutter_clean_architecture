@@ -79,32 +79,35 @@ import 'package:meta/meta.dart';
 abstract class Controller with WidgetsBindingObserver, RouteAware {
   Function _refresh; // callback function for refreshing the UI
   bool isLoading; // indicates whether a loading dialog is present
-  bool _isMounted = true;
+  bool _isMounted;
   Logger logger;
   GlobalKey<State<StatefulWidget>> _globalKey;
 
   @mustCallSuper
   Controller() {
     logger = Logger('${this.runtimeType}');
+    _isMounted = true;
     isLoading = false;
     initListeners();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.inactive:
-        onInActive();
-        break;
-      case AppLifecycleState.paused:
-        onPaused();
-        break;
-      case AppLifecycleState.resumed:
-        onResumed();
-        break;
-      case AppLifecycleState.detached:
-        onDetached();
-        break;
+    if (_isMounted) {
+      switch (state) {
+        case AppLifecycleState.inactive:
+          onInActive();
+          break;
+        case AppLifecycleState.paused:
+          onPaused();
+          break;
+        case AppLifecycleState.resumed:
+          onResumed();
+          break;
+        case AppLifecycleState.detached:
+          onDetached();
+          break;
+      }
     }
   }
 

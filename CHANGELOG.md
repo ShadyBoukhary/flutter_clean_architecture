@@ -1,3 +1,7 @@
+## [2.0.2] - Thursday, December 26th, 2019
+
+* Fixed an issue where `Controller.getContext()` throws due to losing context because lifecycle events where triggered after the `View` had already been dismounted.
+
 ## [2.0.1] - Thursday, December 26th, 2019
 
 * Fixed error in docs
@@ -6,7 +10,7 @@
 
 * Updated RxDart dependency
 * Breaking changes
-** All Observable return types are now changed to Streams
+  * All Observable return types are now changed to Streams
 * Updated documentation
 
 ## [1.1.0] - Tuesday, December 17th, 2019
