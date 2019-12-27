@@ -359,7 +359,7 @@ class LoginUseCase extends CompletableUseCase<LoginUseCaseParams> {
       // Trigger .onError
       controller.addError(e);
     }
-    return Stream(controller.stream);
+    return controller.stream;
   }
 }
 
