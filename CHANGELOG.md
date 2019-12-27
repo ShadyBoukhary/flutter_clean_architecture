@@ -1,3 +1,7 @@
+## [2.0.1] - Thursday, December 26th, 2019
+
+* Fixed error in docs
+
 ## [2.0.0] - Thursday, December 26th, 2019
 
 * Updated RxDart dependency
