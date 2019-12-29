@@ -12,14 +12,14 @@ class HomePage extends View {
   @override
   _HomePageState createState() =>
       // inject dependencies inwards
-      _HomePageState(HomeController(DataUsersRepository()));
+      _HomePageState();
 }
 
 class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState(HomeController controller) : super(controller);
+  _HomePageState() : super(HomeController(DataUsersRepository()));
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildPage() {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -63,8 +63,8 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => callHandler(controller
-            .buttonPressed), // callhandler refreshes the view the handler has finished
+        onPressed: () => controller
+            .buttonPressed(), // callhandler refreshes the view the handler has finished
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
