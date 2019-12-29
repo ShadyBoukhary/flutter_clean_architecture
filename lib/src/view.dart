@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/controller.dart';
+import 'package:meta/meta.dart';
+import 'package:provider/provider.dart';
 
 /// The [ViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
 /// page. The [ViewState] requires a [Controller] to handle its events and provide its data.
@@ -43,45 +45,40 @@ abstract class ViewState<Page extends View, Con extends Controller>
     extends State<Page> {
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
-  final Con controller;
-
-  ViewState(this.controller) {
-    controller.initController(globalKey, callHandler);
-    WidgetsBinding.instance.addObserver(controller);
+  Con _controller;
+  Con get controller => _controller;
+  ViewState(this._controller) {
+    _controller.initController(globalKey);
+    WidgetsBinding.instance.addObserver(_controller);
   }
 
   @override
   @mustCallSuper
   void didChangeDependencies() {
     if (widget.routeObserver != null) {
-      widget.routeObserver.subscribe(controller, ModalRoute.of(context));
+      widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
     }
+
     super.didChangeDependencies();
   }
 
-  /// A wrapper around a [Function] of the [Controller]. This method can be used to handle
-  /// button press events that always refresh the state. This method calls the the [fn] provided
-  /// then refreshes the state of the widget.
-  ///
-  /// Any optional [params] are also passed to the [fn] as a [Map].
-  /// ```dart
-  ///     MaterialButton(onPressed: () => callHandler(controller.increment)),
-  ///     MaterialButton(onPressed: () => callHandler(controller.increment, params: { 'arg1': '5' })),
-  /// ```
-  void callHandler(Function fn, {Map<String, dynamic> params}) {
-    setState(() {
-      if (params == null) {
-        fn();
-      } else {
-        fn(params);
-      }
-    });
+  Widget buildPage();
+
+  @override
+  @nonVirtual
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<Con>.value(
+        value: _controller,
+        child: Consumer<Con>(builder: (ctx, con, _) {
+          _controller = con;
+          return buildPage();
+        }));
   }
 
   @override
   @mustCallSuper
   void dispose() {
-    controller.dispose();
+    //controller.dispose();
     super.dispose();
   }
 }

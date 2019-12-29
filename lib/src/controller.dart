@@ -76,8 +76,8 @@ import 'package:meta/meta.dart';
 ///     }
 ///
 /// ```
-abstract class Controller with WidgetsBindingObserver, RouteAware {
-  Function _refresh; // callback function for refreshing the UI
+abstract class Controller
+    with WidgetsBindingObserver, RouteAware, ChangeNotifier {
   bool isLoading; // indicates whether a loading dialog is present
   bool _isMounted;
   Logger logger;
@@ -116,12 +116,8 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// have no impact.
   @protected
   void dismissLoading() {
-    assert(_refresh != null,
-        '''The `refresh callback is somehow null. This might be because `dismissLoading()` was called
-     before the `View` called `controller.initController()`.
-     Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error.''');
-    if (_isMounted) _refresh(() => isLoading = false);
+    isLoading = false;
+    refreshUI();
   }
 
   /// Sets the loading to true. The `View` body should be wrapped in a loader.
@@ -137,23 +133,17 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   /// Does not work if called inside the [Controller] constructor.
   @protected
   void showLoading() {
-    assert(_refresh != null,
-        '''The `_refresh callback is somehow null. This might be because `showLoading()` was called
-     before the `View` called `controller.initController()`.
-     Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error.''');
-    _refresh(() => isLoading = true);
+    isLoading = true;
+    refreshUI();
   }
 
   /// _refreshes the [View] associated with the [Controller] if it is still mounted.
   @protected
   void refreshUI() {
-    assert(_refresh != null,
-        '''The `_refresh callback is somehow null. This might be because `refreshUI()` was called
-     before the `View` called `controller.initController()`.
-     Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error.''');
-    if (_isMounted) _refresh(() {});
+    if (_isMounted) {
+      notifyListeners();
+    }
+    ;
   }
 
   /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
@@ -163,6 +153,7 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
   void dispose() {
     _isMounted = false;
     logger.info('Disposing ${this.runtimeType}');
+    super.dispose();
   }
 
   /// Retrieves the [State<StatefulWidget>] associated with the [View]
@@ -198,9 +189,8 @@ abstract class Controller with WidgetsBindingObserver, RouteAware {
 
   /// Initializes optional [Controller] variables that can be used for _refreshing and error displaying.
   /// This method is called automatically by the mounted `View`. Do not call.
-  void initController(GlobalKey<State<StatefulWidget>> key, Function refresh) {
+  void initController(GlobalKey<State<StatefulWidget>> key) {
     _globalKey = key;
-    this._refresh = refresh;
   }
 
   /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
