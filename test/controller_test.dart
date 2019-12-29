@@ -3,7 +3,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-CounterController controller = CounterController();
+GlobalKey snackBar = GlobalKey();
+GlobalKey inc = GlobalKey();
+
 void main() {
   testWidgets('Controller can change data and refresh View',
       (WidgetTester tester) async {
@@ -15,20 +17,21 @@ void main() {
     Finder counterFinder = find.text('0');
     expect(counterFinder, findsOneWidget);
 
-    await tester.tap(find.byType(MaterialButton));
+    await tester.tap(find.byKey(inc));
     await tester.pump();
 
     expect(counterFinder, findsNothing);
     counterFinder = find.text('1');
     expect(counterFinder, findsOneWidget);
 
-    await tester.tap(find.byType(MaterialButton));
+    await tester.tap(find.byKey(inc));
     await tester.pump();
 
     expect(counterFinder, findsNothing);
     counterFinder = find.text('2');
     expect(counterFinder, findsOneWidget);
-    controller.showSnackBar();
+
+    await tester.tap(find.byKey(snackBar));
     await tester.pump();
     expect(find.text('Hi'), findsOneWidget);
   });
@@ -56,14 +59,14 @@ class CounterController extends Controller {
 
 class CounterPage extends View {
   @override
-  State<StatefulWidget> createState() => CounterState(controller);
+  State<StatefulWidget> createState() => CounterState();
 }
 
 class CounterState extends ViewState<CounterPage, CounterController> {
-  CounterState(CounterController controller) : super(controller);
+  CounterState() : super(CounterController());
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildPage() {
     return MaterialApp(
       title: 'Flutter Demo',
       home: Scaffold(
@@ -73,7 +76,9 @@ class CounterState extends ViewState<CounterPage, CounterController> {
             Center(
               child: Text(controller.counter.toString()),
             ),
-            MaterialButton(onPressed: () => callHandler(controller.increment)),
+            MaterialButton(key: inc, onPressed: () => controller.increment()),
+            MaterialButton(
+                key: snackBar, onPressed: () => controller.showSnackBar()),
           ],
         ),
       ),
