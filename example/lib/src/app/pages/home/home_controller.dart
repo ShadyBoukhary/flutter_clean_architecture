@@ -42,6 +42,13 @@ class HomeController extends Controller {
 
   void buttonPressed() {
     _counter++;
+    refreshUI();
+  }
+
+  @override
+  void onResumed() {
+    print("On resumed");
+    super.onResumed();
   }
 
   @override
