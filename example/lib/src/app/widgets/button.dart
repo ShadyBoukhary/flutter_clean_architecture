@@ -1,4 +1,4 @@
-import 'package:example/src/app/pages/home/home_controller.dart';
+import '../pages/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
@@ -9,7 +9,8 @@ class HomePageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // use a common controller assuming HomePageButton is always a child of Home
-    HomeController controller = FlutterCleanArchitecture.getController<HomeController>(context);
+    HomeController controller =
+        FlutterCleanArchitecture.getController<HomeController>(context);
     return GestureDetector(
       onTap: controller.buttonPressed,
       child: Container(
