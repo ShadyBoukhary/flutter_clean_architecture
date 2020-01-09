@@ -19,6 +19,7 @@ class FlutterCleanArchitecture {
     return Provider.of<Con>(context);
   }
 
+  /// Enables logging inside the `FlutterCleanArchitecture` package,
   static void debugModeOn() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
