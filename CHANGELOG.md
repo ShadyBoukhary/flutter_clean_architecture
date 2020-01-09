@@ -1,5 +1,17 @@
 ## [3.0.0] - Wednesday, January 8th, 2020
+### What's New
+- Improves performance of the library by using the [Provider package](https://pub.dev/packages/provider) internally.
+- Added an option to enable debug mode via `FlutterCleanArchitecture.debugModeOn()`
+- Added the ability to use a common `Controller` for widgets that exist within a page.
+The widgets can access the `Controller` in the tree via the `FlutterCleanArchitecture.getController<Controller>(context)` method.
 
+### Breaking Changes
+- `ViewState`'s `build()` method can no longer be overridden.
+- `ViewState` UI code must now go into `buildPage()` method.
+- `callHandler()` is now removed
+- Removed `loadOnStart()`
+- Removed `startLoading()`
+- Removed `dismissLoading()`
 
 ## [2.0.2] - Thursday, December 26th, 2019
 
