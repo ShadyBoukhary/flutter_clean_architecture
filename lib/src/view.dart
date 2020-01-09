@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/controller.dart';
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
@@ -43,19 +44,23 @@ import 'package:provider/provider.dart';
 /// ```
 abstract class ViewState<Page extends View, Con extends Controller>
     extends State<Page> {
+      
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   Con _controller;
+  Logger _logger;
   Con get controller => _controller;
   ViewState(this._controller) {
     _controller.initController(globalKey);
     WidgetsBinding.instance.addObserver(_controller);
+    _logger = Logger('${this.runtimeType}');
   }
 
   @override
   @mustCallSuper
   void didChangeDependencies() {
     if (widget.routeObserver != null) {
+      _logger.info('$runtimeType is observring route events.');
       widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
     }
 
@@ -78,7 +83,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @override
   @mustCallSuper
   void dispose() {
-    //controller.dispose();
+    _logger.info('Disposing $runtimeType.');
     super.dispose();
   }
 }

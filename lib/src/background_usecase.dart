@@ -116,6 +116,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
               BackgroundUseCaseParams(_receivePort.sendPort, params: params))
           .then<void>((Isolate isolate) {
         if (!isRunning) {
+          logger.info('Killing background isolate.');
           isolate.kill(priority: Isolate.immediate);
         } else {
           _state = BackgroundUseCaseState.calculating;
@@ -144,6 +145,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
     if (isRunning) {
       _state = BackgroundUseCaseState.idle;
       if (_isolate != null) {
+        logger.info('Killing background isolate.');
         _isolate.kill(priority: Isolate.immediate);
         _isolate = null;
       }

@@ -122,6 +122,7 @@ abstract class UseCase<T, Params> {
   /// Disposes (unsubscribes) from the [Stream]
   void dispose() {
     if (!_disposables.isDisposed) {
+      logger.info('Disposing $runtimeType');
       _disposables.dispose();
     }
   }

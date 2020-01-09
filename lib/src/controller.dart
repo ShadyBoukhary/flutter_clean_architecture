@@ -78,7 +78,6 @@ import 'package:meta/meta.dart';
 /// ```
 abstract class Controller
     with WidgetsBindingObserver, RouteAware, ChangeNotifier {
-  bool isLoading; // indicates whether a loading dialog is present
   bool _isMounted;
   Logger logger;
   GlobalKey<State<StatefulWidget>> _globalKey;
@@ -87,7 +86,6 @@ abstract class Controller
   Controller() {
     logger = Logger('${this.runtimeType}');
     _isMounted = true;
-    isLoading = false;
     initListeners();
   }
 
@@ -109,32 +107,6 @@ abstract class Controller
           break;
       }
     }
-  }
-
-  /// Dismisses the loading dialog. The parent `View` of this [Controller] should have its body wrapped
-  /// in the ModelHUD and is listening to the [Controller]'s [isLoading]. Otherwise, this method will
-  /// have no impact.
-  @protected
-  void dismissLoading() {
-    isLoading = false;
-    refreshUI();
-  }
-
-  /// Sets the loading to true. The `View` body should be wrapped in a loader.
-  /// Call on initial page load. For example, if a loader is needed as soon as you open a page.
-  /// Only works when called inside the [Controller] constructor.
-  @protected
-  void loadOnStart() {
-    isLoading = true;
-  }
-
-  /// Sets the loading to true. The `View` body should be wrapped in a loader.
-  /// Call when a loader is needed after an event (e.g. a button press).
-  /// Does not work if called inside the [Controller] constructor.
-  @protected
-  void showLoading() {
-    isLoading = true;
-    refreshUI();
   }
 
   /// _refreshes the [View] associated with the [Controller] if it is still mounted.
