@@ -1,3 +1,7 @@
+## [3.0.1] - Wednesday, January 8th, 2020
+
+- Fixed typo in documentation.
+
 ## [3.0.0] - Wednesday, January 8th, 2020
 ### What's New
 - Improves performance of the library by using the [Provider package](https://pub.dev/packages/provider) internally.

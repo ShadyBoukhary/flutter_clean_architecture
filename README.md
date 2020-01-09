@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^3.0.0
+  flutter_clean_architecture: ^3.0.1
 
 ```
 
@@ -208,7 +208,7 @@ class CounterState extends ViewState<CounterPage, CounterController> {
      CounterState(CounterController controller) : super(controller);
 
      @override
-     Widget build(BuildContext context) {
+     Widget buildPage(BuildContext context) {
        return MaterialApp(
          title: 'Flutter Demo',
       home: Scaffold(
