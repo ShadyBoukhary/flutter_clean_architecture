@@ -29,11 +29,9 @@ import 'package:provider/provider.dart';
 ///                   // show the number of times the button has been clicked
 ///                   child: Text(controller.counter.toString()),
 ///                 ),
-///                 // wrapping the controller.increment with callHandler() automatically
-///                 // refreshes the state after the counter is incremented
-///                 // you can also refresh manually inside the controller
+///                 // you can refresh manually inside the controller
 ///                 // using refreshUI()
-///                 MaterialButton(onPressed: () => callHandler(controller.increment)),
+///                 MaterialButton(onPressed: controller.increment),
 ///               ],
 ///             ),
 ///           ),
@@ -44,7 +42,7 @@ import 'package:provider/provider.dart';
 /// ```
 abstract class ViewState<Page extends View, Con extends Controller>
     extends State<Page> {
-      
+
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   Con _controller;

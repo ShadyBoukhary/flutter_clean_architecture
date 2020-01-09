@@ -63,11 +63,7 @@ import 'package:meta/meta.dart';
 ///                   // show the number of times the button has been clicked
 ///                   child: Text(controller.counter.toString()),
 ///                 ),
-///                 // wrapping the controller.increment with callHandler() automatically
-///                 // refreshes the state after the counter is incremented
-///                 // you can also refresh manually inside the controller
-///                 // using refreshUI()
-///                 MaterialButton(onPressed: () => callHandler(controller.increment)),
+///                 MaterialButton(onPressed: () => controller.increment()),
 ///               ],
 ///             ),
 ///           ),

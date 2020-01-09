@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^2.0.2
+  flutter_clean_architecture: ^3.0.0
 
 ```
 
@@ -88,7 +88,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * The `ViewState` class maintains a `GlobalKey` that can be used as a key in its scaffold. If used, the `Controller` can easily access it via `getState()` in order to show snackbars and other dialogs. This is helpful but optional.
     * 
 * **Controller**
-  * Every `ViewState` **has-a** `Controller`. The `Controller` provides the needed member data of the `ViewState` i.e. dynamic data. The `Controller` also implements the event-handlers of the `ViewState` widgets, but has no access to the `Widgets` themselves. The `ViewState` uses the `Controller`, not the other way around. When the `ViewState` calls a handler from the `Controller`, it wraps it with a `callHandler(fn)` function if the `ViewState` needs to be rebuilt by calling `setState()` before calling the event-handler. The `callHandler(fn)` method will handle refreshing the state.
+  * Every `ViewState` **has-a** `Controller`. The `Controller` provides the needed member data of the `ViewState` i.e. dynamic data. The `Controller` also implements the event-handlers of the `ViewState` widgets, but has no access to the `Widgets` themselves. The `ViewState` uses the `Controller`, not the other way around. When the `ViewState` calls a handler from the `Controller`, `refreshUI()` can be called to update the view.
   * Every `Controller` extends the `Controller` abstract class, which implements `WidgetsBindingObserver`. Every `Controller` class is responsible for handling lifecycle events for the `View` and can override:
     * **void onInActive()**
     * **void onPaused()** 
@@ -98,7 +98,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * etc..
   * Also, every `Controller` **has** to implement **initListeners()** that initializes the listeners for the `Presenter` for consistency.
   * The `Controller` **has-a** `Presenter`. The `Controller` will pass the `Repository` to the `Presenter`, which it communicate later with the `Usecase`. The `Controller` will specify what listeners the `Presenter` should call for all success and error events as mentioned previously. Only the `Controller` is allowed to obtain instances of a `Repository` from the `Data` or `Device` module in the outermost layer.
-  * The `Controller` has access to the `ViewState` and can refresh the UI via `refreshUI()`. Alternatively, handlers can be wrapped in `callHandler()` which automatically refreshes the UI after it's completed.
+  * The `Controller` has access to the `ViewState` and can refresh the UI via `refreshUI()`.
 * **Presenter**
   * Every `Controller` **has-a** `Presenter`. The `Presenter` communicates with the `Usecase` as mentioned at the beginning of the `App` layer. The `Presenter` will have members that are functions, which are optionally set by the `Controller` and will be called if set upon the `Usecase` sending back data, completing, or erroring.
   * The `Presenter` is comprised of two classes
@@ -220,11 +220,9 @@ class CounterState extends ViewState<CounterPage, CounterController> {
               // show the number of times the button has been clicked
               child: Text(controller.counter.toString()),
             ),
-            // wrapping the controller.increment with callHandler() automatically
-            // refreshes the state after the counter is incremented
-            // you can also refresh manually inside the controller
+            // you can refresh manually inside the controller
             // using refreshUI()
-            MaterialButton(onPressed: () => callHandler(controller.increment)),
+            MaterialButton(onPressed: controller.increment),
             FlatButton(onPressed: () => controller.login, child: Text('Login')),
 
           ],
@@ -234,6 +232,53 @@ class CounterState extends ViewState<CounterPage, CounterController> {
   }
 }
 ```
+##### Widgets with Common Controller
+In the event that multiple widgets need to use the same `Controller` of a certain `Page`,
+the `Controller` can be retrieved inside the children widgets of that page via 
+`FlutterCleanArchitecture.getController<HomeController>(context)`.
+
+For example:
+
+```dart
+
+import '../pages/home/home_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+class HomePageButton extends StatelessWidget {
+  final String text;
+  HomePageButton({@required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    // use a common controller assuming HomePageButton is always a child of Home
+    HomeController controller =
+        FlutterCleanArchitecture.getController<HomeController>(context);
+    return GestureDetector(
+      onTap: controller.buttonPressed,
+      child: Container(
+        height: 50.0,
+        alignment: FractionalOffset.center,
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(230, 38, 39, 1.0),
+          borderRadius: BorderRadius.circular(25.0),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w300,
+              letterSpacing: 0.4),
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+
 #### Controller 
 
 ```dart
