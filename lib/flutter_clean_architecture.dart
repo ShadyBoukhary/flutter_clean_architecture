@@ -31,5 +31,4 @@ class FlutterCleanArchitecture {
 
     Logger.root.info("Logger initialized.");
   }
-
 }

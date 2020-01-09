@@ -1,3 +1,6 @@
+## [3.0.0] - Wednesday, January 8th, 2020
+
+
 ## [2.0.2] - Thursday, December 26th, 2019
 
 * Fixed an issue where `Controller.getContext()` throws due to losing context because lifecycle events where triggered after the `View` had already been dismounted.

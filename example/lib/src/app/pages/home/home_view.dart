@@ -63,8 +63,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => controller
-            .buttonPressed(), // callhandler refreshes the view the handler has finished
+        onPressed: () => controller.buttonPressed(),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
