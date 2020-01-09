@@ -1,3 +1,5 @@
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
 import './src/app/pages/home/home_view.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +9,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FlutterCleanArchitecture.debugModeOn();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
