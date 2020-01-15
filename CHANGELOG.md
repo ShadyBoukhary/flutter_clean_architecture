@@ -1,3 +1,7 @@
+## [3.0.2] - Wednesday, January 8th, 2020
+
+- OnResumed bug fix
+
 ## [3.0.1] - Wednesday, January 8th, 2020
 
 - Fixed typo in documentation.
