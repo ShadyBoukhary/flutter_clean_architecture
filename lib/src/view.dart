@@ -4,13 +4,13 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
-enum HardwareType {
+enum ScreenSizeType {
   TABLET,
   DESKTOP,
   MOBILE,
 }
 
-abstract class ResponsiveViewState<Page extends View, Con extends Controller>
+abstract class ViewResponsiveState<Page extends View, Con extends Controller>
     extends ViewState<Page, Con> {
   /// To fill breakpoint params, they must be passed on super with it's name.
   /// ```dart
@@ -22,7 +22,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   ///   );
   /// ```
   ///
-  ResponsiveViewState(
+  ViewResponsiveState(
       Con controller, {
         this.tabletBreakpointMinimumWidth = 600,
         this.desktopBreakpointMinimumWidth = 1024,
@@ -49,21 +49,21 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
 
   /// This method verify the dimensions using [MediaQuery], and so it defines which viewport will be exposed: [MOBILE], [TABLET] or [DESKTOP].
   /// The Default ViewPort is [MOBILE].
-  HardwareType get _getPlatform {
+  ScreenSizeType get _getPlatform {
     if ((MediaQuery.of(context).size.width < tabletBreakpointMinimumWidth)) {
-      return HardwareType.MOBILE;
+      return ScreenSizeType.MOBILE;
     }
     if ((MediaQuery.of(context).size.width < desktopBreakpointMinimumWidth &&
         MediaQuery.of(context).size.width >= tabletBreakpointMinimumWidth)) {
-      return HardwareType.TABLET;
+      return ScreenSizeType.TABLET;
     }
     if ((MediaQuery.of(context).size.width >= desktopBreakpointMinimumWidth)) {
-      return HardwareType.DESKTOP;
+      return ScreenSizeType.DESKTOP;
     }
-    return HardwareType.MOBILE;
+    return ScreenSizeType.MOBILE;
   }
 
-  /// Not implemented by developer, this in an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
+  /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called. If all the build are null,
   /// it will throw an [UnimplentedError].
   @override
@@ -71,7 +71,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         switch (_getPlatform) {
-          case HardwareType.MOBILE:
+          case ScreenSizeType.MOBILE:
             try {
               return buildMobileView() ??
                   buildTabletView() ??
@@ -80,16 +80,16 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
               throw UnimplementedError('Implement at least one build method');
             }
             break;
-          case HardwareType.TABLET:
+          case ScreenSizeType.TABLET:
             try {
               return buildTabletView() ??
-                  buildMobileView() ??
-                  buildDesktopView();
+                  buildDesktopView() ??
+                  buildMobileView();
             } catch (e) {
               throw UnimplementedError('Implement at least one build method');
             }
             break;
-          case HardwareType.DESKTOP:
+          case ScreenSizeType.DESKTOP:
             try {
               return buildDesktopView() ??
                   buildTabletView() ??
