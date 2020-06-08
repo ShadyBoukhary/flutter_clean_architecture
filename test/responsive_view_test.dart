@@ -3,6 +3,35 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 void main() {
+
+  testWidgets('Run TestPage | Mobile viewport then resizes', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    final page = TestPage();
+
+    await tester.setScreenSize(width: 540, height: 540);
+
+    await tester.pumpWidget(ConstrainedBox(
+        child: MaterialApp(home: page),
+        constraints: BoxConstraints(maxWidth: 500)));
+
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mobile'), findsOneWidget);
+
+    await tester.setScreenSize(width: 600, height: 600);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tablet'), findsOneWidget);
+
+    await tester.setScreenSize(width: 1024, height: 1024);
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Desktop'), findsOneWidget);
+  });
+
   testWidgets('Run TestPage | Mobile Viewport', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final page = TestPage();
