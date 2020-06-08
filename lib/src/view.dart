@@ -10,6 +10,38 @@ enum ScreenSizeType {
   MOBILE,
 }
 
+/// The [ViewResponsiveState] represents the [State] of a [StatefulWidget], typically of a screen or a
+/// page. The [ViewResponsiveState] requires a [Controller] to handle its events and provide its data.
+///
+/// The [ViewResponsiveState] allow us to provide until three build methods to abstract responsivity for the
+/// developer, and the screen renders the view based on [MediaQuery] screen width.
+///
+///
+/// The [ViewResponsiveState] also has a default [globalKey] that can be used inside its `builds` function
+/// in a widget to grant easy access to the [Controller], which could then use it to display
+/// snackbars, dialogs, and so on.
+///
+/// The [ViewResponsiveState] lifecycle is also handled by the [Controller].
+/// ```dart
+///     class CounterState extends ViewResponsiveState<CounterPage, CounterController> {
+///       CounterState(CounterController controller) : super(controller);
+///
+///       @override
+///       Widget buildMobileView(BuildContext context) {
+///         return Text("Mobile view");
+///       }
+///
+///       @override
+///       Widget buildTabletView(BuildContext context) {
+///         return Text("Tablet view");
+///       }
+///
+///       @override
+///       Widget buildDesktopBiew(BuildContext context) {
+///         return Text("Desktop view");
+///       }
+///     }
+/// ```
 abstract class ViewResponsiveState<Page extends View, Con extends Controller>
     extends ViewState<Page, Con> {
   /// To fill breakpoint params, they must be passed on super with it's name.
