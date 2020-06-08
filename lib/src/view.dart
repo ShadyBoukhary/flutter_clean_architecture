@@ -4,6 +4,108 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
+enum HardwareType {
+  TABLET,
+  DESKTOP,
+  MOBILE,
+}
+
+abstract class ResponsiveViewState<Page extends View, Con extends Controller>
+    extends ViewState<Page, Con> {
+  /// To fill breakpoint params, they must be passed on super with it's name.
+  /// ```dart
+  /// SomePageState(SomeController controller)
+  /// : super(
+  ///     controller,
+  ///     tabletBreakpointMinimumWidth: 700,
+  ///     desktopBreakpointMinimumWidth: 1200,
+  ///   );
+  /// ```
+  ///
+  ResponsiveViewState(
+      Con controller, {
+        this.tabletBreakpointMinimumWidth = 600,
+        this.desktopBreakpointMinimumWidth = 1024,
+      })  : assert(desktopBreakpointMinimumWidth > tabletBreakpointMinimumWidth,
+  'Desktop breakpoint must not be less than tablet'),
+        super(controller);
+
+  /// This breakpoint targets the minimum width of [Tablet] size. The default value is 600.
+  /// When the width size from [context] comes under 600 (or the given value), it automatically switchs to [Mobile Viewport].
+  final double tabletBreakpointMinimumWidth;
+
+  /// This breakpoint targets the minimum width of [Desktop] size. The default value is 1024.
+  /// When the width size from [context] comes under 1024 (or the given value), it automatically switchs to [Tablet Viewport].
+  final double desktopBreakpointMinimumWidth;
+
+  /// Abstract Method to be implemented by the developer which implements [Mobile ViewPort].
+  Widget buildMobileView();
+
+  /// Abstract Method to be implemented by the developer which implements [Tablet/Pad ViewPort].
+  Widget buildTabletView();
+
+  /// Abstract Method to be implemented by the developer which implements [Desktop ViewPort].
+  Widget buildDesktopView();
+
+  /// This method verify the dimensions using [MediaQuery], and so it defines which viewport will be exposed: [MOBILE], [TABLET] or [DESKTOP].
+  /// The Default ViewPort is [MOBILE].
+  HardwareType get _getPlatform {
+    if ((MediaQuery.of(context).size.width < tabletBreakpointMinimumWidth)) {
+      return HardwareType.MOBILE;
+    }
+    if ((MediaQuery.of(context).size.width < desktopBreakpointMinimumWidth &&
+        MediaQuery.of(context).size.width >= tabletBreakpointMinimumWidth)) {
+      return HardwareType.TABLET;
+    }
+    if ((MediaQuery.of(context).size.width >= desktopBreakpointMinimumWidth)) {
+      return HardwareType.DESKTOP;
+    }
+    return HardwareType.MOBILE;
+  }
+
+  /// Not implemented by developer, this in an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
+  /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called. If all the build are null,
+  /// it will throw an [UnimplentedError].
+  @override
+  Widget buildPage() {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        switch (_getPlatform) {
+          case HardwareType.MOBILE:
+            try {
+              return buildMobileView() ??
+                  buildTabletView() ??
+                  buildDesktopView();
+            } catch (e) {
+              throw UnimplementedError('Implement at least one build method');
+            }
+            break;
+          case HardwareType.TABLET:
+            try {
+              return buildTabletView() ??
+                  buildMobileView() ??
+                  buildDesktopView();
+            } catch (e) {
+              throw UnimplementedError('Implement at least one build method');
+            }
+            break;
+          case HardwareType.DESKTOP:
+            try {
+              return buildDesktopView() ??
+                  buildTabletView() ??
+                  buildMobileView();
+            } catch (e) {
+              throw UnimplementedError('Implement at least one build method');
+            }
+            break;
+          default:
+        }
+        throw UnimplementedError('Implement at least one build method');
+      },
+    );
+  }
+}
+
 /// The [ViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
 /// page. The [ViewState] requires a [Controller] to handle its events and provide its data.
 ///
