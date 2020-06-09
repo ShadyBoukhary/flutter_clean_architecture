@@ -47,7 +47,11 @@ class HomeController extends Controller {
 
   @override
   void onResumed() {
+<<<<<<< HEAD
     print('On resumed');
+=======
+    print("On resumed");
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
     super.onResumed();
   }
 

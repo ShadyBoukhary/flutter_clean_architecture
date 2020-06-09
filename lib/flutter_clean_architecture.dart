@@ -30,6 +30,10 @@ class FlutterCleanArchitecture {
       }
     });
 
+<<<<<<< HEAD
     Logger.root.info('Logger initialized.');
+=======
+    Logger.root.info("Logger initialized.");
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
   }
 }

@@ -121,7 +121,11 @@ abstract class Controller
   @visibleForOverriding
   void dispose() {
     _isMounted = false;
+<<<<<<< HEAD
     logger.info('Disposing ${runtimeType}');
+=======
+    logger.info('Disposing ${this.runtimeType}');
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
     super.dispose();
   }
 

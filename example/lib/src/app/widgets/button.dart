@@ -9,7 +9,11 @@ class HomePageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // use a common controller assuming HomePageButton is always a child of Home
+<<<<<<< HEAD
     final controller =
+=======
+    HomeController controller =
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
         FlutterCleanArchitecture.getController<HomeController>(context);
     return GestureDetector(
       onTap: controller.buttonPressed,

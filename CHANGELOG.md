@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## [3.1.0] - Monday, June 8th, 2020
 
 - Created Github Actions to run analyze and tests on package
@@ -12,6 +13,8 @@
 
 - Fixed typo in documentation.
 
+=======
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
 ## [3.0.0] - Wednesday, January 8th, 2020
 ### What's New
 - Improves performance of the library by using the [Provider package](https://pub.dev/packages/provider) internally.

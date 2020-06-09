@@ -19,7 +19,11 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
+<<<<<<< HEAD
   flutter_clean_architecture: ^3.1.0
+=======
+  flutter_clean_architecture: ^3.0.0
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
 
 ```
 
@@ -239,6 +243,7 @@ class CounterState extends ViewState<CounterPage, CounterController> {
   }
 }
 ```
+<<<<<<< HEAD
 ##### Responsive view state
 
 To deal with screens on flutter web, you can take advantage of the responsive view state,
@@ -325,6 +330,8 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
 }
 ```
 
+=======
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
 ##### Widgets with Common Controller
 In the event that multiple widgets need to use the same `Controller` of a certain `Page`,
 the `Controller` can be retrieved inside the children widgets of that page via 

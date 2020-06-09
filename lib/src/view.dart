@@ -3,6 +3,7 @@ import 'package:flutter_clean_architecture/src/controller.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
+<<<<<<< HEAD
 
 enum ScreenSizeType {
   TABLET,
@@ -129,6 +130,8 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     );
   }
 }
+=======
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
 
 /// The [ViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
 /// page. The [ViewState] requires a [Controller] to handle its events and provide its data.
@@ -168,6 +171,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
 /// ```
 abstract class ViewState<Page extends View, Con extends Controller>
     extends State<Page> {
+
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   Con _controller;
@@ -176,7 +180,11 @@ abstract class ViewState<Page extends View, Con extends Controller>
   ViewState(this._controller) {
     _controller.initController(globalKey);
     WidgetsBinding.instance.addObserver(_controller);
+<<<<<<< HEAD
     _logger = Logger('${runtimeType}');
+=======
+    _logger = Logger('${this.runtimeType}');
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
   }
 
   @override
@@ -207,7 +215,10 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @mustCallSuper
   void dispose() {
     _logger.info('Disposing $runtimeType.');
+<<<<<<< HEAD
     _controller.dispose();
+=======
+>>>>>>> 5a48f590c2e82682b6324085c66f3285102a48cd
     super.dispose();
   }
 }
