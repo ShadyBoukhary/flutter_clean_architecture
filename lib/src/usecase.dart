@@ -104,7 +104,7 @@ abstract class UseCase<T, Params> {
 
   UseCase() {
     _disposables = CompositeSubscription();
-    _logger = Logger(this.runtimeType.toString());
+    _logger = Logger(runtimeType.toString());
   }
 
   /// Builds the [Stream] to be subscribed to. [Params] is required
@@ -162,5 +162,6 @@ abstract class UseCase<T, Params> {
 ///
 /// ```
 abstract class CompletableUseCase<Params> extends UseCase<void, Params> {
+  @override
   Future<Stream<void>> buildUseCaseStream(Params params);
 }

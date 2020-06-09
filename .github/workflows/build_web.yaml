@@ -1,0 +1,27 @@
+name: Build Example on Web
+
+on: [pull_request]
+
+jobs:
+  build:
+    name: Constructing example build for web on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Configuring java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Configuring flutter environment
+        uses: subosito/flutter-action@v1.3.1
+        with:
+          flutter-version: '1.17.x'
+          channel: 'beta'
+      - name: Getting dependencies
+        run: cd example && flutter packages get
+      - name: Build example website
+        run: flutter config --enable-web && cd example && flutter build web

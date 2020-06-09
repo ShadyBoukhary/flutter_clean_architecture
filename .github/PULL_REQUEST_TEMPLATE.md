@@ -37,7 +37,7 @@ issue-4 [link] [name]
   This will ensure a smooth and quick review process.
 -->
 
-- [ ] All steps on circleci are passing.
+- [ ] All github actions are passing.
 
 ## For reviewers
 

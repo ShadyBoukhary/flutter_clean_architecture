@@ -12,7 +12,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^3.0.2
+  flutter_clean_architecture: ^3.1.0
 
 ```
 
@@ -232,6 +232,92 @@ class CounterState extends ViewState<CounterPage, CounterController> {
   }
 }
 ```
+##### Responsive view state
+
+To deal with screens on flutter web, you can take advantage of the responsive view state,
+that abstracts the main web apps breakpoints (desktop, tablet and mobile) to ease development
+for web with `flutter_clean_architecture`
+
+For example:
+
+```dart
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+class CounterPage extends View {
+    @override
+     // Dependencies can be injected here
+     State<StatefulWidget> createState() => CounterState();
+}
+
+class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
+     CounterState() : super(CounterController());
+
+     Widget AppScaffold({Widget child}) {
+         return MaterialApp(
+              title: 'Flutter Demo',
+           home: Scaffold(
+             key: globalKey, // using the built-in global key of the `View` for the scaffold or any other
+                             // widget provides the controller with a way to access them via getContext(), getState(), getStateKey()
+             body: child
+           ),
+         );
+     }
+ 
+     @override
+     Widget buildMobileView() {
+       return AppScaffold(
+          child: Column(
+              children: <Widget>[
+                Center(
+                  // show the number of times the button has been clicked
+                  child: Text("Counter in mobile view: ${controller.counter.toString()}"),
+                ),
+                // you can refresh manually inside the controller
+                // using refreshUI()
+                MaterialButton(onPressed: controller.increment),
+                FlatButton(onPressed: () => controller.login, child: Text('Login'))
+              ],
+            )
+       );
+     }
+
+     @override
+     Widget buildTabletView() {
+       return AppScaffold(
+         child: Column(
+             children: <Widget>[
+               Center(
+                 // show the number of times the button has been clicked
+                 child: Text("Counter in tablet view: ${controller.counter.toString()}"),
+               ),
+               // you can refresh manually inside the controller
+               // using refreshUI()
+               MaterialButton(onPressed: controller.increment),
+               FlatButton(onPressed: () => controller.login, child: Text('Login'))
+             ],
+           )
+       );
+     }
+
+     @override
+     Widget buildTabletView() {
+       return AppScaffold(
+         child: Row(
+             children: <Widget>[
+               Center(
+                 // show the number of times the button has been clicked
+                 child: Text("Counter in desktop view: ${controller.counter.toString()}"),
+               ),
+               // you can refresh manually inside the controller
+               // using refreshUI()
+               MaterialButton(onPressed: controller.increment),
+               FlatButton(onPressed: () => controller.login, child: Text('Login'))
+             ],
+           )
+       );
+     }
+}
+```
+
 ##### Widgets with Common Controller
 In the event that multiple widgets need to use the same `Controller` of a certain `Page`,
 the `Controller` can be retrieved inside the children widgets of that page via 

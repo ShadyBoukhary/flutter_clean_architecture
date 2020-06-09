@@ -1,3 +1,9 @@
+## [3.1.0] - Monday, June 8th, 2020
+
+- Created Github Actions to run analyze and tests on package
+- Created responsive view to improve the usage on flutter web
+- Fixed lint rules to fit pedantic 1.9.0
+
 ## [3.0.2] - Wednesday, January 8th, 2020
 
 - OnResumed bug fix
