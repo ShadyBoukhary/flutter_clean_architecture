@@ -55,11 +55,11 @@ abstract class ViewResponsiveState<Page extends View, Con extends Controller>
   /// ```
   ///
   ViewResponsiveState(
-      Con controller, {
-        this.tabletBreakpointMinimumWidth = 600,
-        this.desktopBreakpointMinimumWidth = 1024,
-      })  : assert(desktopBreakpointMinimumWidth > tabletBreakpointMinimumWidth,
-  'Desktop breakpoint must not be less than tablet'),
+    Con controller, {
+    this.tabletBreakpointMinimumWidth = 600,
+    this.desktopBreakpointMinimumWidth = 1024,
+  })  : assert(desktopBreakpointMinimumWidth > tabletBreakpointMinimumWidth,
+            'Desktop breakpoint must not be less than tablet'),
         super(controller);
 
   /// This breakpoint targets the minimum width of [Tablet] size. The default value is 600.
@@ -88,7 +88,8 @@ abstract class ViewResponsiveState<Page extends View, Con extends Controller>
       return ScreenSizeType.MOBILE;
     }
 
-    if (screenWidth < desktopBreakpointMinimumWidth && screenWidth >= tabletBreakpointMinimumWidth) {
+    if (screenWidth < desktopBreakpointMinimumWidth &&
+        screenWidth >= tabletBreakpointMinimumWidth) {
       return ScreenSizeType.TABLET;
     }
 
@@ -165,7 +166,6 @@ abstract class ViewResponsiveState<Page extends View, Con extends Controller>
 /// ```
 abstract class ViewState<Page extends View, Con extends Controller>
     extends State<Page> {
-
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   Con _controller;
