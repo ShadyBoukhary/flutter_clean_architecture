@@ -81,18 +81,18 @@ abstract class ViewResponsiveState<Page extends View, Con extends Controller>
 
   /// This method verify the dimensions using [MediaQuery], and so it defines which viewport will be exposed: [MOBILE], [TABLET] or [DESKTOP].
   /// The Default ViewPort is [MOBILE].
-  ScreenSizeType get _getPlatform {
-    if ((MediaQuery.of(context).size.width < tabletBreakpointMinimumWidth)) {
+  ScreenSizeType get _screenSizeType {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    if (screenWidth < tabletBreakpointMinimumWidth) {
       return ScreenSizeType.MOBILE;
     }
-    if ((MediaQuery.of(context).size.width < desktopBreakpointMinimumWidth &&
-        MediaQuery.of(context).size.width >= tabletBreakpointMinimumWidth)) {
+
+    if (screenWidth < desktopBreakpointMinimumWidth && screenWidth >= tabletBreakpointMinimumWidth) {
       return ScreenSizeType.TABLET;
     }
-    if ((MediaQuery.of(context).size.width >= desktopBreakpointMinimumWidth)) {
-      return ScreenSizeType.DESKTOP;
-    }
-    return ScreenSizeType.MOBILE;
+
+    return ScreenSizeType.DESKTOP;
   }
 
   /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
@@ -102,35 +102,24 @@ abstract class ViewResponsiveState<Page extends View, Con extends Controller>
   Widget buildPage() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        switch (_getPlatform) {
-          case ScreenSizeType.MOBILE:
-            try {
+        try {
+          switch (_screenSizeType) {
+            case ScreenSizeType.MOBILE:
               return buildMobileView() ??
                   buildTabletView() ??
                   buildDesktopView();
-            } catch (e) {
-              throw UnimplementedError('Implement at least one build method');
-            }
-            break;
-          case ScreenSizeType.TABLET:
-            try {
+            case ScreenSizeType.TABLET:
               return buildTabletView() ??
                   buildDesktopView() ??
                   buildMobileView();
-            } catch (e) {
-              throw UnimplementedError('Implement at least one build method');
-            }
-            break;
-          case ScreenSizeType.DESKTOP:
-            try {
+            case ScreenSizeType.DESKTOP:
               return buildDesktopView() ??
                   buildTabletView() ??
                   buildMobileView();
-            } catch (e) {
-              throw UnimplementedError('Implement at least one build method');
-            }
-            break;
-          default:
+            default:
+          }
+        } catch (e) {
+          print(e);
         }
         throw UnimplementedError('Implement at least one build method');
       },

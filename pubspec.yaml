@@ -5,7 +5,7 @@ author: Shady Boukhary <sb199898.sb@gmail.com>
 homepage: https://github.com/ShadyBoukhary/flutter_clean_architecture
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
 
 dependencies:
   flutter:

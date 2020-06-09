@@ -111,9 +111,6 @@ class _TestPageState extends ViewResponsiveState<TestPage, TestController> {
   Widget buildTabletView() {
     return Container(child: Center(child: Text('Tablet')));
   }
-
-  @override
-  void virtualInitState() {}
 }
 
 /// This is a snippet to change the default value of test flutter emulator size.
