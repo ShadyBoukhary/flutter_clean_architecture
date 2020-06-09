@@ -1,4 +1,4 @@
-include: package:pedantic/analysis_options.yaml
+include: package:pedantic/analysis_options.1.9.0.yaml
 linter:
   rules:
     library_names: true
@@ -8,5 +8,6 @@ linter:
 analyzer:
   exclude:
     - lib/generated_plugin_registrant.dart
+    - test/**_test.dart
 enable-experiment:
   - extension-methods
