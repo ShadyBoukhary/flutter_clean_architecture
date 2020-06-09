@@ -25,7 +25,6 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_clean_architecture: 
     path: ../
-  rxdart: ^0.23.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
