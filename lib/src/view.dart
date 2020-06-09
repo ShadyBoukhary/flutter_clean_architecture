@@ -104,27 +104,24 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         switch (_screenSizeType) {
+
           /// In case of screen width fits the mobile breakpoint, it should try to build the mobile view into the widget.
           /// In case of the mobile view method isn't defined, it will try to render the tablet view, and the desktop view.
           /// If any of these are defined, it will return null.
           case ScreenSizeType.MOBILE:
-            return buildMobileView() ??
-                buildTabletView() ??
-                buildDesktopView();
+            return buildMobileView() ?? buildTabletView() ?? buildDesktopView();
+
           /// In case of screen width fits the tablet breakpoint, it should try to build the tablet view into the widget.
           /// In case of the tablet view method isn't defined, it will try to render the desktop view, and the mobile view.
           /// If any of these are defined, it will return null.
           case ScreenSizeType.TABLET:
-            return buildTabletView() ??
-                buildDesktopView() ??
-                buildMobileView();
+            return buildTabletView() ?? buildDesktopView() ?? buildMobileView();
+
           /// In case of screen width fits the mobile breakpoint, it should try to build the desktop view into the widget.
           /// In case of the mobile view method isn't defined, it will try to render the tablet view, and the mobile view.
           /// If any of these are defined, it will return null.
           case ScreenSizeType.DESKTOP:
-            return buildDesktopView() ??
-                buildTabletView() ??
-                buildMobileView();
+            return buildDesktopView() ?? buildTabletView() ?? buildMobileView();
         }
 
         return null;
