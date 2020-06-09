@@ -100,6 +100,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called. If all the build are null,
   /// it will throw an [UnimplentedError].
   @override
+  @nonvirtual
   Widget buildPage() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
