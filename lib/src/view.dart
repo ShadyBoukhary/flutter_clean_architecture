@@ -10,18 +10,18 @@ enum ScreenSizeType {
   MOBILE,
 }
 
-/// The [ViewResponsiveState] represents the [State] of a [StatefulWidget], typically of a screen or a
-/// page. The [ViewResponsiveState] requires a [Controller] to handle its events and provide its data.
+/// The [ResponsiveViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
+/// page. The [ResponsiveViewState] requires a [Controller] to handle its events and provide its data.
 ///
-/// The [ViewResponsiveState] allow us to provide until three build methods to abstract responsivity for the
+/// The [ResponsiveViewState] allow us to provide until three build methods to abstract responsivity for the
 /// developer, and the screen renders the view based on [MediaQuery] screen width.
 ///
 ///
-/// The [ViewResponsiveState] also has a default [globalKey] that can be used inside its `builds` function
+/// The [ResponsiveViewState] also has a default [globalKey] that can be used inside its `builds` function
 /// in a widget to grant easy access to the [Controller], which could then use it to display
 /// snackbars, dialogs, and so on.
 ///
-/// The [ViewResponsiveState] lifecycle is also handled by the [Controller].
+/// The [ResponsiveViewState] lifecycle is also handled by the [Controller].
 /// ```dart
 ///     class CounterState extends ViewResponsiveState<CounterPage, CounterController> {
 ///       CounterState(CounterController controller) : super(controller);
@@ -42,7 +42,7 @@ enum ScreenSizeType {
 ///       }
 ///     }
 /// ```
-abstract class ViewResponsiveState<Page extends View, Con extends Controller>
+abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     extends ViewState<Page, Con> {
   /// To fill breakpoint params, they must be passed on super with it's name.
   /// ```dart
@@ -54,7 +54,7 @@ abstract class ViewResponsiveState<Page extends View, Con extends Controller>
   ///   );
   /// ```
   ///
-  ViewResponsiveState(
+  ResponsiveViewState(
     Con controller, {
     this.tabletBreakpointMinimumWidth = 600,
     this.desktopBreakpointMinimumWidth = 1024,

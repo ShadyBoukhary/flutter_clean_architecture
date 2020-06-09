@@ -94,7 +94,7 @@ class TestPage extends View {
   _TestPageState createState() => _TestPageState(TestController());
 }
 
-class _TestPageState extends ViewResponsiveState<TestPage, TestController> {
+class _TestPageState extends ResponsiveViewState<TestPage, TestController> {
   _TestPageState(TestController controller) : super(controller);
 
   @override
