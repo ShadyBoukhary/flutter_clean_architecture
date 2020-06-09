@@ -97,33 +97,37 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   }
 
   /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
-  /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called. If all the build are null,
-  /// it will throw an [UnimplentedError].
+  /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called.
   @override
-  @nonvirtual
+  @nonVirtual
   Widget buildPage() {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        try {
-          switch (_screenSizeType) {
-            case ScreenSizeType.MOBILE:
-              return buildMobileView() ??
-                  buildTabletView() ??
-                  buildDesktopView();
-            case ScreenSizeType.TABLET:
-              return buildTabletView() ??
-                  buildDesktopView() ??
-                  buildMobileView();
-            case ScreenSizeType.DESKTOP:
-              return buildDesktopView() ??
-                  buildTabletView() ??
-                  buildMobileView();
-            default:
-          }
-        } catch (e) {
-          print(e);
+        switch (_screenSizeType) {
+          /// In case of screen width fits the mobile breakpoint, it should try to build the mobile view into the widget.
+          /// In case of the mobile view method isn't defined, it will try to render the tablet view, and the desktop view.
+          /// If any of these are defined, it will return null.
+          case ScreenSizeType.MOBILE:
+            return buildMobileView() ??
+                buildTabletView() ??
+                buildDesktopView();
+          /// In case of screen width fits the tablet breakpoint, it should try to build the tablet view into the widget.
+          /// In case of the tablet view method isn't defined, it will try to render the desktop view, and the mobile view.
+          /// If any of these are defined, it will return null.
+          case ScreenSizeType.TABLET:
+            return buildTabletView() ??
+                buildDesktopView() ??
+                buildMobileView();
+          /// In case of screen width fits the mobile breakpoint, it should try to build the desktop view into the widget.
+          /// In case of the mobile view method isn't defined, it will try to render the tablet view, and the mobile view.
+          /// If any of these are defined, it will return null.
+          case ScreenSizeType.DESKTOP:
+            return buildDesktopView() ??
+                buildTabletView() ??
+                buildMobileView();
         }
-        throw UnimplementedError('Implement at least one build method');
+
+        return null;
       },
     );
   }
