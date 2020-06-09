@@ -1,5 +1,12 @@
 # flutter_clean_architecture Package
-[![CircleCI](https://circleci.com/gh/ShadyBoukhary/flutter_clean_architecture.svg?style=shield)](https://circleci.com/gh/ShadyBoukhary/flutter_clean_architecture) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![pub package](https://img.shields.io/pub/v/flutter_clean_architecture.svg)
+
+
+![Quality Assurance](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Quality%20Assurance/badge.svg)
+
+![Build Example](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Build%20Example/badge.svg)
+
+![Build Example on Web](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Build%20Example%20on%20Web/badge.svg)
+
 
 ## Overview
 A Flutter package that makes it easy and intuitive to implement [Uncle Bob's Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) in Flutter. This package provides basic classes that are tuned to work with Flutter and are designed according to the Clean Architecture.
