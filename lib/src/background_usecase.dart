@@ -85,9 +85,9 @@ class BackgroundUseCaseParams<T> {
 ///}
 /// ```
 abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
-  BehaviorSubject<T> _subject;
   BackgroundUseCaseState _state = BackgroundUseCaseState.idle;
   Isolate _isolate;
+  final BehaviorSubject<T> _subject;
   final ReceivePort _receivePort;
   static UseCaseTask _run;
 

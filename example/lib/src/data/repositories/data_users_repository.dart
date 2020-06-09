@@ -4,9 +4,9 @@ import '../../domain/repositories/users_repository.dart';
 class DataUsersRepository extends UsersRepository {
   List<User> users;
   // sigleton
-  static DataUsersRepository _instance = DataUsersRepository._internal();
+  static final DataUsersRepository _instance = DataUsersRepository._internal();
   DataUsersRepository._internal() {
-    users = List<User>();
+    users = <User>[];
     users.addAll([
       User('test-uid', 'John Smith', 18),
       User('test-uid2', 'John Doe', 22)
