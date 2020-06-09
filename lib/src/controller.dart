@@ -80,7 +80,7 @@ abstract class Controller
 
   @mustCallSuper
   Controller() {
-    logger = Logger('${this.runtimeType}');
+    logger = Logger('${runtimeType}');
     _isMounted = true;
     initListeners();
   }
@@ -116,11 +116,12 @@ abstract class Controller
 
   /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
   /// Any cleaning, disposing should go in here.
+  @override
   @mustCallSuper
   @visibleForOverriding
   void dispose() {
     _isMounted = false;
-    logger.info('Disposing ${this.runtimeType}');
+    logger.info('Disposing ${runtimeType}');
     super.dispose();
   }
 

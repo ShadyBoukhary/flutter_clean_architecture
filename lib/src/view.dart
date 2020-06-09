@@ -174,7 +174,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   ViewState(this._controller) {
     _controller.initController(globalKey);
     WidgetsBinding.instance.addObserver(_controller);
-    _logger = Logger('${this.runtimeType}');
+    _logger = Logger('${runtimeType}');
   }
 
   @override
@@ -227,7 +227,8 @@ abstract class ViewState<Page extends View, Con extends Controller>
 /// ```
 ///
 abstract class View extends StatefulWidget {
-  final RouteObserver routeObserver;
+  @override
   final Key key;
+  final RouteObserver routeObserver;
   View({this.routeObserver, this.key}) : super(key: key);
 }
