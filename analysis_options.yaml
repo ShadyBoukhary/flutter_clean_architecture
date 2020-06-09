@@ -8,5 +8,6 @@ linter:
 analyzer:
   exclude:
     - lib/generated_plugin_registrant.dart
+    - test/**_test.dart
 enable-experiment:
   - extension-methods
