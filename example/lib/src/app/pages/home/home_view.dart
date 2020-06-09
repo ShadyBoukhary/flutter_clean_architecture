@@ -40,7 +40,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
               ),
               Text(
                 controller.user == null ? '' : '${controller.user}',
-                style: Theme.of(context).textTheme.display1,
+                style: Theme.of(context).textTheme.headline4,
               ),
               RaisedButton(
                 onPressed: controller.getUser,

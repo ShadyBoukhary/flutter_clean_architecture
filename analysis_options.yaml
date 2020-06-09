@@ -5,3 +5,8 @@ linter:
     avoid_empty_else: true
     unecessary_const: true
     unawaited_futures: false
+analyzer:
+  exclude:
+    - lib/generated_plugin_registrant.dart
+enable-experiment:
+  - extension-methods
