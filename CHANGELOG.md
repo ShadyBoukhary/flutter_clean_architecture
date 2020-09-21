@@ -1,5 +1,8 @@
-## [3.1.0] - Monday, June 8th, 2020
+## [3.1.1] - Monday, September 21st, 2020
 
+- Added an option to pass listen:false when calling getController() outside of the build method.
+
+## [3.1.0] - Monday, June 8th, 2020
 - Created Github Actions to run analyze and tests on package
 - Created responsive view to improve the usage on flutter web
 - Fixed lint rules to fit pedantic 1.9.0
