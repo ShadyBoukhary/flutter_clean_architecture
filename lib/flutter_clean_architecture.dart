@@ -15,8 +15,9 @@ export 'package:flutter_clean_architecture/src/background_usecase.dart';
 class FlutterCleanArchitecture {
   /// Retrieves a Controller from the widget tree if one exists
   /// Can be used in widgets that exist in pages and need to use the same controller
-  static Con getController<Con extends Controller>(BuildContext context) {
-    return Provider.of<Con>(context);
+  static Con getController<Con extends Controller>(BuildContext context,
+      {bool listen = true}) {
+    return Provider.of<Con>(context, listen: listen);
   }
 
   /// Enables logging inside the `FlutterCleanArchitecture` package,
