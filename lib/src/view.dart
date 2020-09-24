@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/src/controller.dart';
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
@@ -78,9 +78,10 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
 
   /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET], [DESKTOP] and [WATCH].
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called.
+
   @override
   @nonVirtual
-  Widget buildPage() {
+  Widget get view {
     return ScreenTypeLayout.builder(
       mobile: mobileBuilder,
       tablet: tabletBuilder,
@@ -130,9 +131,13 @@ abstract class ViewState<Page extends View, Con extends Controller>
     extends State<Page> {
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
-  Con _controller;
+  final Con _controller;
   Logger _logger;
+  ViewBuilder builder;
+
   Con get controller => _controller;
+  Widget get view;
+
   ViewState(this._controller) {
     _controller.initController(globalKey);
     WidgetsBinding.instance.addObserver(_controller);
@@ -150,17 +155,10 @@ abstract class ViewState<Page extends View, Con extends Controller>
     super.didChangeDependencies();
   }
 
-  Widget buildPage();
-
   @override
   @nonVirtual
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Con>.value(
-        value: _controller,
-        child: Consumer<Con>(builder: (ctx, con, _) {
-          _controller = con;
-          return buildPage();
-        }));
+    return ChangeNotifierProvider<Con>.value(value: _controller, child: view);
   }
 
   @override
