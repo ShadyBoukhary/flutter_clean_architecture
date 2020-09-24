@@ -135,7 +135,6 @@ abstract class ViewState<Page extends View, Con extends Controller>
   Logger _logger;
   ViewBuilder builder;
 
-  Con get controller => _controller;
   Widget get view;
 
   ViewState(this._controller) {
