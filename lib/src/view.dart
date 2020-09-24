@@ -135,6 +135,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   Logger _logger;
   ViewBuilder builder;
 
+  /// Implement the [Widget] you want to be displayed on [View]
   Widget get view;
 
   ViewState(this._controller) {
