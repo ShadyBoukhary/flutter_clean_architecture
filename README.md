@@ -272,7 +272,7 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
      }
  
      @override
-     Widget buildMobileView() {
+     ViewBuilder mobileBuilder = (BuildContext context) {
        return AppScaffold(
           child: Column(
               children: <Widget>[
@@ -287,10 +287,10 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
               ],
             )
        );
-     }
+     };
 
      @override
-     Widget buildTabletView() {
+     ViewBuilder tabletBuilder = (BuildContext context) {
        return AppScaffold(
          child: Column(
              children: <Widget>[
@@ -305,10 +305,10 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
              ],
            )
        );
-     }
+     };
 
      @override
-     Widget buildTabletView() {
+     ViewBuilder desktopBuilder = (BuildContext context) {
        return AppScaffold(
          child: Row(
              children: <Widget>[
@@ -323,7 +323,7 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
              ],
            )
        );
-     }
+     };
 }
 ```
 
