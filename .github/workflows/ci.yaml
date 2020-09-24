@@ -10,8 +10,15 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 0
-      - name: "Install Flutter"
-        run: ./.github/workflows/scripts/install-flutter.sh
+      - name: Configuring java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Configuring flutter environment
+        uses: subosito/flutter-action@v1.3.1
+        with:
+          flutter-version: '1.20.x'
+          channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Dart Analyze"
@@ -24,8 +31,15 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 0
-      - name: "Install Flutter"
-        run: ./.github/workflows/scripts/install-flutter.sh
+      - name: Configuring java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Configuring flutter environment
+        uses: subosito/flutter-action@v1.3.1
+        with:
+          flutter-version: '1.20.x'
+          channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Formatter"
@@ -38,8 +52,15 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 0
-      - name: "Install Flutter"
-        run: ./.github/workflows/scripts/install-flutter.sh
+      - name: Configuring java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Configuring flutter environment
+        uses: subosito/flutter-action@v1.3.1
+        with:
+          flutter-version: '1.20.x'
+          channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Build example bundle"
@@ -71,8 +92,15 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 0
-      - name: "Install Flutter"
-        run: ./.github/workflows/scripts/install-flutter.sh stable
+      - name: Configuring java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - name: Configuring flutter environment
+        uses: subosito/flutter-action@v1.3.1
+        with:
+          flutter-version: '1.20.x'
+          channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Flutter Test"
