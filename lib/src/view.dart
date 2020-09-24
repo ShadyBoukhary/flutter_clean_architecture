@@ -54,40 +54,27 @@ typedef ViewBuilder = Widget Function(BuildContext context);
 ///       };
 ///     }
 /// ```
+///
+/// You can optionally set globally new default values for breakpoints. To do so, just check on [FlutterCleanArchitecture.setDefaultViewBreakpoints]
 abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     extends ViewState<Page, Con> {
-  final double tabletBreakpointMinimumWidth;
-  final double desktopBreakpointMinimumWidth;
-  final double watchBreakpointMinimumWidth;
+  ResponsiveViewState(Con controller) : super(controller);
 
-  /// To fill breakpoint params, they must be passed on super with it's name.
-  /// ```dart
-  /// SomePageState(SomeController controller)
-  /// : super(
-  ///     controller,
-  ///     watchBreakpointMinimumWidth: 300,
-  ///     tabletBreakpointMinimumWidth: 700,
-  ///     desktopBreakpointMinimumWidth: 1200,
-  ///   );
-  /// ```
-  ///
-  ResponsiveViewState(Con controller,
-      {this.tabletBreakpointMinimumWidth = 700,
-      this.desktopBreakpointMinimumWidth = 1200,
-      this.watchBreakpointMinimumWidth = 300})
-      : super(controller);
+  /// Abstract builder to be implemented by the developer which will build on [Watch ViewPort].
+  ///   /// The default breakpoint value is less than [300]
+  ViewBuilder watchBuilder;
 
-  // Abstract builder to be implemented by the developer which will build on [Mobile ViewPort].
+  /// Abstract builder to be implemented by the developer which will build on [Mobile ViewPort].
+  /// The default breakpoint value is more than [300]
   ViewBuilder mobileBuilder;
 
   /// Abstract builder to be implemented by the developer which will build on [Tablet/Pad ViewPort].
+  ///   /// The default breakpoint value is [600]
   ViewBuilder tabletBuilder;
 
   /// Abstract builder to be implemented by the developer which will build on [Desktop ViewPort].
+  ///   /// The default breakpoint value is [950]
   ViewBuilder desktopBuilder;
-
-  /// Abstract builder to be implemented by the developer which will build on [Watch ViewPort].
-  ViewBuilder watchBuilder;
 
   /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET], [DESKTOP] and [WATCH].
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called.
@@ -95,10 +82,6 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   @nonVirtual
   Widget buildPage() {
     return ScreenTypeLayout.builder(
-      breakpoints: ScreenBreakpoints(
-          tablet: tabletBreakpointMinimumWidth,
-          desktop: desktopBreakpointMinimumWidth,
-          watch: watchBreakpointMinimumWidth),
       mobile: mobileBuilder,
       tablet: tabletBuilder,
       desktop: desktopBuilder,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/controller.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 export 'package:flutter_clean_architecture/src/controller.dart';
 export 'package:flutter_clean_architecture/src/observer.dart';
@@ -18,6 +19,31 @@ class FlutterCleanArchitecture {
   static Con getController<Con extends Controller>(BuildContext context,
       {bool listen = true}) {
     return Provider.of<Con>(context, listen: listen);
+  }
+
+  /// Enable customize default view breakpoints. To do so, just call it before `runApp`.
+  ///
+  /// ```dart
+  /// void main() {
+  //    FlutterCleanArchitecture.setDefaultViewBreakpoints(
+  //      desktopBreakpointMinimumWidth: 1000,
+  //      tabletBreakpointMinimumWidth: 700,
+  //      watchBreakpointMinimumWidth: 250,
+  //    );
+  //    runApp(MyApp());
+  //  }
+  /// ```
+  static void setDefaultViewBreakpoints({
+    @required double desktopBreakpointMinimumWidth,
+    @required double tabletBreakpointMinimumWidth,
+    @required double watchBreakpointMinimumWidth,
+  }) {
+    ResponsiveSizingConfig.instance.setCustomBreakpoints(
+      ScreenBreakpoints(
+          desktop: desktopBreakpointMinimumWidth,
+          tablet: tabletBreakpointMinimumWidth,
+          watch: watchBreakpointMinimumWidth),
+    );
   }
 
   /// Enables logging inside the `FlutterCleanArchitecture` package,

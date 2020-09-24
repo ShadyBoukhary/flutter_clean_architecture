@@ -10,16 +10,14 @@ void main() {
 
     await tester.setScreenSize(width: 540, height: 540);
 
-    await tester.pumpWidget(ConstrainedBox(
-        child: MaterialApp(home: page),
-        constraints: BoxConstraints(maxWidth: 500)));
+    await tester.pumpWidget(MaterialApp(home: page));
 
     await tester.pump();
     await tester.pumpAndSettle();
 
     expect(find.text('Mobile'), findsOneWidget);
 
-    await tester.setScreenSize(width: 600, height: 600);
+    await tester.setScreenSize(width: 700, height: 600);
 
     await tester.pumpAndSettle();
 
@@ -38,9 +36,7 @@ void main() {
 
     await tester.setScreenSize(width: 540, height: 540);
 
-    await tester.pumpWidget(ConstrainedBox(
-        child: MaterialApp(home: page),
-        constraints: BoxConstraints(maxWidth: 500)));
+    await tester.pumpWidget(MaterialApp(home: page));
 
     await tester.pump();
     await tester.pumpAndSettle();
@@ -55,7 +51,7 @@ void main() {
     // Build our app and trigger a frame.
     final page = TestPage();
 
-    await tester.setScreenSize(width: 600, height: 600);
+    await tester.setScreenSize(width: 700, height: 600);
 
     await tester
         .pumpWidget(MaterialApp(home: Container(child: page, width: 800)));
@@ -80,6 +76,21 @@ void main() {
     expect(find.text('Desktop'), findsOneWidget);
     expect(find.byWidget(page), findsOneWidget);
   });
+
+  testWidgets('Run TestPage | Watch Viewport', (WidgetTester tester) async {
+    // Build our app and trigger a frame.
+    final page = TestPage();
+
+    await tester.setScreenSize(width: 250, height: 250);
+
+    await tester
+        .pumpWidget(MaterialApp(home: Container(child: page, width: 250)));
+
+    expect(find.byType(Container), findsWidgets);
+    expect(find.byType(Text), findsOneWidget);
+    expect(find.text('Watch'), findsOneWidget);
+    expect(find.byWidget(page), findsOneWidget);
+  });
 }
 
 class TestController extends Controller {
@@ -98,19 +109,24 @@ class _TestPageState extends ResponsiveViewState<TestPage, TestController> {
   _TestPageState(TestController controller) : super(controller);
 
   @override
-  Widget buildDesktopView() {
+  ViewBuilder desktopBuilder = (BuildContext context) {
     return Container(child: Center(child: Text('Desktop')));
-  }
+  };
 
   @override
-  Widget buildMobileView() {
+  ViewBuilder mobileBuilder = (BuildContext context) {
     return Container(child: Center(child: Text('Mobile')));
-  }
+  };
 
   @override
-  Widget buildTabletView() {
+  ViewBuilder tabletBuilder = (BuildContext context) {
     return Container(child: Center(child: Text('Tablet')));
-  }
+  };
+
+  @override
+  ViewBuilder watchBuilder = (BuildContext context) {
+    return Container(child: Center(child: Text('Watch')));
+  };
 }
 
 /// This is a snippet to change the default value of test flutter emulator size.
