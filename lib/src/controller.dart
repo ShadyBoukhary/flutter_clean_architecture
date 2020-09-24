@@ -258,6 +258,45 @@ abstract class Controller
 typedef ControlledWidgetBuilder<Con extends Controller> = Widget Function(
     BuildContext context, Con controller);
 
+
+/// This is a representation of a widget that is controlled by a [Controller] and needs to be re-rendered when
+/// [Controller.refreshUI] is triggered.
+///
+/// This was created to optimize the render cycle from a [ViewState]'s widget tree.
+///
+/// When [Controller.refreshUI] is called, only the ControlledWidgets inside [ViewState.view] will be re-rendered.
+///
+/// Example:
+///
+/// ```dart
+///   class ExamplePage extends View {
+///     @override
+///     State<StatefulWidget> createState() => ExampleState();
+///   }
+///
+///   class ExampleState extends ViewState<ExamplePage, ExampleController> {
+///     ExampleState() : super(ExampleController());
+///
+///     Widget get view {
+///       return Scaffold(
+///         key: globalKey,
+///         body: SingleChildScrollView(
+///           child: Column(
+///             children: [
+///               Text("Uncontrolled title that will not re-render"),
+///               ControlledWidget(
+///                 builder: (context, controller) {
+///                   // Controlled widget that depends on controllers value
+///                   return Text(controller.foo);
+///                 }
+///               )
+///             ]
+///           )
+///         )
+///       )
+///     }
+///   }
+/// ``
 class ControlledWidget<Con extends Controller> extends StatelessWidget {
   final ControlledWidgetBuilder<Con> builder;
 
