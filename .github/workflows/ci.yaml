@@ -15,7 +15,7 @@ jobs:
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Dart Analyze"
-        run: flutter analyze .
+        run: flutter analyze
 
   format:
     runs-on: ubuntu-latest
