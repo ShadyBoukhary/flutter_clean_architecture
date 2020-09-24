@@ -19,7 +19,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
   _HomePageState() : super(HomeController(DataUsersRepository()));
 
   @override
-  Widget buildPage() {
+  Widget get view {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -31,41 +31,60 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                // use data provided by the controller
-                'Button pressed ${controller.counter} times.',
+              ControlledWidget<HomeController>(
+                builder: (context, controller) {
+                  return Text(
+                    'Button pressed ${controller.counter} times.',
+                  );
+                },
               ),
               Text(
                 'The current user is',
               ),
-              Text(
-                controller.user == null ? '' : '${controller.user}',
-                style: Theme.of(context).textTheme.headline4,
+              ControlledWidget<HomeController>(
+                builder: (context, controller) {
+                  return Text(
+                    controller.user == null ? '' : '${controller.user}',
+                    style: Theme.of(context).textTheme.headline4,
+                  );
+                },
               ),
-              RaisedButton(
-                onPressed: controller.getUser,
-                child: Text(
-                  'Get User',
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.blue,
+              ControlledWidget<HomeController>(
+                builder: (context, controller) {
+                  return RaisedButton(
+                    onPressed: controller.getUser,
+                    child: Text(
+                      'Get User',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.blue,
+                  );
+                },
               ),
-              RaisedButton(
-                onPressed: controller.getUserwithError,
-                child: Text(
-                  'Get User Error',
-                  style: TextStyle(color: Colors.white),
-                ),
-                color: Colors.blue,
-              )
+              ControlledWidget<HomeController>(
+                builder: (context, controller) {
+                  return RaisedButton(
+                    onPressed: controller.getUserwithError,
+                    child: Text(
+                      'Get User Error',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.blue,
+                  );
+                },
+              ),
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.buttonPressed(),
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+      floatingActionButton: ControlledWidget<HomeController>(
+        builder: (context, controller) {
+          return FloatingActionButton(
+            onPressed: () => controller.buttonPressed(),
+            tooltip: 'Increment',
+            child: Icon(Icons.add),
+          );
+        },
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

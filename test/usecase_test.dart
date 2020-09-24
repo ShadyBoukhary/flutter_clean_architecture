@@ -4,7 +4,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 void main() {
   group('Domain modules', () {
     test('UseCase onNext and onDone.', () async {
-      CounterUseCaseObserver observer = CounterUseCaseObserver();
+      var observer = CounterUseCaseObserver();
       CounterUseCase().execute(observer);
       await Future.delayed(Duration(milliseconds: 1000), () {
         expect(observer.number, 2);
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('UseCase .OnError.', () async {
-      CounterUseCaseObserver observer = CounterUseCaseObserver();
+      var observer = CounterUseCaseObserver();
       CounterUseCaseError().execute(observer);
       await Future.delayed(Duration(milliseconds: 1000), () {
         expect(observer.number, -1);
@@ -24,8 +24,8 @@ void main() {
     });
 
     test('UseCase .dispose cancels the subscription', () async {
-      CounterUseCaseObserver observer = CounterUseCaseObserver();
-      CounterUseCase usecase = CounterUseCase()..execute(observer);
+      var observer = CounterUseCaseObserver();
+      var usecase = CounterUseCase()..execute(observer);
       await Future.delayed(Duration(milliseconds: 15), () {
         usecase.dispose();
         expect(observer.number, 0);
