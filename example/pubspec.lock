@@ -123,6 +123,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.1"
+  responsive_builder:
+    dependency: transitive
+    description:
+      name: responsive_builder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.0"
   rxdart:
     dependency: transitive
     description:
