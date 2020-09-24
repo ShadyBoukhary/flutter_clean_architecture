@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
@@ -106,13 +107,12 @@ abstract class Controller
     }
   }
 
-  /// _refreshes the [View] associated with the [Controller] if it is still mounted.
+  /// _refreshes the [ControlledWidgets] and the [StatefulWidgets] that depends on [FlutterCleanArchitecture.getController] of the [View] associated with the [Controller] if it is still mounted.
   @protected
   void refreshUI() {
     if (_isMounted) {
       notifyListeners();
     }
-    ;
   }
 
   /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
@@ -257,7 +257,6 @@ abstract class Controller
 
 typedef ControlledWidgetBuilder<Con extends Controller> = Widget Function(
     BuildContext context, Con controller);
-
 
 /// This is a representation of a widget that is controlled by a [Controller] and needs to be re-rendered when
 /// [Controller.refreshUI] is triggered.
