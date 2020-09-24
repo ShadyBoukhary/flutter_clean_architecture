@@ -6,6 +6,8 @@
 - Added `tabletBuilder` to `ResponsiveViewState`
 - Added `desktopBuilder` to `ResponsiveViewState`
 - Added `watchBuilder` to `ResponsiveViewState`
+
+### Breaking Changes
 - Removed `buildTabletView()`
 - Removed `buildMobileView()`
 - Removed `buildDesktopView()`

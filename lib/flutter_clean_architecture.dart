@@ -12,6 +12,7 @@ export 'package:flutter_clean_architecture/src/presenter.dart';
 export 'package:flutter_clean_architecture/src/usecase.dart';
 export 'package:flutter_clean_architecture/src/view.dart';
 export 'package:flutter_clean_architecture/src/background_usecase.dart';
+export 'package:flutter_clean_architecture/src/extensions.dart';
 
 class FlutterCleanArchitecture {
   /// Retrieves a Controller from the widget tree if one exists
