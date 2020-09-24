@@ -11,10 +11,12 @@ void main() {
       (WidgetTester tester) async {
     final AutomatedTestWidgetsFlutterBinding binding = tester.binding;
     binding.addTime(const Duration(seconds: 3));
-    await tester.pumpWidget(CounterPage());
+    await tester.pumpWidget(MaterialApp(
+      home: CounterPage(),
+    ));
 
     // Create our Finders
-    Finder counterFinder = find.text('0');
+    var counterFinder = find.text('0');
     expect(counterFinder, findsOneWidget);
 
     await tester.tap(find.byKey(inc));
@@ -66,21 +68,31 @@ class CounterState extends ViewState<CounterPage, CounterController> {
   CounterState() : super(CounterController());
 
   @override
-  Widget buildPage() {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: Scaffold(
-        key: globalKey,
-        body: Column(
-          children: <Widget>[
-            Center(
-              child: Text(controller.counter.toString()),
+  Widget get view {
+    return Scaffold(
+      key: globalKey,
+      body: Column(
+        children: <Widget>[
+          Center(
+            child: ControlledWidget<CounterController>(
+              builder: (ctx, controller) {
+                return Text(controller.counter.toString());
+              },
             ),
-            MaterialButton(key: inc, onPressed: () => controller.increment()),
-            MaterialButton(
-                key: snackBar, onPressed: () => controller.showSnackBar()),
-          ],
-        ),
+          ),
+          ControlledWidget<CounterController>(
+            builder: (ctx, controller) {
+              return MaterialButton(
+                  key: inc, onPressed: () => controller.increment());
+            },
+          ),
+          ControlledWidget<CounterController>(
+            builder: (ctx, controller) {
+              return MaterialButton(
+                  key: snackBar, onPressed: () => controller.showSnackBar());
+            },
+          ),
+        ],
       ),
     );
   }

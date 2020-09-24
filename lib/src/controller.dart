@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:provider/provider.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
 /// a `View`. However, it is preferable to be contained inside the `View` for readibility
@@ -252,4 +253,18 @@ abstract class Controller
   ///     }
   /// ```
   void onDetached() {}
+}
+
+typedef ControlledWidgetBuilder<Con extends Controller> = Widget Function(
+    BuildContext context, Con controller);
+
+class ControlledWidget<Con extends Controller> extends StatelessWidget {
+  final ControlledWidgetBuilder<Con> builder;
+
+  ControlledWidget({@required this.builder});
+
+  @override
+  Widget build(BuildContext context) => Consumer<Con>(
+      builder: (BuildContext context, Con controller, _) =>
+          builder(context, controller));
 }
