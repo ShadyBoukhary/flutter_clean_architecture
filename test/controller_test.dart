@@ -82,8 +82,9 @@ class CounterPage extends View {
   final Function onUncontrolledWidgetBuild;
   final Function onControlledWidgetBuild;
 
-
-  CounterPage({this.onWidgetBuild, this.onUncontrolledWidgetBuild,
+  CounterPage(
+      {this.onWidgetBuild,
+      this.onUncontrolledWidgetBuild,
       this.onControlledWidgetBuild});
 
   @override
