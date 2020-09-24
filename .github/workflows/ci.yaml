@@ -29,9 +29,7 @@ jobs:
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Formatter"
-        run: flutter format .
-      - name: "Validating formatter"
-        run: ./.github/workflows/scripts/validate-formatting.sh
+        run: flutter format --set-exit-if-changed .
 
   build_example:
     timeout-minutes: 15
