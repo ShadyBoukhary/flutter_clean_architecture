@@ -74,19 +74,19 @@ class CounterState extends ViewState<CounterPage, CounterController> {
       body: Column(
         children: <Widget>[
           Center(
-            child: ControlledWidget<CounterController>(
+            child: ControlledWidgetBuilder<CounterController>(
               builder: (ctx, controller) {
                 return Text(controller.counter.toString());
               },
             ),
           ),
-          ControlledWidget<CounterController>(
+          ControlledWidgetBuilder<CounterController>(
             builder: (ctx, controller) {
               return MaterialButton(
                   key: inc, onPressed: () => controller.increment());
             },
           ),
-          ControlledWidget<CounterController>(
+          ControlledWidgetBuilder<CounterController>(
             builder: (ctx, controller) {
               return MaterialButton(
                   key: snackBar, onPressed: () => controller.showSnackBar());
