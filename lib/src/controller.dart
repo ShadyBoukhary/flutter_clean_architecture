@@ -283,7 +283,7 @@ typedef ControlledBuilder<Con extends Controller> = Widget Function(
 ///           child: Column(
 ///             children: [
 ///               Text("Uncontrolled title that will not re-render"),
-///               ControlledWidget(
+///               ControlledWidgetBuilder(
 ///                 builder: (context, controller) {
 ///                   // Controlled widget that depends on controllers value
 ///                   return Text(controller.foo);
