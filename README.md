@@ -197,7 +197,7 @@ lib/
 ### Example Code
 Checkout a small example [here](./example/) and a full application built [here](https://github.com/ShadyBoukhary/Axion-Technologies-HnH).
 
-#### View and ControlledWidget
+#### View and ControlledWidgetBuilder
 
 ```dart
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -221,7 +221,7 @@ class CounterState extends ViewState<CounterPage, CounterController> {
           children: <Widget>[
             Center(
               // show the number of times the button has been clicked
-              child: ControlledWidget<CounterController>(
+              child: ControlledWidgetBuilder<CounterController>(
                 builder: (context, controller) {
                   return Text(controller.counter.toString());
                 }
@@ -229,7 +229,7 @@ class CounterState extends ViewState<CounterPage, CounterController> {
             ),
             // you can refresh manually inside the controller
             // using refreshUI()
-            ControlledWidget<CounterController>(
+            ControlledWidgetBuilder<CounterController>(
                 builder: (context, controller) {
                   return MaterialButton(onPressed: controller.increment);
                 }
