@@ -1,6 +1,7 @@
 ## [4.0.0] - Thursday, September 24st, 2020
 ### What's New
 - Improves `ResponsiveViewState` with watch interface
+- Added `FlutterCleanArchitecture.setDefaultViewBreakpoints` to configure view breakpoints globally
 - Added `mobileBuilder` to `ResponsiveViewState`
 - Added `tabletBuilder` to `ResponsiveViewState`
 - Added `desktopBuilder` to `ResponsiveViewState`
