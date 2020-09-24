@@ -31,7 +31,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              ControlledWidget<HomeController>(
+              ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
                   return Text(
                     'Button pressed ${controller.counter} times.',
@@ -41,7 +41,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
               Text(
                 'The current user is',
               ),
-              ControlledWidget<HomeController>(
+              ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
                   return Text(
                     controller.user == null ? '' : '${controller.user}',
@@ -49,7 +49,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                   );
                 },
               ),
-              ControlledWidget<HomeController>(
+              ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
                   return RaisedButton(
                     onPressed: controller.getUser,
@@ -61,7 +61,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                   );
                 },
               ),
-              ControlledWidget<HomeController>(
+              ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
                   return RaisedButton(
                     onPressed: controller.getUserwithError,
@@ -77,7 +77,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           ),
         ),
       ),
-      floatingActionButton: ControlledWidget<HomeController>(
+      floatingActionButton: ControlledWidgetBuilder<HomeController>(
         builder: (context, controller) {
           return FloatingActionButton(
             onPressed: () => controller.buttonPressed(),

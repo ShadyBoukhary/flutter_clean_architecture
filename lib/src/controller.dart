@@ -255,7 +255,7 @@ abstract class Controller
   void onDetached() {}
 }
 
-typedef ControlledWidgetBuilder<Con extends Controller> = Widget Function(
+typedef ControlledBuilder<Con extends Controller> = Widget Function(
     BuildContext context, Con controller);
 
 /// This is a representation of a widget that is controlled by a [Controller] and needs to be re-rendered when
@@ -296,10 +296,10 @@ typedef ControlledWidgetBuilder<Con extends Controller> = Widget Function(
 ///     }
 ///   }
 /// ``
-class ControlledWidget<Con extends Controller> extends StatelessWidget {
-  final ControlledWidgetBuilder<Con> builder;
+class ControlledWidgetBuilder<Con extends Controller> extends StatelessWidget {
+  final ControlledBuilder<Con> builder;
 
-  ControlledWidget({@required this.builder});
+  ControlledWidgetBuilder({@required this.builder});
 
   @override
   Widget build(BuildContext context) => Consumer<Con>(
