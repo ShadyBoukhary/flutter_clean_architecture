@@ -11,13 +11,14 @@ enum ScreenSizeType {
   MOBILE,
 }
 
+/// Defines a function type that receives a [BuildContext] and returns a [Widget] for widget builders.
 typedef ViewBuilder = Widget Function(BuildContext context);
 
 /// The [ResponsiveViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
 /// page. The [ResponsiveViewState] requires a [Controller] to handle its events and provide its data.
 ///
-/// The [ResponsiveViewState] allow us to provide until three build methods to abstract responsivity for the
-/// developer, and the screen renders the view based on [MediaQuery] screen width.
+/// The [ResponsiveViewState] allow us to provide until four build methods to abstract responsiveness for the
+/// developer, and the screen renders the view based on [MediaQuery] screen width managed by [ScreenTypeLayout.builder].
 ///
 ///
 /// The [ResponsiveViewState] also has a default [globalKey] that can be used inside its `builds` function
@@ -25,24 +26,32 @@ typedef ViewBuilder = Widget Function(BuildContext context);
 /// snackbars, dialogs, and so on.
 ///
 /// The [ResponsiveViewState] lifecycle is also handled by the [Controller].
+///
+/// You can optionally define builders for layouts that you want to implement (It will always give priority to bigger to smaller
+/// resolutions (e.g: If desktop isn't provided on desktop resolution, it will try to build tablet and forward)
 /// ```dart
-///     class CounterState extends ViewResponsiveState<CounterPage, CounterController> {
+///     class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
 ///       CounterState(CounterController controller) : super(controller);
 ///
 ///       @override
-///       Widget buildMobileView(BuildContext context) {
+///       ViewBuilder mobileBuilder = (BuildContext context) {
 ///         return Text("Mobile view");
-///       }
+///       };
 ///
 ///       @override
-///       Widget buildTabletView(BuildContext context) {
+///       ViewBuilder tabletBuilder = (BuildContext context) {
 ///         return Text("Tablet view");
-///       }
+///       };
 ///
 ///       @override
-///       Widget buildDesktopBiew(BuildContext context) {
+///       ViewBuilder desktopBuilder = (BuildContext context) {
 ///         return Text("Desktop view");
-///       }
+///       };
+///
+///       @override
+///       ViewBuilder watchBuilder = (BuildContext context) {
+///         return Text("Watch view");
+///       };
 ///     }
 /// ```
 abstract class ResponsiveViewState<Page extends View, Con extends Controller>
@@ -56,6 +65,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   /// SomePageState(SomeController controller)
   /// : super(
   ///     controller,
+  ///     watchBreakpointMinimumWidth: 300,
   ///     tabletBreakpointMinimumWidth: 700,
   ///     desktopBreakpointMinimumWidth: 1200,
   ///   );
@@ -67,18 +77,19 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
       this.watchBreakpointMinimumWidth = 300})
       : super(controller);
 
-  // Abstract Method to be implemented by the developer which implements [Mobile ViewPort].
+  // Abstract builder to be implemented by the developer which will build on [Mobile ViewPort].
   ViewBuilder mobileBuilder;
 
-  /// Abstract Method to be implemented by the developer which implements [Tablet/Pad ViewPort].
+  /// Abstract builder to be implemented by the developer which will build on [Tablet/Pad ViewPort].
   ViewBuilder tabletBuilder;
 
-  /// Abstract Method to be implemented by the developer which implements [Desktop ViewPort].
+  /// Abstract builder to be implemented by the developer which will build on [Desktop ViewPort].
   ViewBuilder desktopBuilder;
 
+  /// Abstract builder to be implemented by the developer which will build on [Watch ViewPort].
   ViewBuilder watchBuilder;
 
-  /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
+  /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET], [DESKTOP] and [WATCH].
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called.
   @override
   @nonVirtual
