@@ -1,11 +1,7 @@
 # flutter_clean_architecture Package
 
 
-![Quality Assurance](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Quality%20Assurance/badge.svg)
-
-![Build Example](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Build%20Example/badge.svg)
-
-![Build Example on Web](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Build%20Example%20on%20Web/badge.svg)
+![CI](https://github.com/shadyboukhary/flutter_clean_architecture/workflows/Continuous%20Integration/badge.svg)
 
 
 ## Overview
@@ -105,7 +101,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * etc..
   * Also, every `Controller` **has** to implement **initListeners()** that initializes the listeners for the `Presenter` for consistency.
   * The `Controller` **has-a** `Presenter`. The `Controller` will pass the `Repository` to the `Presenter`, which it communicate later with the `Usecase`. The `Controller` will specify what listeners the `Presenter` should call for all success and error events as mentioned previously. Only the `Controller` is allowed to obtain instances of a `Repository` from the `Data` or `Device` module in the outermost layer.
-  * The `Controller` has access to the `ViewState` and can refresh the UI via `refreshUI()`.
+  * The `Controller` has access to the `ViewState` and can refresh the `ControlledWidgets` via `refreshUI()`.
 * **Presenter**
   * Every `Controller` **has-a** `Presenter`. The `Presenter` communicates with the `Usecase` as mentioned at the beginning of the `App` layer. The `Presenter` will have members that are functions, which are optionally set by the `Controller` and will be called if set upon the `Usecase` sending back data, completing, or erroring.
   * The `Presenter` is comprised of two classes
@@ -201,7 +197,7 @@ lib/
 ### Example Code
 Checkout a small example [here](./example/) and a full application built [here](https://github.com/ShadyBoukhary/Axion-Technologies-HnH).
 
-#### View 
+#### View and ControlledWidget
 
 ```dart
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -225,13 +221,19 @@ class CounterState extends ViewState<CounterPage, CounterController> {
           children: <Widget>[
             Center(
               // show the number of times the button has been clicked
-              child: Text(controller.counter.toString()),
+              child: ControlledWidget<CounterController>(
+                builder: (context, controller) {
+                  return Text(controller.counter.toString());
+                }
+              ),
             ),
             // you can refresh manually inside the controller
             // using refreshUI()
-            MaterialButton(onPressed: controller.increment),
-            FlatButton(onPressed: () => controller.login, child: Text('Login')),
-
+            ControlledWidget<CounterController>(
+                builder: (context, controller) {
+                  return MaterialButton(onPressed: controller.increment);
+                }
+              ),
           ],
         ),
       ),
@@ -409,6 +411,7 @@ class CounterController extends Controller {
 }
 
 ```
+
 #### Presenter
 ```dart
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
