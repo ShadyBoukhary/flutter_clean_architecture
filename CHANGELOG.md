@@ -1,5 +1,9 @@
 ## [4.0.0] - Thursday, September 24st, 2020
 ### What's New
+- Created `ControlledWidget` to create `StatelessWidgets` refreshable by `Controller`
+    - Now, to create refreshable widgets, use `ControlledWidget` builder.
+    - When `Controller.refreshUI` is called, only `ControlledWidgets` will re-render
+    - To create controlled `StatefulWidgets`, please check `FlutterCleanArchitecture.getController` approach
 - Improves `ResponsiveViewState` with watch interface
 - Added `FlutterCleanArchitecture.setDefaultViewBreakpoints` to configure view breakpoints globally
 - Added `mobileBuilder` to `ResponsiveViewState`
@@ -8,6 +12,7 @@
 - Added `watchBuilder` to `ResponsiveViewState`
 
 ### Breaking Changes
+- Removed getter `controller` from `ViewState`
 - Removed `buildTabletView()`
 - Removed `buildMobileView()`
 - Removed `buildDesktopView()`
