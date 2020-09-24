@@ -3,12 +3,15 @@ import 'package:flutter_clean_architecture/src/controller.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 enum ScreenSizeType {
   TABLET,
   DESKTOP,
   MOBILE,
 }
+
+typedef ViewBuilder = Widget Function(BuildContext context);
 
 /// The [ResponsiveViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
 /// page. The [ResponsiveViewState] requires a [Controller] to handle its events and provide its data.
@@ -44,6 +47,10 @@ enum ScreenSizeType {
 /// ```
 abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     extends ViewState<Page, Con> {
+  final double tabletBreakpointMinimumWidth;
+  final double desktopBreakpointMinimumWidth;
+  final double watchBreakpointMinimumWidth;
+
   /// To fill breakpoint params, they must be passed on super with it's name.
   /// ```dart
   /// SomePageState(SomeController controller)
@@ -54,78 +61,37 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   ///   );
   /// ```
   ///
-  ResponsiveViewState(
-    Con controller, {
-    this.tabletBreakpointMinimumWidth = 600,
-    this.desktopBreakpointMinimumWidth = 1024,
-  })  : assert(desktopBreakpointMinimumWidth > tabletBreakpointMinimumWidth,
-            'Desktop breakpoint must not be less than tablet'),
-        super(controller);
+  ResponsiveViewState(Con controller,
+      {this.tabletBreakpointMinimumWidth = 700,
+      this.desktopBreakpointMinimumWidth = 1200,
+      this.watchBreakpointMinimumWidth = 300})
+      : super(controller);
 
-  /// This breakpoint targets the minimum width of [Tablet] size. The default value is 600.
-  /// When the width size from [context] comes under 600 (or the given value), it automatically switchs to [Mobile Viewport].
-  final double tabletBreakpointMinimumWidth;
-
-  /// This breakpoint targets the minimum width of [Desktop] size. The default value is 1024.
-  /// When the width size from [context] comes under 1024 (or the given value), it automatically switchs to [Tablet Viewport].
-  final double desktopBreakpointMinimumWidth;
-
-  /// Abstract Method to be implemented by the developer which implements [Mobile ViewPort].
-  Widget buildMobileView();
+  // Abstract Method to be implemented by the developer which implements [Mobile ViewPort].
+  ViewBuilder mobileBuilder;
 
   /// Abstract Method to be implemented by the developer which implements [Tablet/Pad ViewPort].
-  Widget buildTabletView();
+  ViewBuilder tabletBuilder;
 
   /// Abstract Method to be implemented by the developer which implements [Desktop ViewPort].
-  Widget buildDesktopView();
+  ViewBuilder desktopBuilder;
 
-  /// This method verify the dimensions using [MediaQuery], and so it defines which viewport will be exposed: [MOBILE], [TABLET] or [DESKTOP].
-  /// The Default ViewPort is [MOBILE].
-  ScreenSizeType get _screenSizeType {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    if (screenWidth < tabletBreakpointMinimumWidth) {
-      return ScreenSizeType.MOBILE;
-    }
-
-    if (screenWidth < desktopBreakpointMinimumWidth &&
-        screenWidth >= tabletBreakpointMinimumWidth) {
-      return ScreenSizeType.TABLET;
-    }
-
-    return ScreenSizeType.DESKTOP;
-  }
+  ViewBuilder watchBuilder;
 
   /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET] and [DESKTOP].
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called.
   @override
   @nonVirtual
   Widget buildPage() {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        switch (_screenSizeType) {
-
-          /// In case of screen width fits the mobile breakpoint, it should try to build the mobile view into the widget.
-          /// In case of the mobile view method isn't defined, it will try to render the tablet view, and the desktop view.
-          /// If any of these are defined, it will return null.
-          case ScreenSizeType.MOBILE:
-            return buildMobileView() ?? buildTabletView() ?? buildDesktopView();
-
-          /// In case of screen width fits the tablet breakpoint, it should try to build the tablet view into the widget.
-          /// In case of the tablet view method isn't defined, it will try to render the desktop view, and the mobile view.
-          /// If any of these are defined, it will return null.
-          case ScreenSizeType.TABLET:
-            return buildTabletView() ?? buildDesktopView() ?? buildMobileView();
-
-          /// In case of screen width fits the mobile breakpoint, it should try to build the desktop view into the widget.
-          /// In case of the mobile view method isn't defined, it will try to render the tablet view, and the mobile view.
-          /// If any of these are defined, it will return null.
-          case ScreenSizeType.DESKTOP:
-            return buildDesktopView() ?? buildTabletView() ?? buildMobileView();
-        }
-
-        return null;
-      },
+    return ScreenTypeLayout.builder(
+      breakpoints: ScreenBreakpoints(
+          tablet: tabletBreakpointMinimumWidth,
+          desktop: desktopBreakpointMinimumWidth,
+          watch: watchBreakpointMinimumWidth),
+      mobile: mobileBuilder,
+      tablet: tabletBuilder,
+      desktop: desktopBuilder,
+      watch: watchBuilder,
     );
   }
 }
