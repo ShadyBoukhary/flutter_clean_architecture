@@ -1,3 +1,14 @@
+## [4.0.0] - Thursday, September 24st, 2020
+### What's New
+- Improves `ResponsiveViewState` with watch interface
+- Added `mobileBuilder` to `ResponsiveViewState`
+- Added `tabletBuilder` to `ResponsiveViewState`
+- Added `desktopBuilder` to `ResponsiveViewState`
+- Added `watchBuilder` to `ResponsiveViewState`
+- Removed `buildTabletView()`
+- Removed `buildMobileView()`
+- Removed `buildDesktopView()`
+
 ## [3.1.1] - Monday, September 21st, 2020
 
 - Added an option to pass listen:false when calling getController() outside of the build method.
