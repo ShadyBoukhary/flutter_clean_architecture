@@ -15,7 +15,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^4.0.0
+  flutter_clean_architecture: ^4.0.1
 
 ```
 
@@ -83,9 +83,9 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * The `View` is comprised of 2 classes
       * One that extends `View`, which would be the root `Widget` representing the `View`
       * One that extends `ViewState` with the template specialization of the other class and its `Controller`. 
-    * The `ViewState` contains the `build` method, which is technically the UI
+    * The `ViewState` contains the `view` getter, which is technically the UI implementation
     * `StatefulWidget` contains the `State` as per `Flutter`
-    * The `StatefulWidget` only serves to pass arguments to the `State` from other pages such as a title etc.. It only instantiates the `State` object (the `ViewState`) and provides it with the `Controller` it needs.
+    * The `StatefulWidget` only serves to pass arguments to the `State` from other pages such as a title etc.. It only instantiates the `State` object (the `ViewState`) and provides it with the `Controller` it needs through it's consumer.
     * The `StatefulWidget`  **has-a** `State` object (the `ViewState`) which **has-a** `Controller`
     * In summary, both the `StatefulWidget` and the `State` are represented by a  `View` and `ViewState` of the page.
     * The `ViewState` class maintains a `GlobalKey` that can be used as a key in its scaffold. If used, the `Controller` can easily access it via `getState()` in order to show snackbars and other dialogs. This is helpful but optional.
@@ -276,14 +276,13 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
        return AppScaffold(
           child: Column(
               children: <Widget>[
-                Center(
-                  // show the number of times the button has been clicked
-                  child: Text("Counter in mobile view: ${controller.counter.toString()}"),
-                ),
                 // you can refresh manually inside the controller
                 // using refreshUI()
-                MaterialButton(onPressed: controller.increment),
-                FlatButton(onPressed: () => controller.login, child: Text('Login'))
+                ControlledWidgetBuilder<CounterController>(
+                  builder: (context, controller) {
+                    return Text('Counter on mobile view ${controller.counter.toString()}');
+                  }
+                ),
               ],
             )
        );
@@ -294,14 +293,13 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
        return AppScaffold(
          child: Column(
              children: <Widget>[
-               Center(
-                 // show the number of times the button has been clicked
-                 child: Text("Counter in tablet view: ${controller.counter.toString()}"),
-               ),
                // you can refresh manually inside the controller
                // using refreshUI()
-               MaterialButton(onPressed: controller.increment),
-               FlatButton(onPressed: () => controller.login, child: Text('Login'))
+               ControlledWidgetBuilder<CounterController>(
+                 builder: (context, controller) {
+                   return Text('Counter on tablet view ${controller.counter.toString()}');
+                 }
+               ),
              ],
            )
        );
@@ -312,14 +310,13 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
        return AppScaffold(
          child: Row(
              children: <Widget>[
-               Center(
-                 // show the number of times the button has been clicked
-                 child: Text("Counter in desktop view: ${controller.counter.toString()}"),
-               ),
                // you can refresh manually inside the controller
                // using refreshUI()
-               MaterialButton(onPressed: controller.increment),
-               FlatButton(onPressed: () => controller.login, child: Text('Login'))
+               ControlledWidgetBuilder<CounterController>(
+                 builder: (context, controller) {
+                   return Text('Counter on desktop view ${controller.counter.toString()}');
+                 }
+               ),
              ],
            )
        );
