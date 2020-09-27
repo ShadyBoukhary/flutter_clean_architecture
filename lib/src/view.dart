@@ -144,15 +144,26 @@ abstract class ViewState<Page extends View, Con extends Controller>
     _logger = Logger('${runtimeType}');
   }
 
+  void initViewState(Con controller) {
+    _logger.info('Initializing state of $runtimeType');
+  }
+
   @override
   @mustCallSuper
   void didChangeDependencies() {
     if (widget.routeObserver != null) {
-      _logger.info('$runtimeType is observring route events.');
+      _logger.info('$runtimeType is observing route events.');
       widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
     }
 
     super.didChangeDependencies();
+  }
+
+  @override
+  @nonVirtual
+  void initState() {
+    initViewState(_controller);
+    super.initState();
   }
 
   @override

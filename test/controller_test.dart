@@ -59,7 +59,11 @@ void main() {
 
 class CounterController extends Controller {
   int counter;
-  CounterController() : counter = 0;
+  CounterController();
+
+  void initializeCounter() {
+    counter = 0;
+  }
 
   void increment() {
     counter++;
@@ -93,6 +97,12 @@ class CounterPage extends View {
 
 class CounterState extends ViewState<CounterPage, CounterController> {
   CounterState() : super(CounterController());
+
+  @override
+  void initViewState(CounterController controller) {
+    controller.initializeCounter();
+    super.initViewState(controller);
+  }
 
   @override
   Widget get view {
