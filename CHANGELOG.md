@@ -1,3 +1,6 @@
+## [4.0.1] - Sunday, September 27st, 2020
+- Created `initViewState` on `ViewState` to enable access to controller on initialize.
+
 ## [4.0.0] - Thursday, September 24st, 2020
 ### What's New
 - Created `ControlledWidget` to create `StatelessWidgets` refreshable by `Controller`
