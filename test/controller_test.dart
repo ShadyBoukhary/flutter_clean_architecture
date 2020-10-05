@@ -17,6 +17,11 @@ void main() {
     binding.addTime(const Duration(seconds: 3));
     await tester.pumpWidget(MaterialApp(
       home: CounterPage(
+        // Will be triggered right after initViewState
+        onWidgetChangeDependencies: (BuildContext context, CounterController controller) {
+          expect(controller.counter, equals(0));
+          expect(context, isNotNull);
+        },
         onWidgetBuild: () {
           numberOfWidgetBuilds++;
         },
@@ -83,11 +88,13 @@ class CounterController extends Controller {
 
 class CounterPage extends View {
   final Function onWidgetBuild;
-  final Function onUncontrolledWidgetBuild;
   final Function onControlledWidgetBuild;
+  final Function onUncontrolledWidgetBuild;
+  final Function onWidgetChangeDependencies;
 
   CounterPage(
       {this.onWidgetBuild,
+      this.onWidgetChangeDependencies,
       this.onUncontrolledWidgetBuild,
       this.onControlledWidgetBuild});
 
@@ -99,9 +106,15 @@ class CounterState extends ViewState<CounterPage, CounterController> {
   CounterState() : super(CounterController());
 
   @override
+  void didChangeViewDependencies(CounterController controller) {
+    super.didChangeViewDependencies(controller);
+    widget.onWidgetChangeDependencies(context, controller);
+  }
+
+  @override
   void initViewState(CounterController controller) {
-    controller.initializeCounter();
     super.initViewState(controller);
+    controller.initializeCounter();
   }
 
   @override

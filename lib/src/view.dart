@@ -144,8 +144,33 @@ abstract class ViewState<Page extends View, Con extends Controller>
     _logger = Logger('${runtimeType}');
   }
 
+  /// Should be used when need to perform some action on [initState] life cycle. [Controller] is injected on parameters.
+  /// [super.initViewState] should be called before the actions you need to perform.
+  ///
+  /// ```dart
+  /// void initViewState(CounterController controller) {
+  ///   super.initViewState(controller);
+  ///   controller.initializeCounter();
+  /// }
+  /// ```
+  @mustCallSuper
   void initViewState(Con controller) {
     _logger.info('Initializing state of $runtimeType');
+  }
+
+  /// Should be used when need to perform some action on [didChangeDependencies] life cycle. [Controller] is injected on parameters.
+  /// [super.initViewState] should be called before the actions you need to perform. Like [didChangeDependencies], you can safely perform
+  /// actions that depends on [BuildContext] here.
+  ///
+  /// ```dart
+  /// void didChangeViewDependencies(CounterController controller) {
+  ///   super.didChangeViewDependencies(controller);
+  ///   controller.updateCounterOnDependencies();
+  /// }
+  /// ```
+  @mustCallSuper
+  void didChangeViewDependencies(Con controller) {
+    _logger.info('didChangeDependencies triggered on $runtimeType');
   }
 
   @override
