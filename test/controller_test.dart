@@ -18,7 +18,8 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: CounterPage(
         // Will be triggered right after initViewState
-        onWidgetChangeDependencies: (BuildContext context, CounterController controller) {
+        onWidgetChangeDependencies:
+            (BuildContext context, CounterController controller) {
           expect(controller.counter, equals(0));
           expect(context, isNotNull);
         },
