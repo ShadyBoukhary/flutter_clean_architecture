@@ -1,3 +1,6 @@
+## [4.0.2] - Monday, October 5th, 2020
+- Updated android build requirements for flutter 1.22
+
 ## [4.0.1] - Sunday, September 27st, 2020
 - Created `initViewState` on `ViewState` to enable access to controller on initialize.
 
