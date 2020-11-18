@@ -88,8 +88,7 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * The `StatefulWidget` only serves to pass arguments to the `State` from other pages such as a title etc.. It only instantiates the `State` object (the `ViewState`) and provides it with the `Controller` it needs through it's consumer.
     * The `StatefulWidget`  **has-a** `State` object (the `ViewState`) which **has-a** `Controller`
     * In summary, both the `StatefulWidget` and the `State` are represented by a  `View` and `ViewState` of the page.
-    * The `ViewState` class maintains a `GlobalKey` that can be used as a key in its scaffold. If used, the `Controller` can easily access it via `getState()` in order to show snackbars and other dialogs. This is helpful but optional.
-    * 
+    * The `ViewState` class maintains a `GlobalKey` that can be used as a key in its scaffold. If used, the `Controller` can easily access it via `getState()` in order to show snackbars and other dialogs. This is helpful but optional. 
 * **Controller**
   * Every `ViewState` **has-a** `Controller`. The `Controller` provides the needed member data of the `ViewState` i.e. dynamic data. The `Controller` also implements the event-handlers of the `ViewState` widgets, but has no access to the `Widgets` themselves. The `ViewState` uses the `Controller`, not the other way around. When the `ViewState` calls a handler from the `Controller`, `refreshUI()` can be called to update the view.
   * Every `Controller` extends the `Controller` abstract class, which implements `WidgetsBindingObserver`. Every `Controller` class is responsible for handling lifecycle events for the `View` and can override:
