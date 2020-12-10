@@ -117,9 +117,29 @@ abstract class Controller
 
   /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
   /// Any cleaning, disposing should go in here.
+  ///
+  /// To perform correct actions that depends on latest [BuildContext] used on view before dispose, you must
+  /// use injected context.
+  ///
+  /// The usage of [Controller.getContext] will be impossible here. Since the context will be null after the widget be removed from the widget
+  /// tree.
+
+  @mustCallSuper
+  @visibleForOverriding
+  void onDisposed(BuildContext context) {
+    assert(_globalKey.currentContext == null,
+        '''Make sure you are not calling `disposeController` in any other call. This method should only be called from view `dispose` method.
+        For example:
+        If this is being triggered in any other way, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
+     the error.''');
+    dispose();
+  }
+
   @override
   @mustCallSuper
   @visibleForOverriding
+  @Deprecated(
+      'Please use `onDisposed` to achieve correct behavior. Will be removed in the next release.')
   void dispose() {
     _isMounted = false;
     logger.info('Disposing ${runtimeType}');

@@ -1,5 +1,6 @@
 ## [4.0.3] - Thursday, December 10th, 2020
 - Fixed `didChangeViewDependencies` to trigger correctly on `didChangeDependencies`
+- Deprecated `Controller.dispose`. Added `Controller.onDisposed` to ensure correct usage of `BuildContext` on dispose life cycle.
 
 ## [4.0.2] - Monday, October 5th, 2020
 - Updated example android build requirements for flutter 1.22
