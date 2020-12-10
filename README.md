@@ -15,7 +15,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^4.0.2
+  flutter_clean_architecture: ^4.0.3
 
 ```
 
