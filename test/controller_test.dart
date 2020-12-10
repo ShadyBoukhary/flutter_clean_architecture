@@ -7,6 +7,9 @@ GlobalKey snackBar = GlobalKey();
 GlobalKey inc = GlobalKey();
 
 void main() {
+  int initialCounter;
+  BuildContext widgetContext;
+
   var numberOfWidgetBuilds = 0;
   var numberOfUncontrolledWidgetBuilds = 0;
   var numberOfControlledWidgetBuilds = 0;
@@ -18,10 +21,9 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: CounterPage(
         // Will be triggered right after initViewState
-        onWidgetChangeDependencies:
-            (BuildContext context, CounterController controller) {
-          expect(controller.counter, equals(0));
-          expect(context, isNotNull);
+        onWidgetChangeDependencies: (context, CounterController controller) {
+          initialCounter = controller.counter;
+          widgetContext = context;
         },
         onWidgetBuild: () {
           numberOfWidgetBuilds++;
@@ -35,6 +37,8 @@ void main() {
       ),
     ));
 
+    expect(initialCounter, equals(0));
+    expect(widgetContext, isNotNull);
     // Create our Finders
     var counterFinder = find.text('0');
     expect(counterFinder, findsOneWidget);

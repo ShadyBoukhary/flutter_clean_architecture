@@ -181,6 +181,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
       widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
     }
 
+    didChangeViewDependencies(_controller);
     super.didChangeDependencies();
   }
 
