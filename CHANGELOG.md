@@ -1,3 +1,6 @@
+## [4.0.3] - Thursday, December 10th, 2020
+- Fixed `didChangeViewDependencies` to trigger correctly on `didChangeDependencies`
+
 ## [4.0.2] - Monday, October 5th, 2020
 - Updated example android build requirements for flutter 1.22
 - Created `didChangeViewDependencies` on `ViewState` to enable access to controller on `didChangeDependencies`
