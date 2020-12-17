@@ -245,6 +245,7 @@ abstract class Controller
   ///       void onInActive() => print('App is in the background.');
   ///     }
   /// ```
+  @visibleForOverriding
   void onInActive() {}
 
   /// Called when the application is not currently visible to the user, not responding to user input, and running in the background.
@@ -256,6 +257,7 @@ abstract class Controller
   ///       void onPaused() => print('App is paused.');
   ///     }
   /// ```
+  @visibleForOverriding
   void onPaused() {}
 
   /// Called when the application is visible and is responding to the user i.e. in the foreground and running.
@@ -265,6 +267,7 @@ abstract class Controller
   ///       void onResumed() => print('App is resumed.');
   ///     }
   /// ```
+  @visibleForOverriding
   void onResumed() {}
 
   /// Called before the application is detached.
@@ -276,6 +279,7 @@ abstract class Controller
   ///       void onDetached() => print('App is about to detach.');
   ///     }
   /// ```
+  @visibleForOverriding
   void onDetached() {}
 
   /// Called before the view is deactivated.
@@ -299,6 +303,7 @@ abstract class Controller
   ///       void onDeactivated() => print('View is about to be deactivated and maybe disposed');
   ///     }
   /// ```
+  @visibleForOverriding
   void onDeactivated() {}
 
   /// Called before the view is reassembled.
@@ -317,6 +322,7 @@ abstract class Controller
   ///       void onReassembled() => print('View is about to be reassembled');
   ///     }
   /// ```
+  @visibleForOverriding
   void onReassembled() {}
 
   /// Called before [View.didChangeDependencies] is called
@@ -331,6 +337,7 @@ abstract class Controller
   ///       void onDidChangeDependencies() => print('View is about to run didChangeDependencies life cycle');
   ///     }
   /// ```
+  @visibleForOverriding
   void onDidChangeDependencies() {}
 
   /// Called before [View.initState] is called
@@ -343,6 +350,7 @@ abstract class Controller
   ///       void onInitState() => print('View is about to run initState life cycle');
   ///     }
   /// ```
+  @visibleForOverriding
   void onInitState() {}
 }
 
