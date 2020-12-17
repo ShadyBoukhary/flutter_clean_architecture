@@ -145,7 +145,8 @@ abstract class ViewState<Page extends View, Con extends Controller>
   }
 
   @mustCallSuper
-  @Deprecated('''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
+  @Deprecated(
+      '''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
     correct `Controller`.
     
     To achieve correct use of `ViewState.initState`, please check out `Controller.onInitState` method.
@@ -155,7 +156,8 @@ abstract class ViewState<Page extends View, Con extends Controller>
   void initViewState(Con controller) {}
 
   @mustCallSuper
-  @Deprecated('''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
+  @Deprecated(
+      '''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
     correct `Controller`.
     
     To achieve correct use of `ViewState.didChangeDependencies`, please check out `Controller.onDidChangeDependencies` method.
@@ -198,7 +200,8 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @override
   @mustCallSuper
   void deactivate() {
-    _logger.info('Deactivating $runtimeType. (This is usually called right before dispose)');
+    _logger.info(
+        'Deactivating $runtimeType. (This is usually called right before dispose)');
     _controller.onDeactivated();
     super.deactivate();
   }

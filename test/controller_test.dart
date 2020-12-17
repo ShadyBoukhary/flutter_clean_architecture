@@ -87,11 +87,10 @@ class CounterController extends Controller {
 
   int counter;
 
-  CounterController({
-     this.onViewDidChangeDependencies,
-     this.onViewInitState,
-     this.onViewDeactivated
-  });
+  CounterController(
+      {this.onViewDidChangeDependencies,
+      this.onViewInitState,
+      this.onViewDeactivated});
 
   void increment() {
     counter++;
@@ -131,12 +130,11 @@ class CounterPage extends View {
   final Function onControlledWidgetBuild;
   final Function onUncontrolledWidgetBuild;
 
-  CounterPage({
-    this.onWidgetBuild,
-    this.onUncontrolledWidgetBuild,
-    this.onControlledWidgetBuild,
-    this.controller
-  });
+  CounterPage(
+      {this.onWidgetBuild,
+      this.onUncontrolledWidgetBuild,
+      this.onControlledWidgetBuild,
+      this.controller});
 
   @override
   State<StatefulWidget> createState() => CounterState(controller: controller);
