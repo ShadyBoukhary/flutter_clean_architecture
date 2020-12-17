@@ -152,9 +152,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
     
     This method will be removed in next release.
   ''')
-  void initViewState(Con controller) {
-    _logger.info('Initializing state of $runtimeType');
-  }
+  void initViewState(Con controller) {}
 
   @mustCallSuper
   @Deprecated('''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
@@ -164,9 +162,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
     
     This method will be removed in next release.
   ''')
-  void didChangeViewDependencies(Con controller) {
-    _logger.info('didChangeDependencies triggered on $runtimeType');
-  }
+  void didChangeViewDependencies(Con controller) {}
 
   @override
   @mustCallSuper
@@ -176,7 +172,9 @@ abstract class ViewState<Page extends View, Con extends Controller>
       widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
     }
 
+    _logger.info('didChangeDependencies triggered on $runtimeType');
     _controller.onDidChangeDependencies();
+    // TODO: Remove in next release
     didChangeViewDependencies(_controller);
     super.didChangeDependencies();
   }
@@ -184,7 +182,9 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @override
   @nonVirtual
   void initState() {
+    _logger.info('Initializing state of $runtimeType');
     _controller.onInitState();
+    // TODO: Remove in next release
     initViewState(_controller);
     super.initState();
   }

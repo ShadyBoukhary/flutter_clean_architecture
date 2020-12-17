@@ -7,9 +7,11 @@ GlobalKey snackBar = GlobalKey();
 GlobalKey inc = GlobalKey();
 
 void main() {
-  int initialCounter;
   BuildContext widgetContext;
 
+  var stateInitialized = false;
+  var viewDidChangeViewDependenciesTriggered = false;
+  var stateDeactivated = false;
   var numberOfWidgetBuilds = 0;
   var numberOfUncontrolledWidgetBuilds = 0;
   var numberOfControlledWidgetBuilds = 0;
@@ -20,11 +22,6 @@ void main() {
     binding.addTime(const Duration(seconds: 3));
     await tester.pumpWidget(MaterialApp(
       home: CounterPage(
-        // Will be triggered right after initViewState
-        onWidgetChangeDependencies: (context, CounterController controller) {
-          initialCounter = controller.counter;
-          widgetContext = context;
-        },
         onWidgetBuild: () {
           numberOfWidgetBuilds++;
         },
@@ -34,11 +31,22 @@ void main() {
         onControlledWidgetBuild: () {
           numberOfControlledWidgetBuilds++;
         },
+        controller: CounterController(
+          onViewDeactivated: () {
+            stateDeactivated = true;
+          },
+          onViewDidChangeDependencies: () {
+            viewDidChangeViewDependenciesTriggered = true;
+          },
+          onViewInitState: () {
+            stateInitialized = true;
+          },
+        ),
       ),
     ));
 
-    expect(initialCounter, equals(0));
-    expect(widgetContext, isNotNull);
+    expect(stateInitialized, isTrue);
+    expect(viewDidChangeViewDependenciesTriggered, isTrue);
     // Create our Finders
     var counterFinder = find.text('0');
     expect(counterFinder, findsOneWidget);
@@ -64,16 +72,26 @@ void main() {
     expect(numberOfWidgetBuilds, equals(1));
     expect(numberOfUncontrolledWidgetBuilds, equals(1));
     expect(numberOfControlledWidgetBuilds, equals(3));
+
+    // To remove page from tree
+    await tester.pumpWidget(Container());
+
+    expect(stateDeactivated, isTrue);
   });
 }
 
 class CounterController extends Controller {
-  int counter;
-  CounterController();
+  final Function onViewDidChangeDependencies;
+  final Function onViewInitState;
+  final Function onViewDeactivated;
 
-  void initializeCounter() {
-    counter = 0;
-  }
+  int counter;
+
+  CounterController({
+     this.onViewDidChangeDependencies,
+     this.onViewInitState,
+     this.onViewDeactivated
+  });
 
   void increment() {
     counter++;
@@ -89,38 +107,43 @@ class CounterController extends Controller {
   void initListeners() {
     // No presenter needed for controller test
   }
+
+  @override
+  void onInitState() {
+    onViewInitState();
+  }
+
+  @override
+  void onDidChangeDependencies() {
+    onViewDidChangeDependencies();
+    counter = 0;
+  }
+
+  @override
+  void onDeactivated() {
+    onViewDeactivated();
+  }
 }
 
 class CounterPage extends View {
+  final Controller controller;
   final Function onWidgetBuild;
   final Function onControlledWidgetBuild;
   final Function onUncontrolledWidgetBuild;
-  final Function onWidgetChangeDependencies;
 
-  CounterPage(
-      {this.onWidgetBuild,
-      this.onWidgetChangeDependencies,
-      this.onUncontrolledWidgetBuild,
-      this.onControlledWidgetBuild});
+  CounterPage({
+    this.onWidgetBuild,
+    this.onUncontrolledWidgetBuild,
+    this.onControlledWidgetBuild,
+    this.controller
+  });
 
   @override
-  State<StatefulWidget> createState() => CounterState();
+  State<StatefulWidget> createState() => CounterState(controller: controller);
 }
 
 class CounterState extends ViewState<CounterPage, CounterController> {
-  CounterState() : super(CounterController());
-
-  @override
-  void didChangeViewDependencies(CounterController controller) {
-    super.didChangeViewDependencies(controller);
-    widget.onWidgetChangeDependencies(context, controller);
-  }
-
-  @override
-  void initViewState(CounterController controller) {
-    super.initViewState(controller);
-    controller.initializeCounter();
-  }
+  CounterState({Controller controller}) : super(controller);
 
   @override
   Widget get view {
