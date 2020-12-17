@@ -52,8 +52,8 @@ class HomeController extends Controller {
   }
 
   @override
-  void onDisposed(BuildContext context) {
+  void onDisposed() {
     homePresenter.dispose(); // don't forget to dispose of the presenter
-    super.onDisposed(context);
+    super.onDisposed();
   }
 }

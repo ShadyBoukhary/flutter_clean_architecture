@@ -126,11 +126,16 @@ abstract class Controller
 
   @mustCallSuper
   @visibleForOverriding
-  void onDisposed(BuildContext context) {
+  void onDisposed() {
     assert(_globalKey.currentContext == null,
-        '''Make sure you are not calling `disposeController` in any other call. This method should only be called from view `dispose` method.
+        '''Make sure you are not calling `dispose` in any other call. This method should only be called from view `dispose` method.
+        
+        Also, the usage of context `onDispose` lifecycle is unsafe and it may lead to errors. If you need to remove any resouces from the
+        tree, please check if `onDeactivate`/`onActivate` lifecycles, that controls `deactivate`/`activate` view state are enough to 
+        your case
+        
         For example:
-        If this is being triggered in any other way, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
+        If this does not resolve for you, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
     dispose();
   }

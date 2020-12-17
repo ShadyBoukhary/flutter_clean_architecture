@@ -202,7 +202,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @mustCallSuper
   void dispose() {
     _logger.info('Disposing $runtimeType.');
-    _controller.onDisposed(context);
+    _controller.onDisposed();
     super.dispose();
   }
 }
