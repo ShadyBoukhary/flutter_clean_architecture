@@ -144,31 +144,26 @@ abstract class ViewState<Page extends View, Con extends Controller>
     _logger = Logger('${runtimeType}');
   }
 
-  /// Should be used when need to perform some action on [initState] life cycle. [Controller] is injected on parameters.
-  /// [super.initViewState] should be called before the actions you need to perform.
-  ///
-  /// ```dart
-  /// void initViewState(CounterController controller) {
-  ///   super.initViewState(controller);
-  ///   controller.initializeCounter();
-  /// }
-  /// ```
   @mustCallSuper
+  @Deprecated('''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
+    correct `Controller`.
+    
+    To achieve correct use of `ViewState.initState`, please check out `Controller.onInitState` method.
+    
+    This method will be removed in next release.
+  ''')
   void initViewState(Con controller) {
     _logger.info('Initializing state of $runtimeType');
   }
 
-  /// Should be used when need to perform some action on [didChangeDependencies] life cycle. [Controller] is injected on parameters.
-  /// [super.initViewState] should be called before the actions you need to perform. Like [didChangeDependencies], you can safely perform
-  /// actions that depends on [BuildContext] here.
-  ///
-  /// ```dart
-  /// void didChangeViewDependencies(CounterController controller) {
-  ///   super.didChangeViewDependencies(controller);
-  ///   controller.updateCounterOnDependencies();
-  /// }
-  /// ```
   @mustCallSuper
+  @Deprecated('''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
+    correct `Controller`.
+    
+    To achieve correct use of `ViewState.didChangeDependencies`, please check out `Controller.onDidChangeDependencies` method.
+    
+    This method will be removed in next release.
+  ''')
   void didChangeViewDependencies(Con controller) {
     _logger.info('didChangeDependencies triggered on $runtimeType');
   }
@@ -181,6 +176,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
       widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
     }
 
+    _controller.onDidChangeDependencies();
     didChangeViewDependencies(_controller);
     super.didChangeDependencies();
   }
@@ -188,6 +184,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @override
   @nonVirtual
   void initState() {
+    _controller.onInitState();
     initViewState(_controller);
     super.initState();
   }
@@ -196,6 +193,22 @@ abstract class ViewState<Page extends View, Con extends Controller>
   @nonVirtual
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<Con>.value(value: _controller, child: view);
+  }
+
+  @override
+  @mustCallSuper
+  void deactivate() {
+    _logger.info('Deactivating $runtimeType. (This is usually called right before dispose)');
+    _controller.onDeactivated();
+    super.deactivate();
+  }
+
+  @override
+  @mustCallSuper
+  void reassemble() {
+    _logger.info('Reassembling $runtimeType.');
+    _controller.onReassembled();
+    super.reassemble();
   }
 
   @override

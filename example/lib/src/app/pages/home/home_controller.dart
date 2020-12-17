@@ -46,10 +46,13 @@ class HomeController extends Controller {
   }
 
   @override
-  void onResumed() {
-    print('On resumed');
-    super.onResumed();
-  }
+  void onResumed() => print('On resumed');
+
+  @override
+  void onReassembled() => print('View is about to be reassembled');
+
+  @override
+  void onDeactivated() => print('View is about to be deactivated');
 
   @override
   void onDisposed() {

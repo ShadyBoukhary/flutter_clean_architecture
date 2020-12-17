@@ -130,9 +130,8 @@ abstract class Controller
     assert(_globalKey.currentContext == null,
         '''Make sure you are not calling `dispose` in any other call. This method should only be called from view `dispose` method.
         
-        Also, the usage of context `onDispose` lifecycle is unsafe and it may lead to errors. If you need to remove any resouces from the
-        tree, please check if `onDeactivate`/`onActivate` lifecycles, that controls `deactivate`/`activate` view state are enough to 
-        your case
+        Also, the usage of context `onDispose` lifecycle is unsafe and it may lead to errors. If you need to remove any resources from the
+        tree, please check if `onDeactivate` lifecycle, that controls `deactivate` view state are enough to your case.
         
         For example:
         If this does not resolve for you, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
@@ -278,6 +277,73 @@ abstract class Controller
   ///     }
   /// ```
   void onDetached() {}
+
+  /// Called before the view is deactivated.
+  /// When the view is in this context, it means that the view is about to be extracted from the widget tree, but it can may be
+  /// added again. Quoting the view `deactivate` docs from `https://api.flutter.dev/flutter/widgets/State/deactivate.html`:
+  ///
+  /// ```The framework calls this method whenever it removes this State object from the tree.
+  ///   In some cases, the framework will reinsert the State object into another part of the tree
+  ///   (e.g., if the subtree containing this State object is grafted from one location in the tree to another).
+  ///   If that happens, the framework will ensure that it calls build to give the
+  ///   State object a chance to adapt to its new location in the tree.
+  /// ```
+  ///
+  /// So, this may be the correct lifecycle to remove any resources that depends on other widgets on widget tree.
+  ///
+  /// Usage:
+  ///
+  /// ```dart
+  ///     class MyController extends Controller {
+  ///       @override
+  ///       void onDeactivated() => print('View is about to be deactivated and maybe disposed');
+  ///     }
+  /// ```
+  void onDeactivated() {}
+
+  /// Called before the view is reassembled.
+  /// When this method is called on view life cycle on `reassemble`, and it guarantees that `build` lifecycle will
+  /// be called. Quoting the docs:
+  ///
+  /// ```Most widgets therefore do not need to do anything in the [reassemble] method.```
+  ///
+  /// Please be sure to read docs before use this life cycle.
+  ///
+  /// Usage:
+  ///
+  /// ```dart
+  ///     class MyController extends Controller {
+  ///       @override
+  ///       void onReassembled() => print('View is about to be reassembled');
+  ///     }
+  /// ```
+  void onReassembled() {}
+
+  /// Called before [View.didChangeDependencies] is called
+  ///
+  /// Should be used when need to perform some action on [View.didChangeDependencies] life cycle.
+  /// [View.initViewState] should be called before the actions you need to perform. Like [didChangeDependencies], you can safely perform
+  /// actions that depends on [BuildContext] here.
+  ///
+  /// ```dart
+  ///     class MyController extends Controller {
+  ///       @override
+  ///       void onDidChangeDependencies() => print('View is about to run didChangeDependencies life cycle');
+  ///     }
+  /// ```
+  void onDidChangeDependencies() {}
+
+  /// Called before [View.initState] is called
+  ///
+  /// Should be used when need to perform some action on [View.initState] life cycle.
+  ///
+  /// ```dart
+  ///     class MyController extends Controller {
+  ///       @override
+  ///       void onInitState() => print('View is about to run initState life cycle');
+  ///     }
+  /// ```
+  void onInitState() {}
 }
 
 typedef ControlledBuilder<Con extends Controller> = Widget Function(
