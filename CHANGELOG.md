@@ -1,3 +1,12 @@
+## [4.0.4] - Thursday, December 17th, 2020
+- Removed `BuildContext` injection from `Controller.onDisposed` life cycle to avoid unsafe usages of dead context
+- Created `Controller.onInitState` to correct control `View.initState` life cycle.
+- Created `Controller.onDidChangeDependencies` to correct control `View.initState` life cycle.
+- Created `Controller.onDeactivated` to correct control `View.deactivate` life cycle.
+- Created `Controller.onReassembled` to correct control `View.reassemble` life cycle.
+- Deprecated `View.didChangeViewDependencies`. Added `Controller.didChangeDependencies` to ensure correct usage. 
+- Deprecated `View.initViewState`. Added `Controller.initState` to ensure correct usage. 
+
 ## [4.0.3] - Thursday, December 10th, 2020
 - Fixed `didChangeViewDependencies` to trigger correctly on `didChangeDependencies`
 - Deprecated `Controller.dispose`. Added `Controller.onDisposed` to ensure correct usage of `BuildContext` on dispose life cycle.
