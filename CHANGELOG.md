@@ -1,3 +1,18 @@
+## [4.1.0] - Tuesday, January 5th, 2021
+### What's new
+- Created `mobileView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+- Created `tabletView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+- Created `desktopView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+- Created `watchView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+
+### Breaking changes
+- Removed deprecated methods from view
+- Removed deprecated methods from controller
+- Removed `mobileBuilder` from `ResponsiveViewState`
+- Removed `tabletBuilder` from `ResponsiveViewState`
+- Removed `desktopBuilder` from `ResponsiveViewState`
+- Removed `watchBuilder` from `ResponsiveViewState`
+
 ## [4.0.4] - Thursday, December 17th, 2020
 - Removed `BuildContext` injection from `Controller.onDisposed` life cycle to avoid unsafe usages of dead context
 - Created `Controller.onInitState` to correct control `View.initState` life cycle.
