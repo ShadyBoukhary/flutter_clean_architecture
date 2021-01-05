@@ -150,16 +150,16 @@ class _TestPageState extends ResponsiveViewState<TestPage, TestController> {
   _TestPageState(TestController controller) : super(controller);
 
   @override
-  Widget get desktopView => Container(child: Center(child: Text('Desktop')));
+  Widget get desktopView => Container(key: globalKey, child: Center(child: Text('Desktop')));
 
   @override
-  Widget get mobileView => Container(child: Center(child: Text('Mobile')));
+  Widget get mobileView => Container(key: globalKey, child: Center(child: Text('Mobile')));
 
   @override
-  Widget get tabletView => Container(child: Center(child: Text('Tablet')));
+  Widget get tabletView => Container(key: globalKey, child: Center(child: Text('Tablet')));
 
   @override
-  Widget get watchView => Container(child: Center(child: Text('Watch')));
+  Widget get watchView => Container(key: globalKey, child: Center(child: Text('Watch')));
 }
 
 /// This is a snippet to change the default value of test flutter emulator size.
