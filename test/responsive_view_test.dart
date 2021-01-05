@@ -3,26 +3,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
 void main() {
+  var stateInitialized = false;
+  var viewDidChangeViewDependenciesTriggered = false;
+  var stateDeactivated = false;
+
+  Widget page;
+  TestController controller;
+
+  setUp(() {
+    controller = TestController(
+      onViewDeactivated: () {
+        stateDeactivated = true;
+      },
+      onViewDidChangeDependencies: () {
+        viewDidChangeViewDependenciesTriggered = true;
+      },
+      onViewInitState: () {
+        stateInitialized = true;
+      },
+    );
+    page = TestPage(controller: controller);
+  });
+
   testWidgets('Run TestPage | Mobile viewport then resizes',
       (WidgetTester tester) async {
-    var stateInitialized = false;
-    var viewDidChangeViewDependenciesTriggered = false;
-    var stateDeactivated = false;
-
-    final page = TestPage(
-      controller: TestController(
-        onViewDeactivated: () {
-          stateDeactivated = true;
-        },
-        onViewDidChangeDependencies: () {
-          viewDidChangeViewDependenciesTriggered = true;
-        },
-        onViewInitState: () {
-          stateInitialized = true;
-        },
-      ),
-    );
-
     await tester.setScreenSize(width: 540, height: 540);
 
     await tester.pumpWidget(MaterialApp(home: page));
@@ -54,9 +58,6 @@ void main() {
   });
 
   testWidgets('Run TestPage | Mobile Viewport', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    final page = TestPage();
-
     await tester.setScreenSize(width: 540, height: 540);
 
     await tester.pumpWidget(MaterialApp(home: page));
@@ -71,9 +72,6 @@ void main() {
   });
 
   testWidgets('Run TestPage | Tablet Viewport', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    final page = TestPage();
-
     await tester.setScreenSize(width: 700, height: 600);
 
     await tester
@@ -86,9 +84,6 @@ void main() {
   });
 
   testWidgets('Run TestPage | Desktop Viewport', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    final page = TestPage();
-
     await tester.setScreenSize(width: 1024, height: 1024);
 
     await tester
@@ -101,9 +96,6 @@ void main() {
   });
 
   testWidgets('Run TestPage | Watch Viewport', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    final page = TestPage();
-
     await tester.setScreenSize(width: 250, height: 250);
 
     await tester
@@ -123,8 +115,8 @@ class TestController extends Controller {
 
   TestController(
       {this.onViewDidChangeDependencies,
-        this.onViewInitState,
-        this.onViewDeactivated});
+      this.onViewInitState,
+      this.onViewDeactivated});
 
   @override
   void initListeners() {}
@@ -158,24 +150,16 @@ class _TestPageState extends ResponsiveViewState<TestPage, TestController> {
   _TestPageState(TestController controller) : super(controller);
 
   @override
-  ViewBuilder desktopBuilder = (BuildContext context) {
-    return Container(child: Center(child: Text('Desktop')));
-  };
+  Widget get desktopView => Container(child: Center(child: Text('Desktop')));
 
   @override
-  ViewBuilder mobileBuilder = (BuildContext context) {
-    return Container(child: Center(child: Text('Mobile')));
-  };
+  Widget get mobileView => Container(child: Center(child: Text('Mobile')));
 
   @override
-  ViewBuilder tabletBuilder = (BuildContext context) {
-    return Container(child: Center(child: Text('Tablet')));
-  };
+  Widget get tabletView => Container(child: Center(child: Text('Tablet')));
 
   @override
-  ViewBuilder watchBuilder = (BuildContext context) {
-    return Container(child: Center(child: Text('Watch')));
-  };
+  Widget get watchView => Container(child: Center(child: Text('Watch')));
 }
 
 /// This is a snippet to change the default value of test flutter emulator size.
