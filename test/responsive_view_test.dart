@@ -5,12 +5,30 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 void main() {
   testWidgets('Run TestPage | Mobile viewport then resizes',
       (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    final page = TestPage();
+    var stateInitialized = false;
+    var viewDidChangeViewDependenciesTriggered = false;
+    var stateDeactivated = false;
+
+    final page = TestPage(
+      controller: TestController(
+        onViewDeactivated: () {
+          stateDeactivated = true;
+        },
+        onViewDidChangeDependencies: () {
+          viewDidChangeViewDependenciesTriggered = true;
+        },
+        onViewInitState: () {
+          stateInitialized = true;
+        },
+      ),
+    );
 
     await tester.setScreenSize(width: 540, height: 540);
 
     await tester.pumpWidget(MaterialApp(home: page));
+
+    expect(stateInitialized, isTrue);
+    expect(viewDidChangeViewDependenciesTriggered, isTrue);
 
     await tester.pump();
     await tester.pumpAndSettle();
@@ -28,6 +46,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Desktop'), findsOneWidget);
+
+    // To remove page from tree
+    await tester.pumpWidget(Container());
+
+    expect(stateDeactivated, isTrue);
   });
 
   testWidgets('Run TestPage | Mobile Viewport', (WidgetTester tester) async {
@@ -94,15 +117,41 @@ void main() {
 }
 
 class TestController extends Controller {
+  final Function onViewDidChangeDependencies;
+  final Function onViewInitState;
+  final Function onViewDeactivated;
+
+  TestController(
+      {this.onViewDidChangeDependencies,
+        this.onViewInitState,
+        this.onViewDeactivated});
+
   @override
   void initListeners() {}
+
+  @override
+  void onInitState() {
+    onViewInitState();
+  }
+
+  @override
+  void onDidChangeDependencies() {
+    onViewDidChangeDependencies();
+  }
+
+  @override
+  void onDeactivated() {
+    onViewDeactivated();
+  }
 }
 
 class TestPage extends View {
-  TestPage({Key key}) : super(key: key);
+  final Controller controller;
+
+  TestPage({Key key, this.controller}) : super(key: key);
 
   @override
-  _TestPageState createState() => _TestPageState(TestController());
+  _TestPageState createState() => _TestPageState(controller);
 }
 
 class _TestPageState extends ResponsiveViewState<TestPage, TestController> {
