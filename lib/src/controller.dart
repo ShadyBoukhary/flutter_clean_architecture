@@ -140,10 +140,7 @@ abstract class Controller
   }
 
   @override
-  @mustCallSuper
-  @visibleForOverriding
-  @Deprecated(
-      'Please use `onDisposed` to achieve correct behavior. Will be removed in the next release.')
+  @nonVirtual
   void dispose() {
     _isMounted = false;
     logger.info('Disposing ${runtimeType}');
