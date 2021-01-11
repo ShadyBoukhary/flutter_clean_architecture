@@ -7,8 +7,6 @@ GlobalKey snackBar = GlobalKey();
 GlobalKey inc = GlobalKey();
 
 void main() {
-  BuildContext widgetContext;
-
   var stateInitialized = false;
   var viewDidChangeViewDependenciesTriggered = false;
   var stateDeactivated = false;
