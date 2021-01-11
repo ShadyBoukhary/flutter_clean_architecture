@@ -15,7 +15,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^4.0.5
+  flutter_clean_architecture: ^4.1.1
 
 ```
 
@@ -95,8 +95,11 @@ Since `App` is the presentation layer of the application, it is the most framewo
     * **void onInActive()**
     * **void onPaused()** 
     * **void onResumed()** 
-    * **void onDetatched()**
-    * **void onDidPop()**
+    * **void onDetached()**
+    * **void onDisposed()**
+    * **void onReassembled()**
+    * **void onDidChangeDependencies()**
+    * **void onInitState()**
     * etc..
   * Also, every `Controller` **has** to implement **initListeners()** that initializes the listeners for the `Presenter` for consistency.
   * The `Controller` **has-a** `Presenter`. The `Controller` will pass the `Repository` to the `Presenter`, which it communicate later with the `Usecase`. The `Controller` will specify what listeners the `Presenter` should call for all success and error events as mentioned previously. Only the `Controller` is allowed to obtain instances of a `Repository` from the `Data` or `Device` module in the outermost layer.
@@ -210,10 +213,9 @@ class CounterState extends ViewState<CounterPage, CounterController> {
      CounterState() : super(CounterController());
 
      @override
-     Widget buildPage() {
-       return MaterialApp(
-         title: 'Flutter Demo',
-      home: Scaffold(
+     Widget get view => MaterialApp(
+        title: 'Flutter Demo',
+        home: Scaffold(
         key: globalKey, // using the built-in global key of the `View` for the scaffold or any other
                         // widget provides the controller with a way to access them via getContext(), getState(), getStateKey()
         body: Column(
@@ -237,7 +239,6 @@ class CounterState extends ViewState<CounterPage, CounterController> {
         ),
       ),
     );
-  }
 }
 ```
 ##### Responsive view state
@@ -271,55 +272,49 @@ class CounterState extends ResponsiveViewState<CounterPage, CounterController> {
      }
  
      @override
-     ViewBuilder mobileBuilder = (BuildContext context) {
-       return AppScaffold(
-          child: Column(
-              children: <Widget>[
-                // you can refresh manually inside the controller
-                // using refreshUI()
-                ControlledWidgetBuilder<CounterController>(
-                  builder: (context, controller) {
-                    return Text('Counter on mobile view ${controller.counter.toString()}');
-                  }
-                ),
-              ],
-            )
-       );
-     };
-
-     @override
-     ViewBuilder tabletBuilder = (BuildContext context) {
-       return AppScaffold(
+     ViewBuilder get mobileView => AppScaffold(
          child: Column(
              children: <Widget>[
                // you can refresh manually inside the controller
                // using refreshUI()
                ControlledWidgetBuilder<CounterController>(
                  builder: (context, controller) {
-                   return Text('Counter on tablet view ${controller.counter.toString()}');
+                   return Text('Counter on mobile view ${controller.counter.toString()}');
                  }
                ),
              ],
            )
-       );
-     };
+      );
 
      @override
-     ViewBuilder desktopBuilder = (BuildContext context) {
-       return AppScaffold(
-         child: Row(
-             children: <Widget>[
-               // you can refresh manually inside the controller
-               // using refreshUI()
-               ControlledWidgetBuilder<CounterController>(
-                 builder: (context, controller) {
-                   return Text('Counter on desktop view ${controller.counter.toString()}');
-                 }
-               ),
-             ],
-           )
-       );
-     };
+     ViewBuilder get tabletBuilder => AppScaffold(
+       child: Column(
+           children: <Widget>[
+             // you can refresh manually inside the controller
+             // using refreshUI()
+             ControlledWidgetBuilder<CounterController>(
+               builder: (context, controller) {
+                 return Text('Counter on tablet view ${controller.counter.toString()}');
+               }
+             ),
+           ],
+         )
+     );
+
+     @override
+     ViewBuilder get desktopBuilder => AppScaffold(
+        child: Row(
+            children: <Widget>[
+              // you can refresh manually inside the controller
+              // using refreshUI()
+              ControlledWidgetBuilder<CounterController>(
+                builder: (context, controller) {
+                  return Text('Counter on desktop view ${controller.counter.toString()}');
+                }
+              ),
+            ],
+          )
+      );
 }
 ```
 
@@ -663,4 +658,5 @@ class User {
 Checkout a small example [here](./example/) and a full application built [here](https://github.com/ShadyBoukhary/Axion-Technologies-HnH).
 
 ## Authors
-**Shady Boukhary** 
+**[Shady Boukhary](https://github.com/ShadyBoukhary)** 
+**[Rafael Monteiro](https://github.com/rafaelcmm)**

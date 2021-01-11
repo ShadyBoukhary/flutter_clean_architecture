@@ -60,33 +60,32 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
     extends ViewState<Page, Con> {
   ResponsiveViewState(Con controller) : super(controller);
 
-  /// Abstract builder to be implemented by the developer which will build on [Watch ViewPort].
-  ///   /// The default breakpoint value is less than [300]
-  ViewBuilder watchBuilder;
+  /// To be implemented by the developer which will build on [Watch ViewPort].
+  /// The default breakpoint value is less than [300]
+  Widget get watchView;
 
-  /// Abstract builder to be implemented by the developer which will build on [Mobile ViewPort].
-  /// The default breakpoint value is more than [300]
-  ViewBuilder mobileBuilder;
+  /// To be implemented by the developer which will build on [Mobile ViewPort].
+  /// The default breakpoint value is more than [375]
+  Widget get mobileView;
 
-  /// Abstract builder to be implemented by the developer which will build on [Tablet/Pad ViewPort].
-  ///   /// The default breakpoint value is [600]
-  ViewBuilder tabletBuilder;
+  /// To be implemented by the developer which will build on [Tablet/Pad ViewPort].
+  /// The default breakpoint value is [600]
+  Widget get tabletView;
 
-  /// Abstract builder to be implemented by the developer which will build on [Desktop ViewPort].
-  ///   /// The default breakpoint value is [950]
-  ViewBuilder desktopBuilder;
+  /// To be implemented by the developer which will build on [Desktop ViewPort].
+  /// The default breakpoint value is [950]
+  Widget get desktopView;
 
-  /// This turns buildPage into an implicit method that build according to the given builds methods: [MOBILE], [TABLET], [DESKTOP] and [WATCH].
+  /// This turns view into an implicit method that build according to the given builds methods: [MOBILE], [TABLET], [DESKTOP] and [WATCH].
   /// The Default Viewport is [MOBILE]. When [TABLET] or [DESKTOP] builds are null, [MOBILE] viewport will be called.
-
   @override
   @nonVirtual
   Widget get view {
     return ScreenTypeLayout.builder(
-      mobile: mobileBuilder,
-      tablet: tabletBuilder,
-      desktop: desktopBuilder,
-      watch: watchBuilder,
+      mobile: (_) => mobileView,
+      tablet: (_) => tabletView,
+      desktop: (_) => desktopView,
+      watch: (_) => watchView,
     );
   }
 }
@@ -144,28 +143,6 @@ abstract class ViewState<Page extends View, Con extends Controller>
     _logger = Logger('${runtimeType}');
   }
 
-  @mustCallSuper
-  @Deprecated(
-      '''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
-    correct `Controller`.
-    
-    To achieve correct use of `ViewState.initState`, please check out `Controller.onInitState` method.
-    
-    This method will be removed in next release.
-  ''')
-  void initViewState(Con controller) {}
-
-  @mustCallSuper
-  @Deprecated(
-      '''To attribute the correct responsabilities to each class, all view lifecycles must be controlled by 
-    correct `Controller`.
-    
-    To achieve correct use of `ViewState.didChangeDependencies`, please check out `Controller.onDidChangeDependencies` method.
-    
-    This method will be removed in next release.
-  ''')
-  void didChangeViewDependencies(Con controller) {}
-
   @override
   @mustCallSuper
   void didChangeDependencies() {
@@ -176,8 +153,6 @@ abstract class ViewState<Page extends View, Con extends Controller>
 
     _logger.info('didChangeDependencies triggered on $runtimeType');
     _controller.onDidChangeDependencies();
-    // TODO: Remove in next release
-    didChangeViewDependencies(_controller);
     super.didChangeDependencies();
   }
 
@@ -186,8 +161,6 @@ abstract class ViewState<Page extends View, Con extends Controller>
   void initState() {
     _logger.info('Initializing state of $runtimeType');
     _controller.onInitState();
-    // TODO: Remove in next release
-    initViewState(_controller);
     super.initState();
   }
 

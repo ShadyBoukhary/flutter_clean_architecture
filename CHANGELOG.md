@@ -1,4 +1,4 @@
-## [4.0.5] - Monday, January 11th, 2021
+## [4.1.1] - Monday, January 11th, 2021
 - Update packages:
   -  logging: from `0.11.3+2` to `0.11.4`
   -  meta: from `1.1.6` to `1.3.0-nullsafety.3`
@@ -6,6 +6,21 @@
   -  rxdart: from `0.24.1` to `0.25.0`
   -  test: from `1.5.1` to `1.16.0-nullsafety.5`
   -  pedantic: from `1.9.0` to `1.10.0-nullsafety.2`
+
+## [4.1.0] - Tuesday, January 5th, 2021
+### What's new
+- Created `mobileView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+- Created `tabletView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+- Created `desktopView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+- Created `watchView` on `ResponsiveViewState` to allow correct usage of `globalKey` and improve coherence with parent class
+
+### Breaking changes
+- Removed deprecated methods from view
+- Removed deprecated methods from controller
+- Removed `mobileBuilder` from `ResponsiveViewState`
+- Removed `tabletBuilder` from `ResponsiveViewState`
+- Removed `desktopBuilder` from `ResponsiveViewState`
+- Removed `watchBuilder` from `ResponsiveViewState`
 
 ## [4.0.4] - Thursday, December 17th, 2020
 - Removed `BuildContext` injection from `Controller.onDisposed` life cycle to avoid unsafe usages of dead context
