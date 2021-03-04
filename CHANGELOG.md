@@ -1,3 +1,9 @@
+## [5.0.0] - Thusday, March 04th, 2021
+- Stable Null Safety
+
+## [4.1.2-nullsafety.2] - Thusday, March 04th, 2021
+- Updated CI to use flutter 2.0 with nullsafety
+
 ## [4.1.2-nullsafety.1] - Thusday, March 04th, 2021
 - Updated packages for nullsafety versions
 

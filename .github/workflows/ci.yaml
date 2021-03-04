@@ -17,7 +17,7 @@ jobs:
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '1.22.x'
+          flutter-version: '2.0.x'
           channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
@@ -38,7 +38,7 @@ jobs:
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '1.22.x'
+          flutter-version: '2.0.x'
           channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
@@ -59,7 +59,7 @@ jobs:
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '1.22.x'
+          flutter-version: '2.0.x'
           channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
@@ -78,8 +78,8 @@ jobs:
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '1.22.x'
-          channel: 'beta'
+          flutter-version: '2.0.x'
+          channel: 'stable'
       - name: Getting dependencies
         run: flutter packages get
       - name: Build example website
@@ -99,7 +99,7 @@ jobs:
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '1.22.x'
+          flutter-version: '2.0.x'
           channel: 'stable'
       - name: "Get dependencies"
         run: flutter packages get
