@@ -34,9 +34,9 @@ class FlutterCleanArchitecture {
   //  }
   /// ```
   static void setDefaultViewBreakpoints({
-    @required double desktopBreakpointMinimumWidth,
-    @required double tabletBreakpointMinimumWidth,
-    @required double watchBreakpointMinimumWidth,
+    required double desktopBreakpointMinimumWidth,
+    required double tabletBreakpointMinimumWidth,
+    required double watchBreakpointMinimumWidth,
   }) {
     ResponsiveSizingConfig.instance.setCustomBreakpoints(
       ScreenBreakpoints(

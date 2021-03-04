@@ -76,9 +76,9 @@ import 'package:provider/provider.dart';
 /// ```
 abstract class Controller
     with WidgetsBindingObserver, RouteAware, ChangeNotifier {
-  bool _isMounted;
-  Logger logger;
-  GlobalKey<State<StatefulWidget>> _globalKey;
+  late bool _isMounted;
+  late Logger logger;
+  late GlobalKey<State<StatefulWidget>> _globalKey;
 
   @mustCallSuper
   Controller() {
@@ -163,7 +163,7 @@ abstract class Controller
         If this does not solve the issue, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
-    return _globalKey.currentState;
+    return _globalKey.currentState!;
   }
 
   /// Retrieves the [GlobalKey<State<StatefulWidget>>] associated with the [View]
@@ -200,7 +200,7 @@ abstract class Controller
         If this does not solve the issue, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
-    return _globalKey.currentContext;
+    return _globalKey.currentContext!;
   }
 
   /// Intialize the listeners inside the the [Controller]'s [Presenter]. This method is called automatically inside the
@@ -395,7 +395,7 @@ typedef ControlledBuilder<Con extends Controller> = Widget Function(
 class ControlledWidgetBuilder<Con extends Controller> extends StatelessWidget {
   final ControlledBuilder<Con> builder;
 
-  ControlledWidgetBuilder({@required this.builder});
+  ControlledWidgetBuilder({required this.builder});
 
   @override
   Widget build(BuildContext context) => Consumer<Con>(
