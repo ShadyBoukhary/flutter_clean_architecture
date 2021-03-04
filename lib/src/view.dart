@@ -140,7 +140,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   ViewState(this._controller) {
     _controller.initController(globalKey);
     WidgetsBinding.instance!.addObserver(_controller);
-    _logger = Logger('${runtimeType}');
+    _logger = Logger('$runtimeType');
   }
 
   @override

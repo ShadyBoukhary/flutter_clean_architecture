@@ -82,7 +82,7 @@ abstract class Controller
 
   @mustCallSuper
   Controller() {
-    logger = Logger('${runtimeType}');
+    logger = Logger('$runtimeType');
     _isMounted = true;
     initListeners();
   }
@@ -143,7 +143,7 @@ abstract class Controller
   @nonVirtual
   void dispose() {
     _isMounted = false;
-    logger.info('Disposing ${runtimeType}');
+    logger.info('Disposing $runtimeType');
     super.dispose();
   }
 

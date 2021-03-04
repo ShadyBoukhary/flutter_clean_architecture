@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'dart:isolate';
 import 'package:meta/meta.dart';
@@ -92,7 +93,10 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
   static late UseCaseTask _run;
 
   BackgroundUseCase()
-      : _receivePort = ReceivePort(),
+      : assert(!kIsWeb, '''
+        [BackgroundUseCase] is not supported on web due to dart:isolate limitations.
+      '''),
+        _receivePort = ReceivePort(),
         _subject = BehaviorSubject(),
         super() {
     _receivePort.listen(_handleMessage);
