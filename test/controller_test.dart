@@ -16,7 +16,7 @@ void main() {
 
   testWidgets('Controller can change data and refresh View',
       (WidgetTester tester) async {
-    final AutomatedTestWidgetsFlutterBinding binding = tester.binding;
+    final binding = tester.binding;
     binding.addTime(const Duration(seconds: 3));
     await tester.pumpWidget(MaterialApp(
       home: CounterPage(
@@ -83,12 +83,12 @@ class CounterController extends Controller {
   final Function onViewInitState;
   final Function onViewDeactivated;
 
-  int counter;
+  late int counter;
 
   CounterController(
-      {this.onViewDidChangeDependencies,
-      this.onViewInitState,
-      this.onViewDeactivated});
+      {required this.onViewDidChangeDependencies,
+      required this.onViewInitState,
+      required this.onViewDeactivated});
 
   void increment() {
     counter++;
@@ -96,7 +96,7 @@ class CounterController extends Controller {
   }
 
   void showSnackBar() {
-    ScaffoldState scaffoldState = getState();
+    final scaffoldState = getState() as ScaffoldState;
     scaffoldState.showSnackBar(SnackBar(content: Text('Hi')));
   }
 
@@ -123,23 +123,23 @@ class CounterController extends Controller {
 }
 
 class CounterPage extends View {
-  final Controller controller;
+  final CounterController controller;
   final Function onWidgetBuild;
   final Function onControlledWidgetBuild;
   final Function onUncontrolledWidgetBuild;
 
   CounterPage(
-      {this.onWidgetBuild,
-      this.onUncontrolledWidgetBuild,
-      this.onControlledWidgetBuild,
-      this.controller});
+      {required this.onWidgetBuild,
+      required this.onUncontrolledWidgetBuild,
+      required this.onControlledWidgetBuild,
+      required this.controller});
 
   @override
   State<StatefulWidget> createState() => CounterState(controller: controller);
 }
 
 class CounterState extends ViewState<CounterPage, CounterController> {
-  CounterState({Controller controller}) : super(controller);
+  CounterState({required CounterController controller}) : super(controller);
 
   @override
   Widget get view {
