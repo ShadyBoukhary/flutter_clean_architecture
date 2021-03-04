@@ -1,3 +1,16 @@
+## [5.0.0] - Thusday, March 04th, 2021
+- Stable Null Safety
+
+## [4.1.2-nullsafety.2] - Thusday, March 04th, 2021
+- Updated CI to use flutter 2.0 with nullsafety
+
+## [4.1.2-nullsafety.1] - Thusday, March 04th, 2021
+- Updated packages for nullsafety versions
+
+### BREAKING CHANGES
+- Dart SDK constraint to 2.12.0
+- Nullsafety
+
 ## [4.1.1] - Monday, January 11th, 2021
 - Update packages:
   -  logging: from `0.11.3+2` to `0.11.4`

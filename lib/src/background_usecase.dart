@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'dart:isolate';
 import 'package:meta/meta.dart';
@@ -10,15 +11,15 @@ typedef UseCaseTask = void Function(
 
 /// Data structure sent from the isolate back to the main isolate
 class BackgroundUseCaseMessage<T> {
-  T data;
-  Error error;
-  bool done;
+  T? data;
+  Error? error;
+  bool? done;
   BackgroundUseCaseMessage({this.data, this.error, this.done = false});
 }
 
 /// Data structure sent from the main isolate to the other isolate
 class BackgroundUseCaseParams<T> {
-  T params;
+  T? params;
   SendPort port;
   BackgroundUseCaseParams(this.port, {this.params});
 }
@@ -86,13 +87,16 @@ class BackgroundUseCaseParams<T> {
 /// ```
 abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
   BackgroundUseCaseState _state = BackgroundUseCaseState.idle;
-  Isolate _isolate;
+  late Isolate? _isolate;
   final BehaviorSubject<T> _subject;
   final ReceivePort _receivePort;
-  static UseCaseTask _run;
+  static late UseCaseTask _run;
 
   BackgroundUseCase()
-      : _receivePort = ReceivePort(),
+      : assert(!kIsWeb, '''
+        [BackgroundUseCase] is not supported on web due to dart:isolate limitations.
+      '''),
+        _receivePort = ReceivePort(),
         _subject = BehaviorSubject(),
         super() {
     _receivePort.listen(_handleMessage);
@@ -106,7 +110,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
   /// to a [BehaviorSubject] using the [observer] provided by the user.
   /// All [Params] are sent to the [_isolate] through [BackgroundUseCaseParams].
   @override
-  void execute(Observer<T> observer, [Params params]) async {
+  void execute(Observer<T> observer, [Params? params]) async {
     if (!isRunning) {
       _state = BackgroundUseCaseState.loading;
       _subject.listen(observer.onNext,
@@ -128,7 +132,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
 
   @override
   @nonVirtual
-  Future<Stream<T>> buildUseCaseStream(_) => null;
+  Future<Stream<T?>> buildUseCaseStream(_) => Future.value(null);
 
   /// Provides a [UseCaseTask] to be executed on a different isolate.
   /// Must be overridden.
@@ -146,7 +150,7 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
       _state = BackgroundUseCaseState.idle;
       if (_isolate != null) {
         logger.info('Killing background isolate.');
-        _isolate.kill(priority: Isolate.immediate);
+        _isolate!.kill(priority: Isolate.immediate);
         _isolate = null;
       }
     }
@@ -164,11 +168,11 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
       assert(msg.data is T);
       _subject.add(msg.data);
     } else if (msg.error != null) {
-      _subject.addError(msg.error);
+      _subject.addError(msg.error!);
       _subject.close();
     }
 
-    if (msg.done) {
+    if (msg.done!) {
       _subject.close();
     }
   }

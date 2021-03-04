@@ -131,16 +131,16 @@ abstract class ViewState<Page extends View, Con extends Controller>
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   final Con _controller;
-  Logger _logger;
-  ViewBuilder builder;
+  late Logger _logger;
+  late ViewBuilder builder;
 
   /// Implement the [Widget] you want to be displayed on [View]
   Widget get view;
 
   ViewState(this._controller) {
     _controller.initController(globalKey);
-    WidgetsBinding.instance.addObserver(_controller);
-    _logger = Logger('${runtimeType}');
+    WidgetsBinding.instance!.addObserver(_controller);
+    _logger = Logger('$runtimeType');
   }
 
   @override
@@ -148,7 +148,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
   void didChangeDependencies() {
     if (widget.routeObserver != null) {
       _logger.info('$runtimeType is observing route events.');
-      widget.routeObserver.subscribe(_controller, ModalRoute.of(context));
+      widget.routeObserver!.subscribe(_controller, ModalRoute.of(context)!);
     }
 
     _logger.info('didChangeDependencies triggered on $runtimeType');
@@ -214,7 +214,8 @@ abstract class ViewState<Page extends View, Con extends Controller>
 ///
 abstract class View extends StatefulWidget {
   @override
-  final Key key;
-  final RouteObserver routeObserver;
+  final Key? key;
+  final RouteObserver? routeObserver;
+
   View({this.routeObserver, this.key}) : super(key: key);
 }

@@ -51,25 +51,23 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
               ),
               ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
-                  return RaisedButton(
+                  return ElevatedButton(
                     onPressed: controller.getUser,
                     child: Text(
                       'Get User',
                       style: TextStyle(color: Colors.white),
                     ),
-                    color: Colors.blue,
                   );
                 },
               ),
               ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
-                  return RaisedButton(
+                  return ElevatedButton(
                     onPressed: controller.getUserwithError,
                     child: Text(
                       'Get User Error',
                       style: TextStyle(color: Colors.white),
                     ),
-                    color: Colors.blue,
                   );
                 },
               ),

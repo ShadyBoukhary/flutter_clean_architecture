@@ -7,8 +7,8 @@ void main() {
   var viewDidChangeViewDependenciesTriggered = false;
   var stateDeactivated = false;
 
-  Widget page;
-  TestController controller;
+  late Widget page;
+  late TestController controller;
 
   setUp(() {
     controller = TestController(
@@ -114,9 +114,9 @@ class TestController extends Controller {
   final Function onViewDeactivated;
 
   TestController(
-      {this.onViewDidChangeDependencies,
-      this.onViewInitState,
-      this.onViewDeactivated});
+      {required this.onViewDidChangeDependencies,
+      required this.onViewInitState,
+      required this.onViewDeactivated});
 
   @override
   void initListeners() {}
@@ -138,9 +138,9 @@ class TestController extends Controller {
 }
 
 class TestPage extends View {
-  final Controller controller;
+  final TestController controller;
 
-  TestPage({Key key, this.controller}) : super(key: key);
+  TestPage({Key? key, required this.controller}) : super(key: key);
 
   @override
   _TestPageState createState() => _TestPageState(controller);
@@ -170,8 +170,8 @@ class _TestPageState extends ResponsiveViewState<TestPage, TestController> {
 /// Flutter's Test Emulator by default simulates a 800x600 screen size.
 extension SetScreenSize on WidgetTester {
   Future<void> setScreenSize({
-    @required double width,
-    @required double height,
+    required double width,
+    required double height,
     double pixelDensity = 1,
   }) async {
     final size = Size(width, height);

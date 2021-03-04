@@ -98,8 +98,8 @@ import 'dart:async';
 /// ```
 abstract class UseCase<T, Params> {
   /// This contains all the subscriptions to the [Stream]
-  CompositeSubscription _disposables;
-  Logger _logger;
+  late CompositeSubscription _disposables;
+  late Logger _logger;
   Logger get logger => _logger;
 
   UseCase() {
@@ -109,10 +109,10 @@ abstract class UseCase<T, Params> {
 
   /// Builds the [Stream] to be subscribed to. [Params] is required
   /// by the [UseCase] to retrieve the appropraite data from the repository
-  Future<Stream<T>> buildUseCaseStream(Params params);
+  Future<Stream<T?>> buildUseCaseStream(Params? params);
 
   /// Subscribes to the [Observerable] with the [Observer] callback functions.
-  void execute(Observer<T> observer, [Params params]) async {
+  void execute(Observer<T> observer, [Params? params]) async {
     final StreamSubscription subscription = (await buildUseCaseStream(params))
         .listen(observer.onNext,
             onDone: observer.onComplete, onError: observer.onError);
@@ -161,7 +161,7 @@ abstract class UseCase<T, Params> {
 ///     }
 ///
 /// ```
-abstract class CompletableUseCase<Params> extends UseCase<void, Params> {
+abstract class CompletableUseCase<Params> extends UseCase<void, Params?> {
   @override
-  Future<Stream<void>> buildUseCaseStream(Params params);
+  Future<Stream<void>> buildUseCaseStream(Params? params);
 }

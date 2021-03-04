@@ -65,7 +65,7 @@ class CounterUseCaseObserver extends Observer<int> {
   }
 
   @override
-  void onNext(int number) {
+  void onNext(int? number) {
     this.number++;
     expect(number, this.number);
   }

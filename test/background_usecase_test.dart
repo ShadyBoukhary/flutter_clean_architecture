@@ -102,7 +102,7 @@ class CounterUseCaseObserver extends Observer<int> {
   }
 
   @override
-  void onNext(int number) {
+  void onNext(int? number) {
     this.number++;
     expect(number, this.number);
   }
@@ -132,8 +132,8 @@ class MatMulUseCase
 }
 
 class MatMulUseCaseParams {
-  List<List<double>> mat1;
-  List<List<double>> mat2;
+  late List<List<double>> mat1;
+  late List<List<double>> mat2;
   MatMulUseCaseParams(this.mat1, this.mat2);
   MatMulUseCaseParams.random() {
     var size = 10;
@@ -153,8 +153,8 @@ class MatMulUseCaseObserver extends Observer<List<List<double>>> {
   void onError(e) {}
 
   @override
-  void onNext(List<List<double>> mat) {
-    expect(mat.first.first, 2850.0);
-    expect(mat.last.last, 51855.0);
+  void onNext(List<List<double>>? mat) {
+    expect(mat?.first?.first, 2850.0);
+    expect(mat?.last?.last, 51855.0);
   }
 }

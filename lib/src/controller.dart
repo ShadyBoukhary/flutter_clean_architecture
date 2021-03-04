@@ -76,13 +76,13 @@ import 'package:provider/provider.dart';
 /// ```
 abstract class Controller
     with WidgetsBindingObserver, RouteAware, ChangeNotifier {
-  bool _isMounted;
-  Logger logger;
-  GlobalKey<State<StatefulWidget>> _globalKey;
+  late bool _isMounted;
+  late Logger logger;
+  late GlobalKey<State<StatefulWidget>> _globalKey;
 
   @mustCallSuper
   Controller() {
-    logger = Logger('${runtimeType}');
+    logger = Logger('$runtimeType');
     _isMounted = true;
     initListeners();
   }
@@ -143,19 +143,13 @@ abstract class Controller
   @nonVirtual
   void dispose() {
     _isMounted = false;
-    logger.info('Disposing ${runtimeType}');
+    logger.info('Disposing $runtimeType');
     super.dispose();
   }
 
   /// Retrieves the [State<StatefulWidget>] associated with the [View]
   @protected
   State<StatefulWidget> getState() {
-    assert(_globalKey != null,
-        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
-    This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
-    bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error.''');
-
     assert(_globalKey.currentState != null,
         '''Make sure you are using the `globalKey` that is built into the `ViewState` inside your `build()` method.
         For example:
@@ -163,18 +157,12 @@ abstract class Controller
         If this does not solve the issue, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
-    return _globalKey.currentState;
+    return _globalKey.currentState!;
   }
 
   /// Retrieves the [GlobalKey<State<StatefulWidget>>] associated with the [View]
   @protected
   GlobalKey<State<StatefulWidget>> getStateKey() {
-    assert(_globalKey != null,
-        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
-    This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
-    bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error.''');
-
     return _globalKey;
   }
 
@@ -187,12 +175,6 @@ abstract class Controller
   /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
   @protected
   BuildContext getContext() {
-    assert(_globalKey != null,
-        '''The globalkey must be passed to the Controller via initController() from the View before this can be called.
-    This is done automatically when the `Controller` is being constructed and this error should not occur. This might be a
-    bug with the package. Please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
-     the error.''');
-
     assert(_globalKey.currentContext != null,
         '''Make sure you are using the `globalKey` that is built into the `ViewState` inside your `build()` method.
         For example:
@@ -200,7 +182,7 @@ abstract class Controller
         If this does not solve the issue, please open an issue at `https://github.com/ShadyBoukhary/flutter_clean_architecture` describing 
      the error.''');
 
-    return _globalKey.currentContext;
+    return _globalKey.currentContext!;
   }
 
   /// Intialize the listeners inside the the [Controller]'s [Presenter]. This method is called automatically inside the
@@ -395,7 +377,7 @@ typedef ControlledBuilder<Con extends Controller> = Widget Function(
 class ControlledWidgetBuilder<Con extends Controller> extends StatelessWidget {
   final ControlledBuilder<Con> builder;
 
-  ControlledWidgetBuilder({@required this.builder});
+  ControlledWidgetBuilder({required this.builder});
 
   @override
   Widget build(BuildContext context) => Consumer<Con>(
