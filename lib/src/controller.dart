@@ -5,14 +5,14 @@ import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
-/// a `View`. However, it is preferable to be contained inside the `View` for readibility
+/// a `View`. However, it is preferable to be contained inside the `View` for readability
 /// and maintainability.
 ///
-/// The [Controller] hadnles the events triggered by the `View`. For example, it handles
+/// The [Controller] handles the events triggered by the `View`. For example, it handles
 /// the click events of buttons, lifecycle, data-sourcing, etc...
 ///
-/// The [Controller] is also route aware. However, in order to use it,
-/// it has to be initialzied separately.
+/// The [Controller] is also route-aware. However, in order to use it,
+/// it has to be initialized separately.
 ///
 /// Usage of a [Controller]:
 ///
@@ -185,8 +185,8 @@ abstract class Controller
     return _globalKey.currentContext!;
   }
 
-  /// Intialize the listeners inside the the [Controller]'s [Presenter]. This method is called automatically inside the
-  /// [Controller] constuctor and must be overridden. For example:
+  /// Initialize the listeners inside the the [Controller]'s [Presenter]. This method is called automatically inside the
+  /// [Controller] constructor and must be overridden. For example:
   /// ```dart
   ///     class MyController extends Controller {
   ///       final MyPresenter presenter;
@@ -250,7 +250,7 @@ abstract class Controller
   void onResumed() {}
 
   /// Called before the application is detached.
-  /// When the application is in this state, the engine still runing but not attached to any view.
+  /// When the application is in this state, the engine is still running but not attached to any view.
   ///
   /// ```dart
   ///     class MyController extends Controller {
@@ -262,7 +262,7 @@ abstract class Controller
   void onDetached() {}
 
   /// Called before the view is deactivated.
-  /// When the view is in this context, it means that the view is about to be extracted from the widget tree, but it can may be
+  /// When the view is in this context, it means that the view is about to be extracted from the widget tree, but it may be
   /// added again. Quoting the view `deactivate` docs from `https://api.flutter.dev/flutter/widgets/State/deactivate.html`:
   ///
   /// ```The framework calls this method whenever it removes this State object from the tree.
@@ -272,7 +272,7 @@ abstract class Controller
   ///   State object a chance to adapt to its new location in the tree.
   /// ```
   ///
-  /// So, this may be the correct lifecycle to remove any resources that depends on other widgets on widget tree.
+  /// So, this may be the correct lifecycle to remove any resources that depend on other widgets in the widget tree.
   ///
   /// Usage:
   ///
