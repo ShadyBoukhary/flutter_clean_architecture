@@ -1,3 +1,7 @@
+## [5.0.0-alpha.1] - Monday, June 12th, 2021
+- Updated packages and removed unused ones
+- Added `Diagnosticable` mixin to `ViewState`
+
 ## [5.0.0] - Thusday, March 04th, 2021
 - Stable Null Safety
 

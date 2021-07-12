@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
@@ -126,7 +125,6 @@ abstract class Controller
   /// tree.
 
   @mustCallSuper
-  @visibleForOverriding
   void onDisposed() {
     assert(_globalKey.currentContext == null,
         '''Make sure you are not calling `dispose` in any other call. This method should only be called from view `dispose` method.
@@ -225,7 +223,6 @@ abstract class Controller
   ///       void onInActive() => print('App is in the background.');
   ///     }
   /// ```
-  @visibleForOverriding
   void onInActive() {}
 
   /// Called when the application is not currently visible to the user, not responding to user input, and running in the background.
@@ -237,7 +234,6 @@ abstract class Controller
   ///       void onPaused() => print('App is paused.');
   ///     }
   /// ```
-  @visibleForOverriding
   void onPaused() {}
 
   /// Called when the application is visible and is responding to the user i.e. in the foreground and running.
@@ -247,7 +243,6 @@ abstract class Controller
   ///       void onResumed() => print('App is resumed.');
   ///     }
   /// ```
-  @visibleForOverriding
   void onResumed() {}
 
   /// Called before the application is detached.
@@ -259,7 +254,6 @@ abstract class Controller
   ///       void onDetached() => print('App is about to detach.');
   ///     }
   /// ```
-  @visibleForOverriding
   void onDetached() {}
 
   /// Called before the view is deactivated.
@@ -283,7 +277,6 @@ abstract class Controller
   ///       void onDeactivated() => print('View is about to be deactivated and maybe disposed');
   ///     }
   /// ```
-  @visibleForOverriding
   void onDeactivated() {}
 
   /// Called before the view is reassembled.
@@ -302,7 +295,6 @@ abstract class Controller
   ///       void onReassembled() => print('View is about to be reassembled');
   ///     }
   /// ```
-  @visibleForOverriding
   void onReassembled() {}
 
   /// Called before [View.didChangeDependencies] is called
@@ -317,7 +309,6 @@ abstract class Controller
   ///       void onDidChangeDependencies() => print('View is about to run didChangeDependencies life cycle');
   ///     }
   /// ```
-  @visibleForOverriding
   void onDidChangeDependencies() {}
 
   /// Called before [View.initState] is called
@@ -330,7 +321,6 @@ abstract class Controller
   ///       void onInitState() => print('View is about to run initState life cycle');
   ///     }
   /// ```
-  @visibleForOverriding
   void onInitState() {}
 }
 
