@@ -127,7 +127,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
 ///
 /// ```
 abstract class ViewState<Page extends View, Con extends Controller>
-    extends State<Page> {
+    extends State<Page> with Diagnosticable {
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   final Con _controller;
