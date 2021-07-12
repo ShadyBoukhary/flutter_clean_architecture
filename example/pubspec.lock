@@ -80,7 +80,7 @@ packages:
       name: logging
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   matcher:
     dependency: transitive
     description:
@@ -129,14 +129,14 @@ packages:
       name: responsive_builder
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0-nullsafety.1"
+    version: "0.4.1"
   rxdart:
     dependency: transitive
     description:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.26.0"
+    version: "0.27.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -200,4 +200,4 @@ packages:
     version: "2.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.16.0"
+  flutter: ">=2.0.0"
