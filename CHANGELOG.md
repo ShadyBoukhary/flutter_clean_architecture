@@ -1,3 +1,6 @@
+## [5.0.1] - Thusday, September 09th, 2021
+- Removed conflicting annotation on flutter 2.5.0 on `onDisposed`
+
 ## [5.0.0] - Thusday, March 04th, 2021
 - Stable Null Safety
 
