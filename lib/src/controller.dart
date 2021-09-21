@@ -123,9 +123,7 @@ abstract class Controller
   ///
   /// The usage of [Controller.getContext] will be impossible here. Since the context will be null after the widget be removed from the widget
   /// tree.
-
   @mustCallSuper
-  @visibleForOverriding
   void onDisposed() {
     assert(_globalKey.currentContext == null,
         '''Make sure you are not calling `dispose` in any other call. This method should only be called from view `dispose` method.

@@ -1,3 +1,8 @@
+## [5.0.1] - Thusday, September 09th, 2021
+- Removed conflicting annotation on flutter 2.5.0 on `onDisposed`
+- Removed `author` from `pubspec.yaml` due to deprecation issues.
+- Removed `pre-release` packages
+
 ## [5.0.0] - Thusday, March 04th, 2021
 - Stable Null Safety
 
