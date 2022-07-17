@@ -2,6 +2,10 @@ name: Continuous Integration
 
 on: [pull_request]
 
+env:
+  flutter_version: "3.0.x"
+  java_version: "12.x"
+
 jobs:
   analyze:
     timeout-minutes: 15
@@ -13,12 +17,12 @@ jobs:
       - name: Configuring java
         uses: actions/setup-java@v1
         with:
-          java-version: '12.x'
+          java-version: ${{ env.java_version }}
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '2.0.x'
-          channel: 'stable'
+          flutter-version: ${{ env.flutter_version }}
+          channel: "stable"
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Dart Analyze"
@@ -34,12 +38,12 @@ jobs:
       - name: Configuring java
         uses: actions/setup-java@v1
         with:
-          java-version: '12.x'
+          java-version: ${{ env.java_version }}
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '2.0.x'
-          channel: 'stable'
+          flutter-version: ${{ env.flutter_version }}
+          channel: "stable"
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Formatter"
@@ -55,12 +59,12 @@ jobs:
       - name: Configuring java
         uses: actions/setup-java@v1
         with:
-          java-version: '12.x'
+          java-version: ${{ env.java_version }}
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '2.0.x'
-          channel: 'stable'
+          flutter-version: ${{ env.flutter_version }}
+          channel: "stable"
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Build example bundle"
@@ -74,12 +78,12 @@ jobs:
       - name: Configuring java
         uses: actions/setup-java@v1
         with:
-          java-version: '12.x'
+          java-version: ${{ env.java_version }}
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '2.0.x'
-          channel: 'stable'
+          flutter-version: ${{ env.flutter_version }}
+          channel: "stable"
       - name: Getting dependencies
         run: flutter packages get
       - name: Build example website
@@ -95,12 +99,12 @@ jobs:
       - name: Configuring java
         uses: actions/setup-java@v1
         with:
-          java-version: '12.x'
+          java-version: ${{ env.java_version }}
       - name: Configuring flutter environment
         uses: subosito/flutter-action@v1.4.0
         with:
-          flutter-version: '2.0.x'
-          channel: 'stable'
+          flutter-version: ${{ env.flutter_version }}
+          channel: "stable"
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Flutter Test"
