@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'dart:isolate';
-import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 import 'dart:async';
 
 enum BackgroundUseCaseState { idle, loading, calculating }
+
 typedef UseCaseTask = void Function(
     BackgroundUseCaseParams backgroundUseCaseParams);
 
