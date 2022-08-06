@@ -8,6 +8,7 @@ linter:
 analyzer:
   errors:
     deprecated_member_use_from_same_package: ignore
+    invalid_use_of_visible_for_overriding_member: ignore
   exclude:
     - lib/generated_plugin_registrant.dart
     - test/**_test.dart
