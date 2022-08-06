@@ -67,8 +67,10 @@ jobs:
           channel: "stable"
       - name: "Get dependencies"
         run: flutter packages get
+        working-directory: ./example
       - name: "Build example bundle"
-        run: cd example && flutter build appbundle
+        run: flutter build appbundle
+        working-directory: ./example
 
   build_example_web:
     runs-on: ubuntu-latest
