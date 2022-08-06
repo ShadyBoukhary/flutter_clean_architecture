@@ -4,18 +4,18 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import '../../../data/repositories/data_users_repository.dart';
 
 class HomePage extends View {
-  HomePage({Key key, this.title}) : super(key: key);
+  const HomePage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _HomePageState createState() =>
+  HomePageState createState() =>
       // inject dependencies inwards
-      _HomePageState();
+      HomePageState();
 }
 
-class _HomePageState extends ViewState<HomePage, HomeController> {
-  _HomePageState() : super(HomeController(DataUsersRepository()));
+class HomePageState extends ViewState<HomePage, HomeController> {
+  HomePageState() : super(HomeController(DataUsersRepository()));
 
   @override
   Widget get view {
@@ -37,7 +37,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                   );
                 },
               ),
-              Text(
+              const Text(
                 'The current user is',
               ),
               ControlledWidgetBuilder<HomeController>(
@@ -52,7 +52,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                 builder: (context, controller) {
                   return ElevatedButton(
                     onPressed: controller.getUser,
-                    child: Text(
+                    child: const Text(
                       'Get User',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -63,7 +63,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
                 builder: (context, controller) {
                   return ElevatedButton(
                     onPressed: controller.getUserwithError,
-                    child: Text(
+                    child: const Text(
                       'Get User Error',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -79,7 +79,7 @@ class _HomePageState extends ViewState<HomePage, HomeController> {
           return FloatingActionButton(
             onPressed: () => controller.buttonPressed(),
             tooltip: 'Increment',
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
           );
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.

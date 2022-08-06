@@ -217,5 +217,5 @@ abstract class View extends StatefulWidget {
   final Key? key;
   final RouteObserver? routeObserver;
 
-  View({this.routeObserver, this.key}) : super(key: key);
+  const View({this.routeObserver, this.key}) : super(key: key);
 }

@@ -132,7 +132,8 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
 
   @override
   @nonVirtual
-  Future<Stream<T?>> buildUseCaseStream(_) => Future.value(Stream.value(null));
+  Future<Stream<T?>> buildUseCaseStream(params) =>
+      Future.value(Stream.value(null));
 
   /// Provides a [UseCaseTask] to be executed on a different isolate.
   /// Must be overridden.

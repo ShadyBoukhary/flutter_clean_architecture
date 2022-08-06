@@ -375,7 +375,7 @@ typedef ControlledBuilder<Con extends Controller> = Widget Function(
 class ControlledWidgetBuilder<Con extends Controller> extends StatelessWidget {
   final ControlledBuilder<Con> builder;
 
-  ControlledWidgetBuilder({required this.builder});
+  const ControlledWidgetBuilder({required this.builder});
 
   @override
   Widget build(BuildContext context) => Consumer<Con>(
