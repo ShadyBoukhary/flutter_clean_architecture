@@ -1,13 +1,19 @@
-include: package:pedantic/analysis_options.1.9.0.yaml
+include: package:flutter_lints/flutter.yaml
+
 linter:
   rules:
     library_names: true
     avoid_empty_else: true
     unecessary_const: true
     unawaited_futures: false
+    avoid_print: false
+    use_key_in_widget_constructors: false
+    constant_identifier_names: false
+    overridden_fields: false
 analyzer:
   errors:
     deprecated_member_use_from_same_package: ignore
+    invalid_use_of_visible_for_overriding_member: ignore
   exclude:
     - lib/generated_plugin_registrant.dart
     - test/**_test.dart

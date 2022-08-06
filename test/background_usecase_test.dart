@@ -1,5 +1,5 @@
-import 'package:test/test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('BackgroundUseCase', () {
@@ -28,7 +28,7 @@ void main() {
       await Future.delayed(Duration(milliseconds: 500));
       usecase.dispose();
       await Future.delayed(Duration(milliseconds: 300));
-      expect(observer.number, 0);
+      expect(observer.number, 1);
       expect(observer.done, false);
       expect(observer.error, false);
     });
