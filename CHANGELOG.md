@@ -1,3 +1,6 @@
+## [5.0.3] - Saturday, August 06th, 2022
+- Null safety, flutter 3.0.x support
+
 ## [5.0.1] - Thusday, September 09th, 2021
 - Removed conflicting annotation on flutter 2.5.0 on `onDisposed`
 - Removed `author` from `pubspec.yaml` due to deprecation issues.
