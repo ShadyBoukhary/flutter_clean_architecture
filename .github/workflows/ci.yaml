@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: '12.x'
       - name: Configuring flutter environment
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.0.x'
           channel: 'stable'
@@ -36,7 +36,7 @@ jobs:
         with:
           java-version: '12.x'
       - name: Configuring flutter environment
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.0.x'
           channel: 'stable'
@@ -57,7 +57,7 @@ jobs:
         with:
           java-version: '12.x'
       - name: Configuring flutter environment
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.0.x'
           channel: 'stable'
@@ -76,7 +76,7 @@ jobs:
         with:
           java-version: '12.x'
       - name: Configuring flutter environment
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.0.x'
           channel: 'stable'
@@ -97,7 +97,7 @@ jobs:
         with:
           java-version: '12.x'
       - name: Configuring flutter environment
-        uses: subosito/flutter-action@v1.4.0
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.0.x'
           channel: 'stable'
