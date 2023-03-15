@@ -47,4 +47,13 @@ void main() {
     var counterFinder = find.text('No element');
     expect(counterFinder, findsOneWidget);
   });
+
+  testWidgets('Trigger Reassemble', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
+    ));
+
+    tester.binding.reassembleApplication();
+    tester.idle();
+  });
 }
