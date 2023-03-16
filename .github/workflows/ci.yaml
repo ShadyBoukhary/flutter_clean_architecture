@@ -111,5 +111,5 @@ jobs:
         run: flutter packages get
       - name: "Flutter Core Test"
         run: flutter test 
-      - name: "Flutter Core Test"
+      - name: "Flutter Example Test"
         run: cd example && flutter test 
