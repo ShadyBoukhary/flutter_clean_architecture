@@ -109,5 +109,7 @@ jobs:
           channel: "stable"
       - name: "Get dependencies"
         run: flutter packages get
-      - name: "Flutter Test"
-        run: flutter test .
+      - name: "Flutter Core Test"
+        run: flutter test 
+      - name: "Flutter Core Test"
+        run: cd example && flutter test 
