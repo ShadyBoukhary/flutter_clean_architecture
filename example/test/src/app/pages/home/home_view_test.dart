@@ -6,8 +6,6 @@ void main() {
   testWidgets(
       'Given Add Button when click then increment counter and display Button pressed 1 times. text',
       (tester) async {
-    final binding = tester.binding;
-    binding.addTime(const Duration(seconds: 3));
     await tester.pumpWidget(const MaterialApp(
       home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
     ));
@@ -21,8 +19,6 @@ void main() {
   testWidgets(
       'Given Get User Button when click then display John Smith, 18 text',
       (tester) async {
-    final binding = tester.binding;
-    binding.addTime(const Duration(seconds: 3));
     await tester.pumpWidget(const MaterialApp(
       home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
     ));
@@ -36,8 +32,6 @@ void main() {
   testWidgets(
       'Given Get User Button when click then display John Smith, 18 text',
       (tester) async {
-    final binding = tester.binding;
-    binding.addTime(const Duration(seconds: 3));
     await tester.pumpWidget(const MaterialApp(
       home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
     ));
