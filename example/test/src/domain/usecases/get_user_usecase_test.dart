@@ -23,7 +23,6 @@ void main() {
       'Given getUserUseCase when getUser and user UUID does exist return the namd and the age',
       () async {
     GetUserUseCase getUserUseCase;
-    _Observer observer;
     getUserUseCase = GetUserUseCase(MockGetUser());
     final testUser =
         await getUserUseCase.usersRepository.getUser('1000-2000-5600');
