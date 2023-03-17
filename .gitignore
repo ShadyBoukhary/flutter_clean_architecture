@@ -9,3 +9,4 @@ ios/.generated/
 ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
 .vscode/
+example/coverage/
