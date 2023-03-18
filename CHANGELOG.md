@@ -1,3 +1,6 @@
+## [5.0.4] - Saturday, March 17th, 2023
+- Add 100% test coverage to the example
+
 ## [5.0.3] - Saturday, August 06th, 2022
 - Null safety, flutter 3.0.x support
 
