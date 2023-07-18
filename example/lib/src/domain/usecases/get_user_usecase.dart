@@ -10,10 +10,11 @@ class GetUserUseCase
   GetUserUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetUserUseCaseResponse>> buildUseCaseStream(
-      GetUserUseCaseParams params) async {
+  Stream<GetUserUseCaseResponse> buildUseCaseStream(
+      GetUserUseCaseParams? params) async* {
     final controller = StreamController<GetUserUseCaseResponse>();
     try {
+      if(params == null) throw Exception('Params can\'t be null');
       // get user
       final user = await usersRepository.getUser(params.uid);
       // Adding it triggers the .onNext() in the `Observer`
@@ -26,7 +27,7 @@ class GetUserUseCase
       // Trigger .onError
       controller.addError(e);
     }
-    return controller.stream;
+    yield* controller.stream;
   }
 }
 

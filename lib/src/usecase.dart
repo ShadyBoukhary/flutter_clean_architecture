@@ -109,11 +109,11 @@ abstract class UseCase<T, Params> {
 
   /// Builds the [Stream] to be subscribed to. [Params] is required
   /// by the [UseCase] to retrieve the appropraite data from the repository
-  Future<Stream<T?>> buildUseCaseStream(Params? params);
+  Stream<T?> buildUseCaseStream(Params? params);
 
   /// Subscribes to the [Observerable] with the [Observer] callback functions.
   void execute(Observer<T> observer, [Params? params]) async {
-    final StreamSubscription subscription = (await buildUseCaseStream(params))
+    final StreamSubscription subscription = (buildUseCaseStream(params))
         .listen(observer.onNext,
             onDone: observer.onComplete, onError: observer.onError);
     _addSubscription(subscription);
@@ -163,5 +163,5 @@ abstract class UseCase<T, Params> {
 /// ```
 abstract class CompletableUseCase<Params> extends UseCase<void, Params?> {
   @override
-  Future<Stream<void>> buildUseCaseStream(Params? params);
+  Stream<void> buildUseCaseStream(Params? params);
 }

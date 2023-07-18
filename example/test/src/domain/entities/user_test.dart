@@ -1,5 +1,6 @@
-import 'package:example/src/domain/entities/user.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'package:example/src/domain/entities/user.dart';
 
 void main() {
   test('Given User when instantiate into object then return User object values',

@@ -14,7 +14,7 @@ void main() {
     getUserUseCase = GetUserUseCase(MockGetUser());
     observer = _Observer();
     getUserUseCase.execute(observer, GetUserUseCaseParams('1000-2000-5600'));
-    while (!observer.status['progress'].contains('done')) {
+    while (!observer.status['progress']!.contains('done')) {
       await Future.delayed(const Duration(seconds: 1));
     }
     expect(observer.status['result'], 'success');
@@ -37,7 +37,7 @@ void main() {
     getUserUseCase = GetUserUseCase(MockGetUser());
     observer = _Observer();
     getUserUseCase.execute(observer, GetUserUseCaseParams('22222'));
-    while (!observer.status['progress'].contains('done')) {
+    while (!observer.status['progress']!.contains('done')) {
       await Future.delayed(const Duration(seconds: 1));
     }
     expect(observer.status['result'], 'failed');
@@ -74,7 +74,7 @@ class MockGetUser extends Mock implements UsersRepository {
 
   @override
   Future<User> getUser(String uid) async {
-    User testGetUser;
+    User? testGetUser;
     for (var user in users) {
       if (user.uid == uid) {
         testGetUser = user;

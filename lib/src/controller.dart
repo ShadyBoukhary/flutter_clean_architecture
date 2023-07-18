@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -75,39 +75,43 @@ import 'package:provider/provider.dart';
 ///
 /// ```
 abstract class Controller
-    with WidgetsBindingObserver, RouteAware, ChangeNotifier {
+    with material.WidgetsBindingObserver, material.RouteAware, material.ChangeNotifier {
   late bool _isMounted;
   late Logger logger;
-  late GlobalKey<State<StatefulWidget>> _globalKey;
+  late material.GlobalKey<material.State<material.StatefulWidget>> _globalKey;
+
+  Controller() {
+    init();
+  }
 
   @mustCallSuper
-  Controller() {
+  void init() {
     logger = Logger('$runtimeType');
     _isMounted = true;
     initListeners();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(material.AppLifecycleState state) {
     if (_isMounted) {
       switch (state) {
-        case AppLifecycleState.inactive:
+        case material.AppLifecycleState.inactive:
           onInActive();
           break;
-        case AppLifecycleState.paused:
+        case material.AppLifecycleState.paused:
           onPaused();
           break;
-        case AppLifecycleState.resumed:
+        case material.AppLifecycleState.resumed:
           onResumed();
           break;
-        case AppLifecycleState.detached:
+        case material.AppLifecycleState.detached:
           onDetached();
           break;
       }
     }
   }
 
-  /// _refreshes the [ControlledWidgets] and the [StatefulWidgets] that depends on [FlutterCleanArchitecture.getController] of the [View] associated with the [Controller] if it is still mounted.
+  /// _refreshes the [ControlledWidgets] and the [StatefulWidgets] that depends on [FlutterCleanArchitecture.getController] of the [clean.View] associated with the [Controller] if it is still mounted.
   @protected
   void refreshUI() {
     if (_isMounted) {
@@ -147,7 +151,7 @@ abstract class Controller
 
   /// Retrieves the [State<StatefulWidget>] associated with the [View]
   @protected
-  State<StatefulWidget> getState() {
+  material.State<material.StatefulWidget> getState() {
     assert(_globalKey.currentState != null,
         '''Make sure you are using the `globalKey` that is built into the `ViewState` inside your `build()` method.
         For example:
@@ -160,19 +164,19 @@ abstract class Controller
 
   /// Retrieves the [GlobalKey<State<StatefulWidget>>] associated with the [View]
   @protected
-  GlobalKey<State<StatefulWidget>> getStateKey() {
+  material.GlobalKey<material.State<material.StatefulWidget>> getStateKey() {
     return _globalKey;
   }
 
   /// Initializes optional [Controller] variables that can be used for _refreshing and error displaying.
   /// This method is called automatically by the mounted `View`. Do not call.
-  void initController(GlobalKey<State<StatefulWidget>> key) {
+  void initController(material.GlobalKey<material.State<material.StatefulWidget>> key) {
     _globalKey = key;
   }
 
   /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
   @protected
-  BuildContext getContext() {
+  material.BuildContext getContext() {
     assert(_globalKey.currentContext != null,
         '''Make sure you are using the `globalKey` that is built into the `ViewState` inside your `build()` method.
         For example:
@@ -331,8 +335,8 @@ abstract class Controller
   void onInitState() {}
 }
 
-typedef ControlledBuilder<Con extends Controller> = Widget Function(
-    BuildContext context, Con controller);
+typedef ControlledBuilder<Con extends Controller> = material.Widget Function(
+    material.BuildContext context, Con controller);
 
 /// This is a representation of a widget that is controlled by a [Controller] and needs to be re-rendered when
 /// [Controller.refreshUI] is triggered.
@@ -372,13 +376,13 @@ typedef ControlledBuilder<Con extends Controller> = Widget Function(
 ///     }
 ///   }
 /// ``
-class ControlledWidgetBuilder<Con extends Controller> extends StatelessWidget {
+class ControlledWidgetBuilder<Con extends Controller> extends material.StatelessWidget {
   final ControlledBuilder<Con> builder;
 
   const ControlledWidgetBuilder({required this.builder});
 
   @override
-  Widget build(BuildContext context) => Consumer<Con>(
-      builder: (BuildContext context, Con controller, _) =>
+  material.Widget build(material.BuildContext context) => Consumer<Con>(
+      builder: (material.BuildContext context, Con controller, _) =>
           builder(context, controller));
 }
