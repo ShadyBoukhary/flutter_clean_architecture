@@ -47,7 +47,7 @@ jobs:
       - name: "Get dependencies"
         run: flutter packages get
       - name: "Formatter"
-        run: flutter dart format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed .
 
   build_example:
     timeout-minutes: 15
