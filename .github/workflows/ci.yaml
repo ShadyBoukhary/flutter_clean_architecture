@@ -3,7 +3,7 @@ name: Continuous Integration
 on: [pull_request,workflow_dispatch]
 
 env:
-  flutter_version: "3.0.x"
+  flutter_version: "3.10.x"
   java_version: "12.x"
 
 jobs:
