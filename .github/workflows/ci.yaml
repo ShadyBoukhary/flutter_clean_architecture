@@ -1,6 +1,6 @@
 name: Continuous Integration
 
-on: [pull_request]
+on: [pull_request,workflow_dispatch]
 
 env:
   flutter_version: "3.0.x"
