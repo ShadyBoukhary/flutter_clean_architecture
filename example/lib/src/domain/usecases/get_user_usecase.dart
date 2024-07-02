@@ -10,12 +10,12 @@ class GetUserUseCase
   GetUserUseCase(this.usersRepository);
 
   @override
-  Future<Stream<GetUserUseCaseResponse>> buildUseCaseStream(
-      GetUserUseCaseParams params) async {
+  Future<Stream<GetUserUseCaseResponse?>> buildUseCaseStream(
+      GetUserUseCaseParams? params) async {
     final controller = StreamController<GetUserUseCaseResponse>();
     try {
       // get user
-      final user = await usersRepository.getUser(params.uid);
+      final user = await usersRepository.getUser(params!.uid);
       // Adding it triggers the .onNext() in the `Observer`
       // It is usually better to wrap the reponse inside a respose object.
       controller.add(GetUserUseCaseResponse(user));
