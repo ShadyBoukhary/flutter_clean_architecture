@@ -5,8 +5,7 @@ class DataUsersRepository extends UsersRepository {
   List<User> users;
   // sigleton
   static final DataUsersRepository _instance = DataUsersRepository._internal();
-  DataUsersRepository._internal() {
-    users = <User>[];
+  DataUsersRepository._internal() : users = <User>[] {
     users.addAll([
       User('test-uid', 'John Smith', 18),
       User('test-uid2', 'John Doe', 22)

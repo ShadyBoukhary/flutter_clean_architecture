@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart' as clean;
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
-/// a `View`. However, it is preferable to be contained inside the `View` for readability
+/// a `clean.View`. However, it is preferable to be contained inside the `clean.View` for readability
 /// and maintainability.
 ///
-/// The [Controller] handles the events triggered by the `View`. For example, it handles
+/// The [Controller] handles the events triggered by the `clean.View`. For example, it handles
 /// the click events of buttons, lifecycle, data-sourcing, etc...
 ///
 /// The [Controller] is also route-aware. However, in order to use it,
@@ -57,7 +57,7 @@ import 'package:provider/provider.dart';
 ///         return MaterialApp(
 ///           title: 'Flutter Demo',
 ///           home: Scaffold(
-///             key: globalKey, // using the built-in global key of the `View` for the scaffold or any other
+///             key: globalKey, // using the built-in global key of the `clean.View` for the scaffold or any other
 ///                             // widget provides the controller with a way to access them via getContext(), getState(), getStateKey()
 ///             body: Column(
 ///               children: <Widget>[
@@ -103,6 +103,9 @@ abstract class Controller
         case AppLifecycleState.detached:
           onDetached();
           break;
+        case AppLifecycleState.hidden:
+          onHidden();
+          break;
       }
     }
   }
@@ -115,7 +118,7 @@ abstract class Controller
     }
   }
 
-  /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
+  /// Unmounts the [Controller] from the `clean.View`. Called by the `clean.View` automatically.
   /// Any cleaning, disposing should go in here.
   ///
   /// To perform correct actions that depends on latest [BuildContext] used on view before dispose, you must
@@ -165,12 +168,12 @@ abstract class Controller
   }
 
   /// Initializes optional [Controller] variables that can be used for _refreshing and error displaying.
-  /// This method is called automatically by the mounted `View`. Do not call.
+  /// This method is called automatically by the mounted `clean.View`. Do not call.
   void initController(GlobalKey<State<StatefulWidget>> key) {
     _globalKey = key;
   }
 
-  /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
+  /// Retrieves the [BuildContext] associated with the `clean.View`. Will throw an error if initController() was not called prior.
   @protected
   BuildContext getContext() {
     assert(_globalKey.currentContext != null,
@@ -258,6 +261,22 @@ abstract class Controller
   /// ```
   @visibleForOverriding
   void onDetached() {}
+
+  /// Called before the application is detached.
+  /// A callback that is called when the application is hidden.
+  /// On mobile platforms, this is usually just before the application is replaced by another application in the foreground.
+  /// On desktop platforms, this is just before the application is hidden by being minimized or otherwise hiding all views of the application.
+  /// On the web, this is just before a window (or tab) is hidden.
+
+  ///
+  /// ```dart
+  ///     class MyController extends Controller {
+  ///       @override
+  ///       void onHidden() => print('App is about to be hidden.');
+  ///     }
+  /// ```
+  @visibleForOverriding
+  void onHidden() {}
 
   /// Called before the view is deactivated.
   /// When the view is in this context, it means that the view is about to be extracted from the widget tree, but it may be
