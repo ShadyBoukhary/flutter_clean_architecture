@@ -1,3 +1,6 @@
+## [6.0.0] - Tuesday, July 2nd, 2024
+- Migrate to Dart 3
+
 ## [5.0.4] - Saturday, March 17th, 2023
 - Add 100% test coverage to the example
 
