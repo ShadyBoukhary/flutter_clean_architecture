@@ -6,7 +6,7 @@ void main() {
     test('BackgroundUseCase onNext and onDone.', () async {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
       CounterUseCase().execute(observer);
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       expect(observer.number, 2);
       expect(observer.done, true);
       expect(observer.error, false);
@@ -15,7 +15,7 @@ void main() {
     test('BackgroundUseCase .OnError.', () async {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
       CounterUseCaseError().execute(observer);
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       expect(observer.number, -1);
       expect(observer.done, true);
       expect(observer.error, true);
@@ -25,9 +25,9 @@ void main() {
       CounterUseCaseObserver observer = CounterUseCaseObserver();
       CounterUseCaseCancelled usecase = CounterUseCaseCancelled()
         ..execute(observer);
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
       usecase.dispose();
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(const Duration(milliseconds: 300));
       expect(observer.number, 1);
       expect(observer.done, false);
       expect(observer.error, false);
@@ -35,8 +35,8 @@ void main() {
 
     test('BackgroundUseCase matmul', () async {
       MatMulUseCaseObserver observer = MatMulUseCaseObserver();
-      MatMulUseCase()..execute(observer, MatMulUseCaseParams.random());
-      await Future.delayed(Duration(milliseconds: 400));
+      MatMulUseCase().execute(observer, MatMulUseCaseParams.random());
+      await Future.delayed(const Duration(milliseconds: 400));
     });
   });
 }
@@ -154,7 +154,7 @@ class MatMulUseCaseObserver extends Observer<List<List<double>>> {
 
   @override
   void onNext(List<List<double>>? mat) {
-    expect(mat?.first?.first, 2850.0);
-    expect(mat?.last?.last, 51855.0);
+    expect(mat?.first.first, 2850.0);
+    expect(mat?.last.last, 51855.0);
   }
 }
