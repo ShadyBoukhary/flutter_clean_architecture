@@ -139,8 +139,7 @@ abstract class ViewState<Page extends View, Con extends Controller>
 
   ViewState(this._controller) {
     _controller.initController(globalKey);
-    // ignore: invalid_null_aware_operator
-    WidgetsBinding?.instance!
+    WidgetsBinding?.instance // ignore: invalid_null_aware_operator
         .addObserver(_controller); // ignore:unnecessary_non_null_assertion
     _logger = Logger('$runtimeType');
   }
