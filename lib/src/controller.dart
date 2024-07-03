@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
-    as clean;
+import 'package:flutter/material.dart' hide View;
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
-/// a `clean.View`. However, it is preferable to be contained inside the `clean.View` for readability
+/// a `View`. However, it is preferable to be contained inside the `View` for readability
 /// and maintainability.
 ///
-/// The [Controller] handles the events triggered by the `clean.View`. For example, it handles
+/// The [Controller] handles the events triggered by the `View`. For example, it handles
 /// the click events of buttons, lifecycle, data-sourcing, etc...
 ///
 /// The [Controller] is also route-aware. However, in order to use it,
@@ -58,7 +57,7 @@ import 'package:provider/provider.dart';
 ///         return MaterialApp(
 ///           title: 'Flutter Demo',
 ///           home: Scaffold(
-///             key: globalKey, // using the built-in global key of the `clean.View` for the scaffold or any other
+///             key: globalKey, // using the built-in global key of the `View` for the scaffold or any other
 ///                             // widget provides the controller with a way to access them via getContext(), getState(), getStateKey()
 ///             body: Column(
 ///               children: <Widget>[
@@ -81,7 +80,6 @@ abstract class Controller
   late Logger logger;
   late GlobalKey<State<StatefulWidget>> _globalKey;
 
-  @mustCallSuper
   Controller() {
     logger = Logger('$runtimeType');
     _isMounted = true;
@@ -119,7 +117,7 @@ abstract class Controller
     }
   }
 
-  /// Unmounts the [Controller] from the `clean.View`. Called by the `clean.View` automatically.
+  /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
   /// Any cleaning, disposing should go in here.
   ///
   /// To perform correct actions that depends on latest [BuildContext] used on view before dispose, you must
@@ -169,12 +167,12 @@ abstract class Controller
   }
 
   /// Initializes optional [Controller] variables that can be used for _refreshing and error displaying.
-  /// This method is called automatically by the mounted `clean.View`. Do not call.
+  /// This method is called automatically by the mounted `View`. Do not call.
   void initController(GlobalKey<State<StatefulWidget>> key) {
     _globalKey = key;
   }
 
-  /// Retrieves the [BuildContext] associated with the `clean.View`. Will throw an error if initController() was not called prior.
+  /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
   @protected
   BuildContext getContext() {
     assert(_globalKey.currentContext != null,

@@ -19,17 +19,17 @@ class HomeController extends Controller {
   // this is called automatically by the parent class
   void initListeners() {
     homePresenter.getUserOnNext = (User user) {
-      print(user.toString());
+      logger.log(logger.level, user.toString());
       _user = user;
       refreshUI(); // Refreshes the UI manually
     };
     homePresenter.getUserOnComplete = () {
-      print('User retrieved');
+      logger.log(logger.level, 'User retrieved');
     };
 
     // On error, show a snackbar, remove the user, and refresh the UI
     homePresenter.getUserOnError = (e) {
-      print('Could not retrieve user.');
+      logger.log(logger.level, 'Could not retrieve user.');
       ScaffoldMessenger.of(getContext())
           .showSnackBar(SnackBar(content: Text(e.message)));
       _user = null;
@@ -46,13 +46,15 @@ class HomeController extends Controller {
   }
 
   @override
-  void onResumed() => print('On resumed');
+  void onResumed() => logger.log(logger.level, 'On resumed');
 
   @override
-  void onReassembled() => print('View is about to be reassembled');
+  void onReassembled() =>
+      logger.log(logger.level, 'View is about to be reassembled');
 
   @override
-  void onDeactivated() => print('View is about to be deactivated');
+  void onDeactivated() =>
+      logger.log(logger.level, 'View is about to be deactivated');
 
   @override
   void onDisposed() {
