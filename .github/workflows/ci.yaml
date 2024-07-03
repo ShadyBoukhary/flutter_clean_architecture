@@ -3,8 +3,9 @@ name: Continuous Integration
 on: [pull_request,workflow_dispatch]
 
 env:
-  flutter_version: "3.0.x"
+  flutter_version: "3.22.x"
   java_version: "12.x"
+  dart_sdk_version: ">=3.0.0 <4.0.0"
 
 jobs:
   analyze:
