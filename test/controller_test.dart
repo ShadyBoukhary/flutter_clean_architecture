@@ -96,7 +96,8 @@ class CounterController extends Controller {
   }
 
   void showSnackBar(context) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hi')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Hi')));
   }
 
   @override
@@ -175,7 +176,8 @@ class CounterState extends ViewState<CounterPage, CounterController> {
           ControlledWidgetBuilder<CounterController>(
             builder: (ctx, controller) {
               return MaterialButton(
-                  key: snackBar, onPressed: () => controller.showSnackBar(context));
+                  key: snackBar,
+                  onPressed: () => controller.showSnackBar(context));
             },
           ),
         ],
