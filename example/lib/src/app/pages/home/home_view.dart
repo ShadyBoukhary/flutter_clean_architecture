@@ -1,6 +1,7 @@
 import './home_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart' as clean;
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
+    as clean;
 import '../../../data/repositories/data_users_repository.dart';
 
 class HomePage extends clean.View {

@@ -2,7 +2,8 @@ import 'package:example/src/app/pages/home/home_controller.dart';
 import 'package:example/src/app/widgets/button.dart';
 import 'package:example/src/data/repositories/data_users_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart' as clean;
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
+    as clean;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
