@@ -6,7 +6,7 @@ void main() {
     test('UseCase onNext and onDone.', () async {
       var observer = CounterUseCaseObserver();
       CounterUseCase().execute(observer);
-      await Future.delayed(Duration(milliseconds: 1000), () {
+      await Future.delayed(const Duration(milliseconds: 1000), () {
         expect(observer.number, 2);
         expect(observer.done, true);
         expect(observer.error, false);
@@ -16,7 +16,7 @@ void main() {
     test('UseCase .OnError.', () async {
       var observer = CounterUseCaseObserver();
       CounterUseCaseError().execute(observer);
-      await Future.delayed(Duration(milliseconds: 1000), () {
+      await Future.delayed(const Duration(milliseconds: 1000), () {
         expect(observer.number, -1);
         expect(observer.done, true);
         expect(observer.error, true);
@@ -26,7 +26,7 @@ void main() {
     test('UseCase .dispose cancels the subscription', () async {
       var observer = CounterUseCaseObserver();
       var usecase = CounterUseCase()..execute(observer);
-      await Future.delayed(Duration(milliseconds: 15), () {
+      await Future.delayed(const Duration(milliseconds: 15), () {
         usecase.dispose();
         expect(observer.number, 0);
         expect(observer.done, false);
@@ -39,7 +39,7 @@ void main() {
 class CounterUseCase extends UseCase<int, void> {
   @override
   Future<Stream<int>> buildUseCaseStream(void params) async {
-    return Stream.periodic(Duration(milliseconds: 10), (i) => i).take(3);
+    return Stream.periodic(const Duration(milliseconds: 10), (i) => i).take(3);
   }
 }
 

@@ -14,6 +14,6 @@ analyzer:
     invalid_use_of_visible_for_overriding_member: ignore
   exclude:
     - lib/generated_plugin_registrant.dart
-    - test/**_test.dart
+    # - test/**_test.dart
 enable-experiment:
   - extension-methods

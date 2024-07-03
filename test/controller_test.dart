@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide View;
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -16,8 +16,8 @@ void main() {
 
   testWidgets('Controller can change data and refresh View',
       (WidgetTester tester) async {
-    final binding = tester.binding;
-    binding.addTime(const Duration(seconds: 3));
+    // await Future.delayed(const Duration(seconds: 3));
+
     await tester.pumpWidget(MaterialApp(
       home: CounterPage(
         onWidgetBuild: () {
@@ -95,9 +95,8 @@ class CounterController extends Controller {
     refreshUI();
   }
 
-  void showSnackBar() {
-    final scaffoldState = getState() as ScaffoldState;
-    scaffoldState.showSnackBar(SnackBar(content: Text('Hi')));
+  void showSnackBar(context) {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Hi')));
   }
 
   @override
@@ -176,7 +175,7 @@ class CounterState extends ViewState<CounterPage, CounterController> {
           ControlledWidgetBuilder<CounterController>(
             builder: (ctx, controller) {
               return MaterialButton(
-                  key: snackBar, onPressed: () => controller.showSnackBar());
+                  key: snackBar, onPressed: () => controller.showSnackBar(context));
             },
           ),
         ],
