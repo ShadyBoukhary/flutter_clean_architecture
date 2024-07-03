@@ -122,7 +122,7 @@ class CounterController extends Controller {
   }
 }
 
-class CounterPage extends View {
+class CounterPage extends CleanView {
   final CounterController controller;
   final Function onWidgetBuild;
   final Function onControlledWidgetBuild;
@@ -138,7 +138,7 @@ class CounterPage extends View {
   State<StatefulWidget> createState() => CounterState(controller: controller);
 }
 
-class CounterState extends ViewState<CounterPage, CounterController> {
+class CounterState extends CleanViewState<CounterPage, CounterController> {
   CounterState({required CounterController controller}) : super(controller);
 
   @override
