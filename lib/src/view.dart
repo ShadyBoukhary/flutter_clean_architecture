@@ -56,8 +56,8 @@ typedef ViewBuilder = Widget Function(BuildContext context);
 /// ```
 ///
 /// You can optionally set globally new default values for breakpoints. To do so, just check on [FlutterCleanArchitecture.setDefaultViewBreakpoints]
-abstract class ResponsiveViewState<Page extends View, Con extends Controller>
-    extends ViewState<Page, Con> {
+abstract class ResponsiveViewState<Page extends CleanView,
+    Con extends Controller> extends CleanViewState<Page, Con> {
   ResponsiveViewState(Con controller) : super(controller);
 
   /// To be implemented by the developer which will build on [Watch ViewPort].
@@ -90,14 +90,14 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
   }
 }
 
-/// The [ViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
-/// page. The [ViewState] requires a [Controller] to handle its events and provide its data.
+/// The [CleanViewState] represents the [State] of a [StatefulWidget], typically of a screen or a
+/// page. The [CleanViewState] requires a [Controller] to handle its events and provide its data.
 ///
-/// The [ViewState] also has a default [globalKey] that can be used inside its `build()` function
+/// The [CleanViewState] also has a default [globalKey] that can be used inside its `build()` function
 /// in a widget to grant easy access to the [Controller], which could then use it to display
 /// snackbars, dialogs, and so on.
 ///
-/// The [ViewState] lifecycle is also handled by the [Controller].
+/// The [CleanViewState] lifecycle is also handled by the [Controller].
 /// ```dart
 ///     class CounterState extends ViewState<CounterPage, CounterController> {
 ///       CounterState(CounterController controller) : super(controller);
@@ -126,7 +126,7 @@ abstract class ResponsiveViewState<Page extends View, Con extends Controller>
 ///     }
 ///
 /// ```
-abstract class ViewState<Page extends View, Con extends Controller>
+abstract class CleanViewState<Page extends CleanView, Con extends Controller>
     extends State<Page> {
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
@@ -134,10 +134,10 @@ abstract class ViewState<Page extends View, Con extends Controller>
   late Logger _logger;
   late ViewBuilder builder;
 
-  /// Implement the [Widget] you want to be displayed on [View]
+  /// Implement the [Widget] you want to be displayed on [CleanView]
   Widget get view;
 
-  ViewState(this._controller) {
+  CleanViewState(this._controller) {
     _controller.initController(globalKey);
     WidgetsBinding?.instance // ignore: invalid_null_aware_operator
         .addObserver(_controller); // ignore:unnecessary_non_null_assertion
@@ -197,11 +197,11 @@ abstract class ViewState<Page extends View, Con extends Controller>
   }
 }
 
-/// The [View] represents a [StatefulWidget]. The [View] is typically a page or screen in
-/// the application. However, a [View] can be any [StatefulWidget]. The [View] must have a
+/// The [CleanView] represents a [StatefulWidget]. The [CleanView] is typically a page or screen in
+/// the application. However, a [CleanView] can be any [StatefulWidget]. The [CleanView] must have a
 /// [State], and that [State] should be of type [ViewState<MyView, MyController>].
 ///
-/// If a [RouteObserver] is given to the [View], it is used to register its [Controller] as
+/// If a [RouteObserver] is given to the [CleanView], it is used to register its [Controller] as
 /// a subscriber, which provides the ability to listen to push and pop route events.
 /// ```dart
 ///   class CounterPage extends View {
@@ -213,10 +213,10 @@ abstract class ViewState<Page extends View, Con extends Controller>
 ///
 /// ```
 ///
-abstract class View extends StatefulWidget {
+abstract class CleanView extends StatefulWidget {
   @override
   final Key? key;
   final RouteObserver? routeObserver;
 
-  const View({this.routeObserver, this.key}) : super(key: key);
+  const CleanView({this.routeObserver, this.key}) : super(key: key);
 }

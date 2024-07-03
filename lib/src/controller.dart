@@ -5,10 +5,10 @@ import 'package:meta/meta.dart';
 import 'package:provider/provider.dart';
 
 /// A Clean Architecture [Controller]. Should be aggregated within a `ViewState` or
-/// a `View`. However, it is preferable to be contained inside the `View` for readability
+/// a `CleanView`. However, it is preferable to be contained inside the `CleanView` for readability
 /// and maintainability.
 ///
-/// The [Controller] handles the events triggered by the `View`. For example, it handles
+/// The [Controller] handles the events triggered by the `CleanView`. For example, it handles
 /// the click events of buttons, lifecycle, data-sourcing, etc...
 ///
 /// The [Controller] is also route-aware. However, in order to use it,
@@ -57,7 +57,7 @@ import 'package:provider/provider.dart';
 ///         return MaterialApp(
 ///           title: 'Flutter Demo',
 ///           home: Scaffold(
-///             key: globalKey, // using the built-in global key of the `View` for the scaffold or any other
+///             key: globalKey, // using the built-in global key of the `CleanView` for the scaffold or any other
 ///                             // widget provides the controller with a way to access them via getContext(), getState(), getStateKey()
 ///             body: Column(
 ///               children: <Widget>[
@@ -109,7 +109,7 @@ abstract class Controller
     }
   }
 
-  /// _refreshes the [ControlledWidgets] and the [StatefulWidgets] that depends on [FlutterCleanArchitecture.getController] of the [View] associated with the [Controller] if it is still mounted.
+  /// _refreshes the [ControlledWidgets] and the [StatefulWidgets] that depends on [FlutterCleanArchitecture.getController] of the [CleanView] associated with the [Controller] if it is still mounted.
   @protected
   void refreshUI() {
     if (_isMounted) {
@@ -117,7 +117,7 @@ abstract class Controller
     }
   }
 
-  /// Unmounts the [Controller] from the `View`. Called by the `View` automatically.
+  /// Unmounts the [Controller] from the `CleanView`. Called by the `CleanView` automatically.
   /// Any cleaning, disposing should go in here.
   ///
   /// To perform correct actions that depends on latest [BuildContext] used on view before dispose, you must
@@ -147,7 +147,7 @@ abstract class Controller
     super.dispose();
   }
 
-  /// Retrieves the [State<StatefulWidget>] associated with the [View]
+  /// Retrieves the [State<StatefulWidget>] associated with the [CleanView]
   @protected
   State<StatefulWidget> getState() {
     assert(_globalKey.currentState != null,
@@ -160,19 +160,19 @@ abstract class Controller
     return _globalKey.currentState!;
   }
 
-  /// Retrieves the [GlobalKey<State<StatefulWidget>>] associated with the [View]
+  /// Retrieves the [GlobalKey<State<StatefulWidget>>] associated with the [CleanView]
   @protected
   GlobalKey<State<StatefulWidget>> getStateKey() {
     return _globalKey;
   }
 
   /// Initializes optional [Controller] variables that can be used for _refreshing and error displaying.
-  /// This method is called automatically by the mounted `View`. Do not call.
+  /// This method is called automatically by the mounted `CleanView`. Do not call.
   void initController(GlobalKey<State<StatefulWidget>> key) {
     _globalKey = key;
   }
 
-  /// Retrieves the [BuildContext] associated with the `View`. Will throw an error if initController() was not called prior.
+  /// Retrieves the [BuildContext] associated with the `CleanView`. Will throw an error if initController() was not called prior.
   @protected
   BuildContext getContext() {
     assert(_globalKey.currentContext != null,
@@ -320,10 +320,10 @@ abstract class Controller
   @visibleForOverriding
   void onReassembled() {}
 
-  /// Called before [View.didChangeDependencies] is called
+  /// Called before [CleanView.didChangeDependencies] is called
   ///
-  /// Should be used when need to perform some action on [View.didChangeDependencies] life cycle.
-  /// [View.initViewState] should be called before the actions you need to perform. Like [didChangeDependencies], you can safely perform
+  /// Should be used when need to perform some action on [CleanView.didChangeDependencies] life cycle.
+  /// [CleanView.initViewState] should be called before the actions you need to perform. Like [didChangeDependencies], you can safely perform
   /// actions that depends on [BuildContext] here.
   ///
   /// ```dart
@@ -335,9 +335,9 @@ abstract class Controller
   @visibleForOverriding
   void onDidChangeDependencies() {}
 
-  /// Called before [View.initState] is called
+  /// Called before [CleanView.initState] is called
   ///
-  /// Should be used when need to perform some action on [View.initState] life cycle.
+  /// Should be used when need to perform some action on [CleanView.initState] life cycle.
   ///
   /// ```dart
   ///     class MyController extends Controller {
@@ -355,9 +355,9 @@ typedef ControlledBuilder<Con extends Controller> = Widget Function(
 /// This is a representation of a widget that is controlled by a [Controller] and needs to be re-rendered when
 /// [Controller.refreshUI] is triggered.
 ///
-/// This was created to optimize the render cycle from a [ViewState]'s widget tree.
+/// This was created to optimize the render cycle from a [CleanViewState]'s widget tree.
 ///
-/// When [Controller.refreshUI] is called, only the ControlledWidgets inside [ViewState.view] will be re-rendered.
+/// When [Controller.refreshUI] is called, only the ControlledWidgets inside [CleanViewState.view] will be re-rendered.
 ///
 /// Example:
 ///
