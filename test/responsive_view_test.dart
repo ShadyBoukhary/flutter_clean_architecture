@@ -137,7 +137,7 @@ class TestController extends Controller {
   }
 }
 
-class TestPage extends View {
+class TestPage extends CleanView {
   final TestController controller;
 
   TestPage({Key? key, required this.controller}) : super(key: key);
