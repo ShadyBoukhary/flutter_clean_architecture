@@ -26,7 +26,7 @@ void main() {
   });
 }
 
-class TestPage extends clean.View {
+class TestPage extends clean.CleanView {
   const TestPage({
     Key? key,
   }) : super(key: key);
@@ -35,7 +35,7 @@ class TestPage extends clean.View {
   TestPageState createState() => TestPageState();
 }
 
-class TestPageState extends clean.ViewState<TestPage, HomeController> {
+class TestPageState extends clean.CleanViewState<TestPage, HomeController> {
   TestPageState() : super(HomeController(DataUsersRepository()));
 
   @override
