@@ -1,5 +1,6 @@
 import '../../../domain/usecases/get_user_usecase.dart';
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart' as clean;
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
+    as clean;
 
 class HomePresenter extends clean.Presenter {
   Function? getUserOnNext;
