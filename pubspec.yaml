@@ -13,7 +13,7 @@ dependencies:
   meta: ^1.3.0
   provider: ^6.1.2
   responsive_builder: ^0.4.1
-  rxdart: ^0.26.0
+  rxdart: ^0.27.0
 
 dev_dependencies:
   flutter_test:
