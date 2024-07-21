@@ -203,13 +203,13 @@ Checkout a small example [here](./example/) and a full application built [here](
 
 ```dart
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-class CounterPage extends View {
+class CounterPage extends CleanView {
     @override
      // Dependencies can be injected here
      State<StatefulWidget> createState() => CounterState();
 }
 
-class CounterState extends ViewState<CounterPage, CounterController> {
+class CounterState extends CleanViewState<CounterPage, CounterController> {
      CounterState() : super(CounterController());
 
      @override
@@ -251,7 +251,7 @@ For example:
 
 ```dart
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-class CounterPage extends View {
+class CounterPage extends CleanView {
     @override
      // Dependencies can be injected here
      State<StatefulWidget> createState() => CounterState();
@@ -405,9 +405,10 @@ class CounterController extends Controller {
 
 #### Presenter
 ```dart
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
+    as clean;
 
-class LoginPresenter() {
+class LoginPresenter extends clean.Presenter {
 
   Function loginOnComplete; // alternatively `void loginOnComplete();`
   Function loginOnError;
@@ -430,7 +431,7 @@ class LoginPresenter() {
 }
 
 /// The [Observer] used to observe the `Stream` of the [LoginUseCase]
-class _LoginUseCaseObserver implements Observer<void> {
+class _LoginUseCaseObserver extends clean.Observer<GetUserUseCaseResponse>{
 
   // The above presenter
   // This is not optimal, but it is a workaround due to dart limitations. Dart does
