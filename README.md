@@ -431,7 +431,7 @@ class LoginPresenter extends clean.Presenter {
 }
 
 /// The [Observer] used to observe the `Stream` of the [LoginUseCase]
-class _LoginUseCaseObserver extends clean.Observer<GetUserUseCaseResponse>{
+class _LoginUseCaseObserver extends clean.Observer<void>{
 
   // The above presenter
   // This is not optimal, but it is a workaround due to dart limitations. Dart does
