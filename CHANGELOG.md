@@ -1,3 +1,6 @@
+## [6.0.2] - Monday, May 26th, 2025
+- Update RxDart dependency to latest
+
 ## [6.0.1] - Tuesday, July 17th, 2024
 - Update RX dependency to latest
 
