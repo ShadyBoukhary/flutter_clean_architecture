@@ -1,3 +1,6 @@
+## [6.1.0] - Tuesday, October 28th, 2025
+- Introduced CLI functionality
+
 ## [6.0.2] - Monday, May 26th, 2025
 - Update RxDart dependency to latest
 
