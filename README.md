@@ -15,7 +15,7 @@ Add this to your package's pubspec.yaml file:
 ```yaml
 
 dependencies:
-  flutter_clean_architecture: ^6.0.2
+  flutter_clean_architecture: ^6.1.0
 
 ```
 
@@ -657,6 +657,88 @@ class User {
 ```
 
 Checkout a small example [here](./example/) and a full application built [here](https://github.com/ShadyBoukhary/Axion-Technologies-HnH).
+
+## CLI Tool
+The `flutter_clean_architecture` package includes a command-line interface (CLI) tool that helps you quickly scaffold Clean Architecture components in your Flutter projects.
+
+### Installation
+The CLI is automatically available when you add the package to your project:
+
+```yaml
+dependencies:
+  flutter_clean_architecture: ^6.1.0
+```
+
+### Usage
+Run the CLI using Flutter's pub command:
+
+```bash
+flutter pub run flutter_clean_architecture:cli <command>
+```
+
+### Available Commands
+
+#### Create Default Architecture Structure
+
+Generate the complete Clean Architecture folder structure:
+
+```bash
+flutter pub run flutter_clean_architecture:cli create
+```
+
+This creates the following structure in your `lib/src/` directory:
+
+```
+lib/src/
+├── app/                   # Application Layer
+│   ├── pages/             # Page components
+│   ├── widgets/           # Reusable UI components
+│   ├── utils/             # Application utilities
+│   └── navigator.dart     # Navigation configuration
+├── data/                  # Data Layer
+│   ├── repositories/      # Data access implementations
+│   ├── helpers/           # Data processing helpers
+│   └── constants.dart     # Data-related constants
+├── device/                # Device Layer
+│   ├── repositories/      # Platform-specific implementations
+│   └── utils/             # Device utilities
+└── domain/                # Domain Layer
+    ├── entities/          # Business objects
+    ├── usecases/          # Business logic
+    └── repositories/      # Repository interfaces
+```
+
+#### Create a New Page
+Generate a complete page with Controller, Presenter, and View files:
+
+```bash
+flutter pub run flutter_clean_architecture:cli create --page user_profile
+```
+
+This creates three files in `lib/src/app/pages/user_profile/`:
+
+- `user_profile_view.dart` - UI implementation (View + ViewState)
+- `user_profile_controller.dart` - Business logic controller
+- `user_profile_presenter.dart` - Presentation logic and use case coordination
+
+### Page Naming Convention
+Page names must follow snake_case format:
+
+- ✅ Valid: `user_profile`, `product_detail`, `login`, `home_page`
+- ❌ Invalid: `UserProfile`, `user-profile`, `user_profile_`
+
+### Help
+Get help for the CLI tool:
+
+```bash
+flutter pub run flutter_clean_architecture:cli --help
+```
+
+Get help for specific commands:
+
+```bash
+flutter pub run flutter_clean_architecture:cli create --help
+```
 
 ## Authors
 **[Shady Boukhary](https://github.com/ShadyBoukhary)** 
