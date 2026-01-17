@@ -93,6 +93,10 @@ Future<void> _handleGenerate(List<String> args) async {
     ..addOption('repos', help: 'Comma-separated repositories to inject')
     ..addFlag('repository',
         abbr: 'r', help: 'Generate repository interface', defaultsTo: false)
+    ..addFlag('data',
+        abbr: 'd',
+        help: 'Generate data repository implementation + data source',
+        defaultsTo: false)
     ..addOption('type',
         help: 'UseCase type: usecase,stream,background,completable',
         defaultsTo: 'usecase')
@@ -105,6 +109,7 @@ Future<void> _handleGenerate(List<String> args) async {
     ..addFlag('presenter', help: 'Generate Presenter only', defaultsTo: false)
     ..addFlag('controller', help: 'Generate Controller only', defaultsTo: false)
     ..addFlag('observer', help: 'Generate Observer', defaultsTo: false)
+    ..addFlag('datasource', help: 'Generate DataSource only', defaultsTo: false)
     ..addOption('output',
         abbr: 'o', help: 'Output directory', defaultsTo: 'lib/src')
     ..addOption('format', help: 'Output format: json,text', defaultsTo: 'text')
@@ -151,6 +156,8 @@ Future<void> _handleGenerate(List<String> args) async {
       generatePresenter: results['presenter'] == true,
       generateController: results['controller'] == true,
       generateObserver: results['observer'] == true,
+      generateData: results['data'] == true,
+      generateDataSource: results['datasource'] == true,
     );
   }
 
@@ -308,8 +315,10 @@ USAGE:
   fca generate <Name> [options]
 
 ENTITY-BASED GENERATION:
-  --methods=<list>      Comma-separated: get,getAll,create,update,delete,watch,watchAll
+  --methods=<list>      Comma-separated: get,getList,create,update,delete,watch,watchList
   -r, --repository      Generate repository interface
+  -d, --data            Generate data repository + data source
+  --datasource          Generate data source only
   --id-type=<type>      ID type for entity (default: String)
 
 CUSTOM USECASE:
@@ -338,6 +347,9 @@ INPUT/OUTPUT:
 EXAMPLES:
   # Entity-based CRUD with VPC
   fca generate Product --methods=get,getList,create,update,delete --repository --vpc
+
+  # With data layer (repository impl + datasource)
+  fca generate Product --methods=get,getList,create,update,delete --repository --data
 
   # Stream usecases
   fca generate Product --methods=watch,watchList --repository
@@ -396,6 +408,8 @@ class GeneratorConfig {
   final bool generatePresenter;
   final bool generateController;
   final bool generateObserver;
+  final bool generateData;
+  final bool generateDataSource;
 
   GeneratorConfig({
     required this.name,
@@ -411,6 +425,8 @@ class GeneratorConfig {
     this.generatePresenter = false,
     this.generateController = false,
     this.generateObserver = false,
+    this.generateData = false,
+    this.generateDataSource = false,
   });
 
   factory GeneratorConfig.fromJson(Map<String, dynamic> json, String name) {
@@ -428,6 +444,8 @@ class GeneratorConfig {
       generatePresenter: json['presenter'] == true,
       generateController: json['controller'] == true,
       generateObserver: json['observer'] == true,
+      generateData: json['data'] == true,
+      generateDataSource: json['datasource'] == true,
     );
   }
 
@@ -514,6 +532,17 @@ class CodeGenerator {
 
       if (config.generateObserver) {
         final file = await _generateObserver();
+        files.add(file);
+      }
+
+      // Generate data layer
+      if (config.generateData || config.generateDataSource) {
+        final file = await _generateDataSource();
+        files.add(file);
+      }
+
+      if (config.generateData) {
+        final file = await _generateDataRepository();
         files.add(file);
       }
 
@@ -1056,6 +1085,149 @@ class $observerName extends Observer<$entityName> {
 ''';
 
     return _writeFile(filePath, content, 'observer');
+  }
+
+  // ============================================================
+  // Data Layer Generation
+  // ============================================================
+
+  Future<GeneratedFile> _generateDataSource() async {
+    final entityName = config.name;
+    final entitySnake = config.nameSnake;
+    final entityCamel = config.nameCamel;
+    final dataSourceName = '${entityName}DataSource';
+    final fileName = '${entitySnake}_data_source.dart';
+    final filePath =
+        path.join(outputDir, 'data', 'data_sources', entitySnake, fileName);
+
+    final methods = <String>[];
+
+    for (final method in config.methods) {
+      switch (method) {
+        case 'get':
+          methods.add('  Future<${entityName}> get(${config.idType} id);');
+          break;
+        case 'getList':
+          methods.add('  Future<List<${entityName}>> getList();');
+          break;
+        case 'create':
+          methods.add(
+              '  Future<${entityName}> create(${entityName} ${entityCamel});');
+          break;
+        case 'update':
+          methods.add(
+              '  Future<${entityName}> update(${entityName} ${entityCamel});');
+          break;
+        case 'delete':
+          methods.add('  Future<void> delete(${config.idType} id);');
+          break;
+        case 'watch':
+          methods.add('  Stream<${entityName}> watch(${config.idType}? id);');
+          break;
+        case 'watchList':
+          methods.add('  Stream<List<${entityName}>> watchList();');
+          break;
+      }
+    }
+
+    final content = '''
+// Generated by fca
+// fca generate $entityName --methods=${config.methods.join(',')} --data
+
+import '../../../domain/entities/$entitySnake/$entitySnake.dart';
+
+abstract class $dataSourceName {
+${methods.join('\n')}
+}
+''';
+
+    return _writeFile(filePath, content, 'datasource');
+  }
+
+  Future<GeneratedFile> _generateDataRepository() async {
+    final entityName = config.name;
+    final entitySnake = config.nameSnake;
+    final entityCamel = config.nameCamel;
+    final repoName = '${entityName}Repository';
+    final dataRepoName = 'Data${entityName}Repository';
+    final dataSourceName = '${entityName}DataSource';
+    final fileName = 'data_${entitySnake}_repository.dart';
+    final filePath = path.join(outputDir, 'data', 'repositories', fileName);
+
+    final methods = <String>[];
+
+    for (final method in config.methods) {
+      switch (method) {
+        case 'get':
+          methods.add('''
+  @override
+  Future<$entityName> get(${config.idType} id) {
+    return _dataSource.get(id);
+  }''');
+          break;
+        case 'getList':
+          methods.add('''
+  @override
+  Future<List<$entityName>> getList() {
+    return _dataSource.getList();
+  }''');
+          break;
+        case 'create':
+          methods.add('''
+  @override
+  Future<$entityName> create($entityName $entityCamel) {
+    return _dataSource.create($entityCamel);
+  }''');
+          break;
+        case 'update':
+          methods.add('''
+  @override
+  Future<$entityName> update($entityName $entityCamel) {
+    return _dataSource.update($entityCamel);
+  }''');
+          break;
+        case 'delete':
+          methods.add('''
+  @override
+  Future<void> delete(${config.idType} id) {
+    return _dataSource.delete(id);
+  }''');
+          break;
+        case 'watch':
+          methods.add('''
+  @override
+  Stream<$entityName> watch(${config.idType}? id) {
+    return _dataSource.watch(id);
+  }''');
+          break;
+        case 'watchList':
+          methods.add('''
+  @override
+  Stream<List<$entityName>> watchList() {
+    return _dataSource.watchList();
+  }''');
+          break;
+      }
+    }
+
+    final content = '''
+// Generated by fca
+// fca generate $entityName --methods=${config.methods.join(',')} --data
+
+import '../../domain/entities/$entitySnake/$entitySnake.dart';
+import '../../domain/repositories/${entitySnake}_repository.dart';
+import '../data_sources/$entitySnake/${entitySnake}_data_source.dart';
+
+class $dataRepoName implements $repoName {
+  final $dataSourceName _dataSource;
+
+  $dataRepoName(this._dataSource);
+
+${methods.join('\n\n')}
+}
+''';
+
+    return _writeFile(filePath, content, 'data_repository');
   }
 
   // ============================================================
