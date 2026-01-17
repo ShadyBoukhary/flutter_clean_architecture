@@ -728,6 +728,7 @@ ${methods.join('\n')}
       executeMethod = '''
   @override
   Stream<$returnType> execute($paramsType $paramName, CancelToken? cancelToken) {
+    cancelToken?.throwIfCancelled();
     $executeBody
   }''';
     } else if (isCompletable) {
