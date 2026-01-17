@@ -1,3 +1,59 @@
+## [7.0.0] - January 17th, 2025
+
+### 🚀 Major Release: Complete Architecture Redesign
+
+This is a major breaking release with a complete redesign of the API focused on developer experience and modern Dart patterns.
+
+### New Features
+
+#### Core
+- **Result Type**: All UseCases now return `Result<T, AppFailure>` for type-safe error handling
+- **AppFailure Hierarchy**: Sealed class with exhaustive pattern matching (ServerFailure, NetworkFailure, ValidationFailure, NotFoundFailure, UnauthorizedFailure, ForbiddenFailure, TimeoutFailure, CacheFailure, ConflictFailure, CancellationFailure, UnknownFailure)
+- **CancelToken**: Cooperative cancellation with parent/child token support and timeout helpers
+- **NoParams**: Type-safe marker for UseCases that don't require parameters
+
+#### Domain Layer
+- **UseCase**: Single-shot operations returning `Future<Result<T, AppFailure>>` (default)
+- **StreamUseCase**: Reactive/streaming operations returning `Stream<Result<T, AppFailure>>`
+- **BackgroundUseCase**: CPU-intensive operations running on separate isolates
+- **CompletableUseCase**: Operations that don't return a value
+
+#### Presentation Layer
+- **Controller**: Simplified with automatic cancellation, ChangeNotifier integration
+- **Presenter**: Optional orchestration layer for complex multi-step flows
+- **CleanView/CleanViewState**: Streamlined view base classes
+- **ControlledWidgetBuilder**: Fine-grained widget rebuilds
+- **ControlledWidgetSelector**: Selector pattern for optimal performance
+
+#### CLI Code Generator (`fca`)
+- **Entity-based generation**: `--methods=get,getList,create,update,delete,watch,watchList`
+- **Repository interface**: `--repository` flag
+- **Data layer**: `--data` flag generates DataRepository + DataSource
+- **VPC layer**: `--vpc` flag generates View, Presenter, Controller
+- **Custom UseCases**: `--repos`, `--params`, `--returns`, `--type` flags
+- **AI-agent friendly**: `--format=json`, `--from-stdin`, `fca schema` command
+- **Multiple repository injection**: `--repos=Repo1,Repo2,Repo3`
+
+### Breaking Changes
+
+- `UseCase` now returns `Future<Result<T, AppFailure>>` instead of `Stream`
+- Removed RxDart dependency
+- `Observer` pattern changed - now optional
+- `Presenter` is now optional (can call UseCases directly from Controller)
+- Removed `buildUseCaseStream` - replaced with `execute` method
+- Controller no longer requires Presenter (can use UseCases directly)
+
+### Migration Guide
+
+See [README.md](README.md#migration-from-v6) for detailed migration instructions.
+
+### Documentation
+
+- [CLI_GUIDE.md](CLI_GUIDE.md) - Comprehensive CLI documentation
+- [AGENTS.md](AGENTS.md) - AI agent integration guide
+
+---
+
 ## [6.0.2] - Monday, May 26th, 2025
 - Update RxDart dependency to latest
 
