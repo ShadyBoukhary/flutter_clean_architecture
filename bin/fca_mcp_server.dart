@@ -68,6 +68,11 @@ class FcaMcpServer {
       case 'tools/call':
         return await _callTool(
             id, request['params'] as Map<String, dynamic>? ?? {});
+      case 'resources/list':
+        return _listResources(id);
+      case 'resources/read':
+        return await _readResource(
+            id, request['params'] as Map<String, dynamic>? ?? {});
       case 'shutdown':
         // Graceful shutdown
         return _success(id, {});
@@ -86,7 +91,7 @@ class FcaMcpServer {
         'protocolVersion': '2024-11-05',
         'capabilities': {
           'tools': {'listChanged': true},
-          'resources': {},
+          'resources': {'subscribe': true, 'listChanged': true},
           'prompts': {},
         },
         'serverInfo': {
@@ -244,10 +249,13 @@ class FcaMcpServer {
 
     try {
       String result;
+      List<String> generatedFiles = [];
 
       switch (toolName) {
         case 'fca_generate':
           result = await _runGenerateCommand(args);
+          // Parse generated files from result to send notifications
+          generatedFiles = _extractGeneratedFiles(result);
           break;
         case 'fca_schema':
           result = await _runSchemaCommand();
@@ -257,6 +265,11 @@ class FcaMcpServer {
           break;
         default:
           return _error(id, -32602, 'Unknown tool: $toolName');
+      }
+
+      // Send resource change notifications for generated files
+      for (final filePath in generatedFiles) {
+        _sendResourceNotification('created', filePath);
       }
 
       return {
@@ -373,6 +386,7 @@ class FcaMcpServer {
       dartExecutable,
       ['run', 'flutter_clean_architecture:fca', ...args],
       environment: {...Platform.environment},
+      workingDirectory: Directory.current.path,
     );
 
     final stdoutStr = process.stdout as String;
@@ -416,5 +430,110 @@ class FcaMcpServer {
       },
       'id': id,
     };
+  }
+
+  /// List available resources (generated files)
+  Map<String, dynamic> _listResources(dynamic id) {
+    return {
+      'jsonrpc': '2.0',
+      'result': {
+        'resources': [
+          {
+            'uri': 'file://lib/src/domain/repositories',
+            'name': 'domain/repositories',
+            'description': 'Domain repository interfaces',
+            'mimeType': 'text/dart',
+          },
+          {
+            'uri': 'file://lib/src/domain/usecases',
+            'name': 'domain/usecases',
+            'description': 'Domain usecases',
+            'mimeType': 'text/dart',
+          },
+          {
+            'uri': 'file://lib/src/data',
+            'name': 'data',
+            'description': 'Data layer implementations',
+            'mimeType': 'text/dart',
+          },
+          {
+            'uri': 'file://lib/src/presentation',
+            'name': 'presentation',
+            'description':
+                'Presentation layer (Views, Presenters, Controllers)',
+            'mimeType': 'text/dart',
+          },
+        ],
+      },
+      'id': id,
+    };
+  }
+
+  /// Read a resource's contents
+  Future<Map<String, dynamic>> _readResource(
+      dynamic id, Map<String, dynamic> params) async {
+    final uri = params['uri'] as String?;
+
+    if (uri == null) {
+      return _error(id, -32602, 'Missing uri parameter');
+    }
+
+    try {
+      final file = File(uri.replaceFirst('file://', ''));
+      if (!await file.exists()) {
+        return _error(id, -32602, 'Resource not found: $uri');
+      }
+
+      final contents = await file.readAsString();
+
+      return {
+        'jsonrpc': '2.0',
+        'result': {
+          'contents': [
+            {
+              'uri': uri,
+              'mimeType': 'text/dart',
+              'text': contents,
+            }
+          ]
+        },
+        'id': id,
+      };
+    } catch (e) {
+      return _error(id, -32603, 'Error reading resource: ${e.toString()}');
+    }
+  }
+
+  /// Extract generated file paths from JSON response
+  List<String> _extractGeneratedFiles(String jsonResponse) {
+    try {
+      final json = jsonDecode(jsonResponse) as Map<String, dynamic>;
+      final generated = json['generated'] as List<dynamic>?;
+      if (generated == null) return [];
+
+      return generated
+          .map((item) => item['path'] as String?)
+          .whereType<String>()
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Send resource change notification
+  void _sendResourceNotification(String changeType, String uri) {
+    final notification = {
+      'jsonrpc': '2.0',
+      'method': 'notifications/resources/list_changed',
+      'params': {
+        'changes': [
+          {
+            'type': changeType,
+            'uri': 'file://$uri',
+          }
+        ]
+      },
+    };
+    stdout.writeln(jsonEncode(notification));
   }
 }

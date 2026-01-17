@@ -109,6 +109,91 @@ Validate a JSON configuration file.
 **Parameters:**
 - config (object, required): The configuration to validate
 
+## Resources
+
+The MCP server also provides access to generated project resources:
+
+### resources/list
+
+List available resource directories in the project:
+
+```json
+{
+  "resources": [
+    {
+      "uri": "file://lib/src/domain/repositories",
+      "name": "domain/repositories",
+      "description": "Domain repository interfaces",
+      "mimeType": "text/dart"
+    },
+    {
+      "uri": "file://lib/src/domain/usecases",
+      "name": "domain/usecases",
+      "description": "Domain usecases",
+      "mimeType": "text/dart"
+    },
+    {
+      "uri": "file://lib/src/data",
+      "name": "data",
+      "description": "Data layer implementations",
+      "mimeType": "text/dart"
+    },
+    {
+      "uri": "file://lib/src/presentation",
+      "name": "presentation",
+      "description": "Presentation layer (Views, Presenters, Controllers)",
+      "mimeType": "text/dart"
+    }
+  ]
+}
+```
+
+### resources/read
+
+Read the contents of a specific file:
+
+**Parameters:**
+- uri (string, required): File URI to read
+
+```json
+{
+  "name": "resources/read",
+  "arguments": {
+    "uri": "file://lib/src/domain/repositories/product_repository.dart"
+  }
+}
+```
+
+## Notifications
+
+When the `fca_generate` tool creates new files, the MCP server automatically sends resource change notifications to the agent. This ensures the agent is aware of newly generated files without needing to explicitly query them.
+
+**Example notification sent after generating code:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/resources/list_changed",
+  "params": {
+    "changes": [
+      {
+        "type": "created",
+        "uri": "file://lib/src/domain/repositories/product_repository.dart"
+      },
+      {
+        "type": "created",
+        "uri": "file://lib/src/domain/usecases/product/get_product_usecase.dart"
+      }
+    ]
+  }
+}
+```
+
+This enables the agent to:
+- Automatically become aware of new files
+- Update its context with generated code
+- Continue working with the generated files seamlessly
+
 ## Testing
 
 Test the server directly:
