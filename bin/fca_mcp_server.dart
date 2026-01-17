@@ -37,30 +37,65 @@ class FcaMcpServer {
       // Ignore errors in piped context
     }
 
-    // Process messages
-    await for (final line
-        in stdin.transform(utf8.decoder).transform(const LineSplitter())) {
-      if (line.isEmpty) continue;
+    // Set up the stream first to ensure it's ready
+    final stream =
+        stdin.transform(utf8.decoder).transform(const LineSplitter());
 
-      try {
-        final request = jsonDecode(line) as Map<String, dynamic>;
-        final response = await handleRequest(request);
-        stdout.writeln(jsonEncode(response));
-        await stdout.flush();
-      } catch (e, stackTrace) {
-        stderr.writeln('Error processing request: $e\n$stackTrace');
-        final errorResponse = {
-          'jsonrpc': '2.0',
-          'error': {
-            'code': -32603,
-            'message': 'Internal error: ${e.toString()}',
-          },
-          'id': null,
-        };
-        stdout.writeln(jsonEncode(errorResponse));
-        await stdout.flush();
-      }
-    }
+    // Keep the process alive indefinitely
+    // Use a completer that never completes to prevent exit
+    final keepAlive = Completer<void>();
+
+    // Start processing messages IMMEDIATELY before any delays
+    // This ensures we don't miss any early messages from Zed
+    _processStream(stream).catchError((e) {
+      stderr.writeln('Message processor error: $e');
+      // Don't exit - keep the process alive
+    });
+
+    // Wait forever - this keeps the process alive even if stdin closes
+    await keepAlive.future;
+  }
+
+  /// Process stdin messages from the provided stream
+  Future<void> _processStream(Stream<String> stream) async {
+    final completer = Completer<void>();
+
+    // Use subscription instead of await-for to prevent early exit
+    final subscription = stream.listen(
+      (line) async {
+        if (line.isEmpty) return;
+
+        try {
+          final request = jsonDecode(line) as Map<String, dynamic>;
+          final response = await handleRequest(request);
+          stdout.writeln(jsonEncode(response));
+        } catch (e, stackTrace) {
+          stderr.writeln('Error processing request: $e\n$stackTrace');
+          final errorResponse = {
+            'jsonrpc': '2.0',
+            'error': {
+              'code': -32603,
+              'message': 'Internal error: ${e.toString()}',
+            },
+            'id': null,
+          };
+          stdout.writeln(jsonEncode(errorResponse));
+        }
+      },
+      onError: (e) {
+        stderr.writeln('Stream error: $e');
+        // Don't complete - keep listening
+      },
+      onDone: () {
+        // Stdin closed - but don't log anything to avoid confusing Zed
+        // Just keep the process alive silently
+        // Don't complete the completer - process stays alive forever
+      },
+      cancelOnError: false,
+    );
+
+    // Wait forever - never complete this future
+    await completer.future;
   }
 
   /// Handle incoming JSON-RPC requests
@@ -176,7 +211,7 @@ class FcaMcpServer {
           },
           'id_type': {
             'type': 'string',
-            'description': 'ID type for entity (default: String)',
+            'description': 'ID type for entity - ONLY include if user explicitly specifies (default: String)',
           },
           'repos': {
             'type': 'array',
@@ -185,11 +220,11 @@ class FcaMcpServer {
           },
           'params': {
             'type': 'string',
-            'description': 'Params type for custom UseCase (default: NoParams)',
+            'description': 'Params type for custom UseCase - ONLY include if user explicitly specifies (default: NoParams)',
           },
           'returns': {
             'type': 'string',
-            'description': 'Return type for custom UseCase (default: void)',
+            'description': 'Return type for custom UseCase - ONLY include if user explicitly specifies (default: void)',
           },
           'type': {
             'type': 'string',
@@ -198,7 +233,7 @@ class FcaMcpServer {
           },
           'output': {
             'type': 'string',
-            'description': 'Output directory (default: lib/src)',
+            'description': 'Output directory - ONLY include if user explicitly specifies a custom path. Do NOT guess or include default value.',
           },
           'dry_run': {
             'type': 'boolean',
@@ -274,11 +309,6 @@ class FcaMcpServer {
           break;
         default:
           return _error(id, -32602, 'Unknown tool: $toolName');
-      }
-
-      // Send resource change notifications for generated files
-      for (final filePath in generatedFiles) {
-        _sendResourceNotification('created', filePath);
       }
 
       return {
@@ -455,25 +485,16 @@ class FcaMcpServer {
         };
       }
 
-      final resources = <Map<String, dynamic>>[];
-
-      // Add overall timeout for entire listing operation
-      await Future.delayed(Duration.zero).timeout(
-        Duration(seconds: 3),
-        onTimeout: () {
-          throw TimeoutException('Resource listing timed out');
-        },
-      );
-
-      // Add overall timeout for entire listing operation
       final collected = <Map<String, dynamic>>[];
       final listingFuture = _doResourceListing(collected);
 
+      // Use a longer timeout for IDE restart scenarios, but return partial results
       final cached = await listingFuture.timeout(
-        Duration(seconds: 3),
+        Duration(seconds: 30),
         onTimeout: () {
-          // Return whatever we've collected so far
-          return resources.take(_maxFiles).toList();
+          // Return whatever we've collected so far (partial results)
+          stderr.writeln('Resource listing timeout, returning ${collected.length} partial results');
+          return collected.take(_maxFiles).toList();
         },
       );
 
@@ -604,6 +625,7 @@ class FcaMcpServer {
       },
     };
     stdout.writeln(jsonEncode(notification));
+    stdout.flush();
   }
 
   /// Perform actual resource listing with timeouts

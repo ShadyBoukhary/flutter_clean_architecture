@@ -60,10 +60,13 @@ dart compile exe bin/fca_mcp_server.dart -o "$PACKAGE_DIR/build/fca_mcp_server"
 # Create the pub bin directory if it doesn't exist
 mkdir -p "$PUB_BIN"
 
-# Create custom wrapper scripts
-# This avoids the noisy "Downloading packages" output from dart pub global run
+# Activate the package globally so it persists across IDE restarts
+echo "🌍 Activating package globally..."
+cd "$PACKAGE_DIR"
+dart pub global activate --source=path .
 
-echo "📝 Creating wrapper scripts..."
+# Now create our custom wrappers (after activation to override pub's wrappers)
+echo "📝 Creating custom wrapper scripts..."
 
 # Create fca wrapper (uses dart run for flexibility)
 cat > "$PUB_BIN/fca" << 'WRAPPER_EOF'
@@ -77,11 +80,11 @@ sed -i.bak "s|PACKAGE_DIR_PLACEHOLDER|$PACKAGE_DIR|g" "$PUB_BIN/fca"
 rm -f "$PUB_BIN/fca.bak"
 chmod +x "$PUB_BIN/fca"
 
-# Create fca_mcp_server wrapper (uses precompiled executable for fast startup)
+# Create fca_mcp_server wrapper (uses dart run for better compatibility)
 cat > "$PUB_BIN/fca_mcp_server" << 'WRAPPER_EOF'
 #!/usr/bin/env bash
-# FCA MCP Server wrapper - uses precompiled executable for fast startup
-exec "PACKAGE_DIR_PLACEHOLDER/build/fca_mcp_server" "$@"
+# FCA MCP Server wrapper - uses dart run for compatibility
+exec dart run "PACKAGE_DIR_PLACEHOLDER/bin/fca_mcp_server.dart" "$@"
 WRAPPER_EOF
 
 # Replace placeholder with actual path
