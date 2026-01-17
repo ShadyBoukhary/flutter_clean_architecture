@@ -280,6 +280,8 @@ class ProcessImagesUseCase extends BackgroundUseCase<ProcessedImage, ImageBatch>
 
 Generate the presentation layer with View, Presenter, and Controller.
 
+**Note:** The `--vpc` flag creates files in `presentation/pages/{entity}/` to better organize multi-page applications.
+
 ```bash
 fca generate Product --methods=get,getList,create --repository --vpc
 ```
@@ -290,7 +292,7 @@ Generates:
 lib/src/
 ├── domain/
 │   └── ...
-└── presentation/product/
+└── presentation/pages/product/
     ├── product_view.dart
     ├── product_presenter.dart
     └── product_controller.dart
@@ -624,10 +626,11 @@ lib/src/
 │   └── repositories/
 │       └── data_product_repository.dart  # Generated implementation
 └── presentation/
-    └── product/
-        ├── product_view.dart
-        ├── product_presenter.dart
-        └── product_controller.dart
+    └── pages/
+        └── product/
+            ├── product_view.dart
+            ├── product_presenter.dart
+            └── product_controller.dart
 ```
 
 ## Troubleshooting

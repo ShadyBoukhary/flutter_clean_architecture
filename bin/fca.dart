@@ -1,9 +1,8 @@
 #!/usr/bin/env dart
-
-/// FCA CLI - Flutter Clean Architecture Code Generator
-///
-/// Generates UseCases, Repositories, and VPC (View/Presenter/Controller) layers
-/// from simple command-line flags or JSON input.
+// FCA CLI - Flutter Clean Architecture Code Generator
+//
+// Generates UseCases, Repositories, and VPC (View/Presenter/Controller) layers
+// from simple command-line flags or JSON input.
 
 import 'dart:convert';
 import 'dart:io';
@@ -1106,27 +1105,27 @@ class $observerName extends Observer<$entityName> {
     for (final method in config.methods) {
       switch (method) {
         case 'get':
-          methods.add('  Future<${entityName}> get(${config.idType} id);');
+          methods.add('  Future<$entityName> get(${config.idType} id);');
           break;
         case 'getList':
-          methods.add('  Future<List<${entityName}>> getList();');
+          methods.add('  Future<List<$entityName>> getList();');
           break;
         case 'create':
-          methods.add(
-              '  Future<${entityName}> create(${entityName} ${entityCamel});');
+          methods
+              .add('  Future<$entityName> create($entityName $entityCamel);');
           break;
         case 'update':
-          methods.add(
-              '  Future<${entityName}> update(${entityName} ${entityCamel});');
+          methods
+              .add('  Future<$entityName> update($entityName $entityCamel);');
           break;
         case 'delete':
           methods.add('  Future<void> delete(${config.idType} id);');
           break;
         case 'watch':
-          methods.add('  Stream<${entityName}> watch(${config.idType}? id);');
+          methods.add('  Stream<$entityName> watch(${config.idType}? id);');
           break;
         case 'watchList':
-          methods.add('  Stream<List<${entityName}>> watchList();');
+          methods.add('  Stream<List<$entityName>> watchList();');
           break;
       }
     }

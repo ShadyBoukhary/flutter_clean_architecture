@@ -61,7 +61,7 @@ class FcaMcpServer {
     final completer = Completer<void>();
 
     // Use subscription instead of await-for to prevent early exit
-    final subscription = stream.listen(
+    stream.listen(
       (line) async {
         if (line.isEmpty) return;
 
@@ -211,7 +211,8 @@ class FcaMcpServer {
           },
           'id_type': {
             'type': 'string',
-            'description': 'ID type for entity - ONLY include if user explicitly specifies (default: String)',
+            'description':
+                'ID type for entity - ONLY include if user explicitly specifies (default: String)',
           },
           'repos': {
             'type': 'array',
@@ -220,11 +221,13 @@ class FcaMcpServer {
           },
           'params': {
             'type': 'string',
-            'description': 'Params type for custom UseCase - ONLY include if user explicitly specifies (default: NoParams)',
+            'description':
+                'Params type for custom UseCase - ONLY include if user explicitly specifies (default: NoParams)',
           },
           'returns': {
             'type': 'string',
-            'description': 'Return type for custom UseCase - ONLY include if user explicitly specifies (default: void)',
+            'description':
+                'Return type for custom UseCase - ONLY include if user explicitly specifies (default: void)',
           },
           'type': {
             'type': 'string',
@@ -233,7 +236,8 @@ class FcaMcpServer {
           },
           'output': {
             'type': 'string',
-            'description': 'Output directory - ONLY include if user explicitly specifies a custom path. Do NOT guess or include default value.',
+            'description':
+                'Output directory - ONLY include if user explicitly specifies a custom path. Do NOT guess or include default value.',
           },
           'dry_run': {
             'type': 'boolean',
@@ -293,13 +297,10 @@ class FcaMcpServer {
 
     try {
       String result;
-      List<String> generatedFiles = [];
 
       switch (toolName) {
         case 'fca_generate':
           result = await _runGenerateCommand(args);
-          // Parse generated files from result to send notifications
-          generatedFiles = _extractGeneratedFiles(result);
           break;
         case 'fca_schema':
           result = await _runSchemaCommand();
@@ -493,7 +494,8 @@ class FcaMcpServer {
         Duration(seconds: 30),
         onTimeout: () {
           // Return whatever we've collected so far (partial results)
-          stderr.writeln('Resource listing timeout, returning ${collected.length} partial results');
+          stderr.writeln(
+              'Resource listing timeout, returning ${collected.length} partial results');
           return collected.take(_maxFiles).toList();
         },
       );
@@ -547,22 +549,6 @@ class FcaMcpServer {
     }
   }
 
-  /// Extract generated file paths from JSON response
-  List<String> _extractGeneratedFiles(String jsonResponse) {
-    try {
-      final json = jsonDecode(jsonResponse) as Map<String, dynamic>;
-      final generated = json['generated'] as List<dynamic>?;
-      if (generated == null) return [];
-
-      return generated
-          .map((item) => item['path'] as String?)
-          .whereType<String>()
-          .toList();
-    } catch (_) {
-      return [];
-    }
-  }
-
   /// Scan a directory and add found Dart files to resources
   Future<void> _scanDirectory(
     String dirPath,
@@ -604,28 +590,6 @@ class FcaMcpServer {
     } catch (_) {
       // Skip problematic directories silently
     }
-  }
-
-  /// Send resource change notification
-  void _sendResourceNotification(String changeType, String uri) {
-    // Invalidate cache when files are modified
-    _resourcesCache = null;
-    _resourcesCacheTime = null;
-
-    final notification = {
-      'jsonrpc': '2.0',
-      'method': 'notifications/resources/list_changed',
-      'params': {
-        'changes': [
-          {
-            'type': changeType,
-            'uri': 'file://$uri',
-          }
-        ]
-      },
-    };
-    stdout.writeln(jsonEncode(notification));
-    stdout.flush();
   }
 
   /// Perform actual resource listing with timeouts
