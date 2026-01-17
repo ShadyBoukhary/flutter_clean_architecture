@@ -24,11 +24,10 @@ dart run flutter_clean_architecture:fca_mcp_server
 fca_mcp_server
 
 # RECOMMENDED: Precompile once for faster startup
-cd /path/to/flutter_clean_architecture
 dart compile exe bin/fca_mcp_server.dart -o fca_mcp_server
 ```
 
-**Important**: Use the precompiled executable in your MCP client configuration to avoid timeouts during connection. The `dart run` command compiles the package on every invocation, which can cause MCP clients to timeout.
+**Important**: Use the precompiled `fca_mcp_server` binary in your MCP client configuration to avoid timeouts during connection. The `dart run` command compiles the package on every invocation, which can cause MCP clients to timeout.
 
 ## Configuration
 
@@ -40,15 +39,13 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 {
   "mcpServers": {
     "flutter-clean-architecture": {
-      "command": "/path/to/flutter_clean_architecture/fca_mcp_server",
+      "command": "fca_mcp_server",
       "args": [],
       "cwd": "/path/to/your/flutter/project"
     }
   }
 }
 ```
-
-**Note**: Point `command` to the precompiled binary you created with `dart compile exe`. If you must use `dart run`, increase your MCP client timeout to at least 90 seconds.
 
 ### Cursor / VS Code
 
@@ -58,15 +55,13 @@ Add to your workspace settings (`.vscode/settings.json`) or MCP configuration:
 {
   "mcp.servers": {
     "fca": {
-      "command": "/path/to/flutter_clean_architecture/fca_mcp_server",
+      "command": "fca_mcp_server",
       "args": [],
       "cwd": "${workspaceFolder}"
     }
   }
 }
 ```
-
-**Note**: Point `command` to the precompiled binary you created with `dart compile exe`. If you must use `dart run`, increase your MCP client timeout to at least 90 seconds.
 
 ## Available Tools
 
@@ -228,13 +223,13 @@ Test the server directly:
 
 ```bash
 # Test initialize (using precompiled binary)
-echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | /path/to/fca_mcp_server
+echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | fca_mcp_server
 
 # List tools
-echo '{"jsonrpc":"2.0","method":"tools/list","id":2}' | /path/to/fca_mcp_server
+echo '{"jsonrpc":"2.0","method":"tools/list","id":2}' | fca_mcp_server
 
 # Get schema
-echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"fca_schema","arguments":{}}}' | /path/to/fca_mcp_server
+echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"fca_schema","arguments":{}}}' | fca_mcp_server
 ```
 
 ## Troubleshooting
@@ -248,12 +243,11 @@ echo '{"jsonrpc":"2.0","method":"tools/call","id":3,"params":{"name":"fca_schema
 **Solution**: Use a precompiled executable:
 
 ```bash
-# From the flutter_clean_architecture directory
-cd /path/to/flutter_clean_architecture
+# From flutter_clean_architecture directory
 dart compile exe bin/fca_mcp_server.dart -o fca_mcp_server
 
 # Then update your MCP configuration to use the precompiled binary:
-"command": "/path/to/flutter_clean_architecture/fca_mcp_server"
+"command": "fca_mcp_server"
 ```
 
 **Alternative**: If you must use `dart run`, increase your MCP client timeout setting to at least 90 seconds.
