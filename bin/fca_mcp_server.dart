@@ -17,7 +17,10 @@ class FcaMcpServer {
   // Cache for resource listings to avoid repeated filesystem scans
   List<Map<String, dynamic>>? _resourcesCache;
   DateTime? _resourcesCacheTime;
-  static const _cacheDuration = Duration(minutes: 5);
+  static const _cacheDuration = Duration(minutes: 10);
+
+  // Maximum files to return to prevent large responses
+  static const _maxFiles = 100;
 
   /// Main server loop that handles JSON-RPC messages
   Future<void> run() async {
@@ -447,49 +450,39 @@ class FcaMcpServer {
           DateTime.now().difference(_resourcesCacheTime!) < _cacheDuration) {
         return {
           'jsonrpc': '2.0',
-          'result': {'resources': _resourcesCache},
+          'result': {'resources': _resourcesCache!.take(_maxFiles).toList()},
           'id': id,
         };
       }
 
       final resources = <Map<String, dynamic>>[];
 
-      // Scan common FCA directories for Dart files (single level only)
-      final directories = [
-        'lib/src/domain/repositories',
-        'lib/src/domain/usecases',
-        'lib/src/data/data_sources',
-        'lib/src/data/repositories',
-        'lib/src/presentation',
-      ];
+      // Add overall timeout for entire listing operation
+      await Future.delayed(Duration.zero).timeout(
+        Duration(seconds: 3),
+        onTimeout: () {
+          throw TimeoutException('Resource listing timed out');
+        },
+      );
 
-      // Scan directories in parallel with concurrency limit
-      final scanTasks = <Future>[];
-      const maxConcurrent = 3;
+      // Add overall timeout for entire listing operation
+      final collected = <Map<String, dynamic>>[];
+      final listingFuture = _doResourceListing(collected);
 
-      for (final dirPath in directories) {
-        if (scanTasks.length >= maxConcurrent) {
-          await scanTasks[0];
-          scanTasks.removeAt(0);
-        }
+      final cached = await listingFuture.timeout(
+        Duration(seconds: 3),
+        onTimeout: () {
+          // Return whatever we've collected so far
+          return resources.take(_maxFiles).toList();
+        },
+      );
 
-        scanTasks.add(_scanDirectory(dirPath, resources));
-      }
-
-      // Wait for remaining tasks
-      await Future.wait(scanTasks, eagerError: false);
-
-      // Scan entities directory
-      await _scanDirectory('lib/src/domain/entities', resources,
-          prefix: 'entity/');
-
-      // Update cache
-      _resourcesCache = resources;
+      _resourcesCache = cached;
       _resourcesCacheTime = DateTime.now();
 
       return {
         'jsonrpc': '2.0',
-        'result': {'resources': resources},
+        'result': {'resources': _resourcesCache},
         'id': id,
       };
     } catch (e) {
@@ -559,47 +552,33 @@ class FcaMcpServer {
       final dir = Directory(dirPath);
       if (!await dir.exists()) return;
 
-      // List with short timeout
-      final entities =
-          await dir.list().timeout(const Duration(milliseconds: 500)).toList();
+      // List with timeout - wrap in try-catch to skip slow directories
+      try {
+        final entities = await dir.list().toList().timeout(
+              const Duration(milliseconds: 300),
+              onTimeout: () => [],
+            );
 
-      for (final entity in entities) {
-        try {
-          if (entity is File && entity.path.endsWith('.dart')) {
-            final relativePath = entity.path.replaceFirst('$dirPath/', '');
-            final name =
-                relativePath.replaceAll('/', '.').replaceAll('.dart', '');
+        for (final entity in entities) {
+          try {
+            if (entity is File && entity.path.endsWith('.dart')) {
+              final relativePath = entity.path.replaceFirst('$dirPath/', '');
+              final name =
+                  relativePath.replaceAll('/', '.').replaceAll('.dart', '');
 
-            resources.add({
-              'uri': 'file://${entity.path}',
-              'name': name,
-              'description': '$prefix$relativePath',
-              'mimeType': 'text/dart',
-            });
-          } else if (entity is Directory && prefix.isNotEmpty) {
-            // Only scan subdirectories for entities (e.g., entities/product/product.dart)
-            final subFiles = await entity
-                .list()
-                .timeout(const Duration(milliseconds: 300))
-                .toList();
-            for (final subFile in subFiles) {
-              if (subFile is File && subFile.path.endsWith('.dart')) {
-                final relativePath = subFile.path.replaceFirst('$dirPath/', '');
-                final name =
-                    relativePath.replaceAll('/', '.').replaceAll('.dart', '');
-
-                resources.add({
-                  'uri': 'file://${subFile.path}',
-                  'name': name,
-                  'description': '$prefix$relativePath',
-                  'mimeType': 'text/dart',
-                });
-              }
+              resources.add({
+                'uri': 'file://${entity.path}',
+                'name': name,
+                'description': '$prefix$relativePath',
+                'mimeType': 'text/dart',
+              });
             }
+          } catch (_) {
+            // Skip problematic files silently
           }
-        } catch (_) {
-          // Skip problematic files silently
         }
+      } catch (_) {
+        // Skip slow or problematic directories silently
       }
     } catch (_) {
       // Skip problematic directories silently
@@ -625,5 +604,32 @@ class FcaMcpServer {
       },
     };
     stdout.writeln(jsonEncode(notification));
+  }
+
+  /// Perform actual resource listing with timeouts
+  Future<List<Map<String, dynamic>>> _doResourceListing(
+      List<Map<String, dynamic>> collected) async {
+    // Scan common FCA directories for Dart files (single level only)
+    final directories = [
+      'lib/src/domain/repositories',
+      'lib/src/domain/usecases',
+      'lib/src/data/data_sources',
+      'lib/src/data/repositories',
+      'lib/src/presentation',
+    ];
+
+    // Scan directories sequentially to reduce overhead
+    for (final dirPath in directories) {
+      await _scanDirectory(dirPath, collected);
+      if (collected.length >= _maxFiles) break;
+    }
+
+    // Scan entities directory if we haven't hit the limit
+    if (collected.length < _maxFiles) {
+      await _scanDirectory('lib/src/domain/entities', collected,
+          prefix: 'entity/');
+    }
+
+    return collected.take(_maxFiles).toList();
   }
 }
