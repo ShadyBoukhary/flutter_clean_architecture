@@ -139,8 +139,7 @@ abstract class CleanViewState<Page extends CleanView, Con extends Controller>
 
   CleanViewState(this._controller) {
     _controller.initController(globalKey);
-    WidgetsBinding?.instance // ignore: invalid_null_aware_operator
-        .addObserver(_controller); // ignore:unnecessary_non_null_assertion
+    WidgetsBinding.instance.addObserver(_controller);
     _logger = Logger('$runtimeType');
   }
 
@@ -192,6 +191,10 @@ abstract class CleanViewState<Page extends CleanView, Con extends Controller>
   @mustCallSuper
   void dispose() {
     _logger.info('Disposing $runtimeType.');
+    WidgetsBinding.instance.removeObserver(_controller);
+    if (widget.routeObserver != null) {
+      widget.routeObserver!.unsubscribe(_controller);
+    }
     _controller.onDisposed();
     super.dispose();
   }

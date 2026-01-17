@@ -109,12 +109,17 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
   /// using the static method provided by [buildUseCaseTask] and listens
   /// to a [BehaviorSubject] using the [observer] provided by the user.
   /// All [Params] are sent to the [_isolate] through [BackgroundUseCaseParams].
+  ///
+  /// Returns a [StreamSubscription] for the subject stream so callers can cancel
+  /// the listen directly if needed (it is still tracked by the base [UseCase]).
   @override
-  void execute(Observer<T> observer, [Params? params]) async {
+  Future<StreamSubscription> execute(Observer<T> observer,
+      [Params? params]) async {
+    final StreamSubscription subscription = _subject.listen(observer.onNext,
+        onError: observer.onError, onDone: observer.onComplete);
+
     if (!isRunning) {
       _state = BackgroundUseCaseState.loading;
-      _subject.listen(observer.onNext,
-          onError: observer.onError, onDone: observer.onComplete);
       _run = buildUseCaseTask();
       Isolate.spawn<BackgroundUseCaseParams>(_run,
               BackgroundUseCaseParams(_receivePort.sendPort, params: params))
@@ -128,6 +133,8 @@ abstract class BackgroundUseCase<T, Params> extends UseCase<T, Params> {
         }
       });
     }
+
+    return subscription;
   }
 
   @override

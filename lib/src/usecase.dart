@@ -112,11 +112,17 @@ abstract class UseCase<T, Params> {
   Future<Stream<T?>> buildUseCaseStream(Params? params);
 
   /// Subscribes to the [Observerable] with the [Observer] callback functions.
-  void execute(Observer<T> observer, [Params? params]) async {
+  ///
+  /// Returns the created [StreamSubscription] to allow callers to cancel directly
+  /// if they need finer-grained control, while still tracking it internally for
+  /// disposal.
+  Future<StreamSubscription> execute(Observer<T> observer,
+      [Params? params]) async {
     final StreamSubscription subscription = (await buildUseCaseStream(params))
         .listen(observer.onNext,
             onDone: observer.onComplete, onError: observer.onError);
     _addSubscription(subscription);
+    return subscription;
   }
 
   /// Disposes (unsubscribes) from the [Stream]
