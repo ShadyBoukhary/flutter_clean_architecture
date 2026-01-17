@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,6 +14,11 @@ void main() async {
 }
 
 class FcaMcpServer {
+  // Cache for resource listings to avoid repeated filesystem scans
+  List<Map<String, dynamic>>? _resourcesCache;
+  DateTime? _resourcesCacheTime;
+  static const _cacheDuration = Duration(minutes: 5);
+
   /// Main server loop that handles JSON-RPC messages
   Future<void> run() async {
     // Enable stdin line reading
@@ -435,9 +441,20 @@ class FcaMcpServer {
   /// List available resources (generated files)
   Future<Map<String, dynamic>> _listResources(dynamic id) async {
     try {
+      // Return cached results if available and fresh
+      if (_resourcesCache != null &&
+          _resourcesCacheTime != null &&
+          DateTime.now().difference(_resourcesCacheTime!) < _cacheDuration) {
+        return {
+          'jsonrpc': '2.0',
+          'result': {'resources': _resourcesCache},
+          'id': id,
+        };
+      }
+
       final resources = <Map<String, dynamic>>[];
 
-      // Scan common FCA directories for Dart files
+      // Scan common FCA directories for Dart files (single level only)
       final directories = [
         'lib/src/domain/repositories',
         'lib/src/domain/usecases',
@@ -446,65 +463,29 @@ class FcaMcpServer {
         'lib/src/presentation',
       ];
 
+      // Scan directories in parallel with concurrency limit
+      final scanTasks = <Future>[];
+      const maxConcurrent = 3;
+
       for (final dirPath in directories) {
-        try {
-          final dir = Directory(dirPath);
-          if (await dir.exists()) {
-            await for (final entity in dir.list(recursive: true)) {
-              try {
-                if (entity is File && entity.path.endsWith('.dart')) {
-                  // Create a readable name from the path
-                  final relativePath =
-                      entity.path.replaceFirst('$dirPath/', '');
-                  final name =
-                      relativePath.replaceAll('/', '.').replaceAll('.dart', '');
-
-                  resources.add({
-                    'uri': 'file://${entity.path}',
-                    'name': name,
-                    'description': relativePath,
-                    'mimeType': 'text/dart',
-                  });
-                }
-              } catch (e) {
-                // Skip problematic files, log to stderr
-                stderr.writeln('Warning: Could not process file: $e');
-              }
-            }
-          }
-        } catch (e) {
-          // Skip problematic directories, log to stderr
-          stderr.writeln('Warning: Could not scan directory $dirPath: $e');
+        if (scanTasks.length >= maxConcurrent) {
+          await scanTasks[0];
+          scanTasks.removeAt(0);
         }
+
+        scanTasks.add(_scanDirectory(dirPath, resources));
       }
 
-      // Also scan for any entity files
-      try {
-        final entitiesDir = Directory('lib/src/domain/entities');
-        if (await entitiesDir.exists()) {
-          await for (final entity in entitiesDir.list(recursive: true)) {
-            try {
-              if (entity is File && entity.path.endsWith('.dart')) {
-                final relativePath =
-                    entity.path.replaceFirst('$entitiesDir/', '');
-                final name =
-                    relativePath.replaceAll('/', '.').replaceAll('.dart', '');
+      // Wait for remaining tasks
+      await Future.wait(scanTasks, eagerError: false);
 
-                resources.add({
-                  'uri': 'file://${entity.path}',
-                  'name': name,
-                  'description': 'entity/$relativePath',
-                  'mimeType': 'text/dart',
-                });
-              }
-            } catch (e) {
-              stderr.writeln('Warning: Could not process entity file: $e');
-            }
-          }
-        }
-      } catch (e) {
-        stderr.writeln('Warning: Could not scan entities directory: $e');
-      }
+      // Scan entities directory
+      await _scanDirectory('lib/src/domain/entities', resources,
+          prefix: 'entity/');
+
+      // Update cache
+      _resourcesCache = resources;
+      _resourcesCacheTime = DateTime.now();
 
       return {
         'jsonrpc': '2.0',
@@ -568,8 +549,69 @@ class FcaMcpServer {
     }
   }
 
+  /// Scan a directory and add found Dart files to resources
+  Future<void> _scanDirectory(
+    String dirPath,
+    List<Map<String, dynamic>> resources, {
+    String prefix = '',
+  }) async {
+    try {
+      final dir = Directory(dirPath);
+      if (!await dir.exists()) return;
+
+      // List with short timeout
+      final entities =
+          await dir.list().timeout(const Duration(milliseconds: 500)).toList();
+
+      for (final entity in entities) {
+        try {
+          if (entity is File && entity.path.endsWith('.dart')) {
+            final relativePath = entity.path.replaceFirst('$dirPath/', '');
+            final name =
+                relativePath.replaceAll('/', '.').replaceAll('.dart', '');
+
+            resources.add({
+              'uri': 'file://${entity.path}',
+              'name': name,
+              'description': '$prefix$relativePath',
+              'mimeType': 'text/dart',
+            });
+          } else if (entity is Directory && prefix.isNotEmpty) {
+            // Only scan subdirectories for entities (e.g., entities/product/product.dart)
+            final subFiles = await entity
+                .list()
+                .timeout(const Duration(milliseconds: 300))
+                .toList();
+            for (final subFile in subFiles) {
+              if (subFile is File && subFile.path.endsWith('.dart')) {
+                final relativePath = subFile.path.replaceFirst('$dirPath/', '');
+                final name =
+                    relativePath.replaceAll('/', '.').replaceAll('.dart', '');
+
+                resources.add({
+                  'uri': 'file://${subFile.path}',
+                  'name': name,
+                  'description': '$prefix$relativePath',
+                  'mimeType': 'text/dart',
+                });
+              }
+            }
+          }
+        } catch (_) {
+          // Skip problematic files silently
+        }
+      }
+    } catch (_) {
+      // Skip problematic directories silently
+    }
+  }
+
   /// Send resource change notification
   void _sendResourceNotification(String changeType, String uri) {
+    // Invalidate cache when files are modified
+    _resourcesCache = null;
+    _resourcesCacheTime = null;
+
     final notification = {
       'jsonrpc': '2.0',
       'method': 'notifications/resources/list_changed',
