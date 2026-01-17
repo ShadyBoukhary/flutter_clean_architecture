@@ -16,11 +16,13 @@ Version 7 is a major redesign focused on developer experience and modern Dart pa
 - ✅ **Background processing**: `BackgroundUseCase` for CPU-intensive work on isolates
 - ✅ **Fine-grained rebuilds**: `ControlledWidgetBuilder` and `ControlledWidgetSelector`
 - ✅ **Automatic cleanup**: Controllers automatically cancel operations on dispose
+- ✅ **CLI Code Generator**: `fca` CLI for generating boilerplate code (AI-agent friendly)
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [CLI Code Generator](#cli-code-generator)
 - [Core Concepts](#core-concepts)
   - [Result Type](#result-type)
   - [AppFailure Hierarchy](#appfailure-hierarchy)
@@ -34,6 +36,7 @@ Version 7 is a major redesign focused on developer experience and modern Dart pa
 - [Complete Example](#complete-example)
 - [Migration from v6](#migration-from-v6)
 - [API Reference](#api-reference)
+- [AI Agents](#ai-agents)
 
 ## Installation
 
@@ -57,6 +60,8 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 ```
 
 ## Quick Start
+
+> 💡 **Tip**: Use the `fca` CLI to generate boilerplate code automatically. See [CLI Code Generator](#cli-code-generator).
 
 ### 1. Create a UseCase
 
@@ -130,6 +135,50 @@ class _UserPageState extends CleanViewState<UserPage, UserController> {
   }
 }
 ```
+
+## CLI Code Generator
+
+The `fca` CLI generates Clean Architecture boilerplate code from simple command-line flags.
+
+### Quick Examples
+
+```bash
+# Generate UseCases + Repository for an entity
+fca generate Product --methods=get,getList,create,update,delete --repository
+
+# With VPC layer (View, Presenter, Controller)
+fca generate Product --methods=get,getList,create --repository --vpc
+
+# With Data layer (DataRepository + DataSource)
+fca generate Product --methods=get,getList,create --repository --data
+
+# Custom UseCase with multiple repositories
+fca generate ProcessOrder --repos=OrderRepo,PaymentRepo --params=OrderRequest --returns=OrderResult
+
+# AI-friendly JSON output
+fca generate Product --methods=get,getList --format=json
+```
+
+### Available Methods
+
+| Method | UseCase Type | Description |
+|--------|--------------|-------------|
+| `get` | `UseCase` | Get single entity by ID |
+| `getList` | `UseCase` | Get all entities |
+| `create` | `UseCase` | Create new entity |
+| `update` | `UseCase` | Update existing entity |
+| `delete` | `CompletableUseCase` | Delete entity by ID |
+| `watch` | `StreamUseCase` | Watch single entity |
+| `watchList` | `StreamUseCase` | Watch all entities |
+
+### Full Documentation
+
+See **[CLI_GUIDE.md](CLI_GUIDE.md)** for comprehensive CLI documentation including:
+- All command-line options
+- JSON configuration format
+- AI agent integration
+- Generated file structure
+- Troubleshooting
 
 ## Core Concepts
 
@@ -770,6 +819,31 @@ result.fold(
 | `ConflictFailure` | HTTP 409 / version conflicts |
 | `CancellationFailure` | Operation cancelled |
 | `UnknownFailure` | Catch-all for unclassified errors |
+
+## AI Agents
+
+This package is designed to work well with AI coding agents. See **[AGENTS.md](AGENTS.md)** for:
+
+- Recommended content for your project's `AGENTS.md` or `CLAUDE.md`
+- Architecture overview for AI understanding
+- Common tasks and workflows
+- CLI commands optimized for AI agents
+
+### Quick Reference for AI Agents
+
+```bash
+# JSON output for parsing
+fca generate Product --methods=get,getList --format=json
+
+# Read from stdin
+echo '{"name":"Product","methods":["get","getList"]}' | fca generate Product --from-stdin
+
+# Get JSON schema for validation
+fca schema
+
+# Dry run (preview without writing)
+fca generate Product --methods=get --dry-run --format=json
+```
 
 ## Contributing
 
