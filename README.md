@@ -780,10 +780,9 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 MIT License - see [LICENSE](LICENSE) for details.
 
 ## Authors
-
+- **Ahmet TOK** - [GitHub](https://github.com/arrrrny)
 - **Shady Boukhary** - [GitHub](https://github.com/ShadyBoukhary)
-- **Rafael Setragni** - [GitHub](https://github.com/rafaelsetragni)
 
 ---
 
-Made with ❤️ for the Flutter community
+Made with ⚡️ for the Flutter community
