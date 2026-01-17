@@ -1,32 +1,38 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
-import './src/app/pages/home/home_view.dart';
-import 'package:flutter/material.dart';
+import 'src/presentation/pages/todo_page.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  // Enable framework logging in debug mode
+  FlutterCleanArchitecture.enableLogging();
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  runApp(const CleanArchitectureExampleApp());
+}
 
-  // This widget is the root of your application.
+/// Example app demonstrating Flutter Clean Architecture v7.
+///
+/// This app shows:
+/// - [UseCase] for single-shot operations (create, toggle, delete todos)
+/// - [StreamUseCase] for real-time updates (watch todos)
+/// - [BackgroundUseCase] for CPU-intensive work (calculate primes)
+/// - [Controller] and [CleanView] for presentation layer
+/// - [ControlledWidgetBuilder] for fine-grained UI updates
+/// - [Result] and [AppFailure] for type-safe error handling
+/// - [CancelToken] for cooperative cancellation
+class CleanArchitectureExampleApp extends StatelessWidget {
+  const CleanArchitectureExampleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    FlutterCleanArchitecture.debugModeOn();
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Clean Architecture Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
       ),
-      home: const HomePage(title: 'Flutter Clean Demo Page'),
+      home: const TodoPage(),
     );
   }
 }
