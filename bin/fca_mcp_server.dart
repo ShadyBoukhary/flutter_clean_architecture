@@ -69,7 +69,7 @@ class FcaMcpServer {
         return await _callTool(
             id, request['params'] as Map<String, dynamic>? ?? {});
       case 'resources/list':
-        return _listResources(id);
+        return await _listResources(id);
       case 'resources/read':
         return await _readResource(
             id, request['params'] as Map<String, dynamic>? ?? {});
@@ -433,40 +433,88 @@ class FcaMcpServer {
   }
 
   /// List available resources (generated files)
-  Map<String, dynamic> _listResources(dynamic id) {
-    return {
-      'jsonrpc': '2.0',
-      'result': {
-        'resources': [
-          {
-            'uri': 'file://lib/src/domain/repositories',
-            'name': 'domain/repositories',
-            'description': 'Domain repository interfaces',
-            'mimeType': 'text/dart',
-          },
-          {
-            'uri': 'file://lib/src/domain/usecases',
-            'name': 'domain/usecases',
-            'description': 'Domain usecases',
-            'mimeType': 'text/dart',
-          },
-          {
-            'uri': 'file://lib/src/data',
-            'name': 'data',
-            'description': 'Data layer implementations',
-            'mimeType': 'text/dart',
-          },
-          {
-            'uri': 'file://lib/src/presentation',
-            'name': 'presentation',
-            'description':
-                'Presentation layer (Views, Presenters, Controllers)',
-            'mimeType': 'text/dart',
-          },
-        ],
-      },
-      'id': id,
-    };
+  Future<Map<String, dynamic>> _listResources(dynamic id) async {
+    try {
+      final resources = <Map<String, dynamic>>[];
+
+      // Scan common FCA directories for Dart files
+      final directories = [
+        'lib/src/domain/repositories',
+        'lib/src/domain/usecases',
+        'lib/src/data/data_sources',
+        'lib/src/data/repositories',
+        'lib/src/presentation',
+      ];
+
+      for (final dirPath in directories) {
+        try {
+          final dir = Directory(dirPath);
+          if (await dir.exists()) {
+            await for (final entity in dir.list(recursive: true)) {
+              try {
+                if (entity is File && entity.path.endsWith('.dart')) {
+                  // Create a readable name from the path
+                  final relativePath =
+                      entity.path.replaceFirst('$dirPath/', '');
+                  final name =
+                      relativePath.replaceAll('/', '.').replaceAll('.dart', '');
+
+                  resources.add({
+                    'uri': 'file://${entity.path}',
+                    'name': name,
+                    'description': relativePath,
+                    'mimeType': 'text/dart',
+                  });
+                }
+              } catch (e) {
+                // Skip problematic files, log to stderr
+                stderr.writeln('Warning: Could not process file: $e');
+              }
+            }
+          }
+        } catch (e) {
+          // Skip problematic directories, log to stderr
+          stderr.writeln('Warning: Could not scan directory $dirPath: $e');
+        }
+      }
+
+      // Also scan for any entity files
+      try {
+        final entitiesDir = Directory('lib/src/domain/entities');
+        if (await entitiesDir.exists()) {
+          await for (final entity in entitiesDir.list(recursive: true)) {
+            try {
+              if (entity is File && entity.path.endsWith('.dart')) {
+                final relativePath =
+                    entity.path.replaceFirst('$entitiesDir/', '');
+                final name =
+                    relativePath.replaceAll('/', '.').replaceAll('.dart', '');
+
+                resources.add({
+                  'uri': 'file://${entity.path}',
+                  'name': name,
+                  'description': 'entity/$relativePath',
+                  'mimeType': 'text/dart',
+                });
+              }
+            } catch (e) {
+              stderr.writeln('Warning: Could not process entity file: $e');
+            }
+          }
+        }
+      } catch (e) {
+        stderr.writeln('Warning: Could not scan entities directory: $e');
+      }
+
+      return {
+        'jsonrpc': '2.0',
+        'result': {'resources': resources},
+        'id': id,
+      };
+    } catch (e) {
+      stderr.writeln('Error listing resources: $e');
+      return _error(id, -32603, 'Failed to list resources: ${e.toString()}');
+    }
   }
 
   /// Read a resource's contents

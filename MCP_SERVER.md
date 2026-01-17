@@ -115,33 +115,29 @@ The MCP server also provides access to generated project resources:
 
 ### resources/list
 
-List available resource directories in the project:
+List all available files in the project's Clean Architecture directories. The server scans the following directories recursively for `.dart` files:
 
+- `lib/src/domain/repositories` - Repository interfaces
+- `lib/src/domain/usecases` - UseCase implementations
+- `lib/src/data/data_sources` - Data source implementations
+- `lib/src/data/repositories` - Data repository implementations
+- `lib/src/presentation` - Views, Presenters, Controllers
+- `lib/src/domain/entities` - Entity definitions
+
+**Example response:**
 ```json
 {
   "resources": [
     {
-      "uri": "file://lib/src/domain/repositories",
-      "name": "domain/repositories",
-      "description": "Domain repository interfaces",
+      "uri": "file://lib/src/domain/repositories/product_repository.dart",
+      "name": "product_repository",
+      "description": "product_repository.dart",
       "mimeType": "text/dart"
     },
     {
-      "uri": "file://lib/src/domain/usecases",
-      "name": "domain/usecases",
-      "description": "Domain usecases",
-      "mimeType": "text/dart"
-    },
-    {
-      "uri": "file://lib/src/data",
-      "name": "data",
-      "description": "Data layer implementations",
-      "mimeType": "text/dart"
-    },
-    {
-      "uri": "file://lib/src/presentation",
-      "name": "presentation",
-      "description": "Presentation layer (Views, Presenters, Controllers)",
+      "uri": "file://lib/src/domain/usecases/product/get_product_usecase.dart",
+      "name": "product.get_product_usecase",
+      "description": "product/get_product_usecase.dart",
       "mimeType": "text/dart"
     }
   ]
@@ -150,17 +146,37 @@ List available resource directories in the project:
 
 ### resources/read
 
-Read the contents of a specific file:
+Read the contents of a specific file using its URI from `resources/list`.
 
 **Parameters:**
-- uri (string, required): File URI to read
+- `uri` (string, required): File URI to read (from the `resources/list` response)
 
+**Example:**
 ```json
 {
-  "name": "resources/read",
-  "arguments": {
+  "jsonrpc": "2.0",
+  "method": "resources/read",
+  "id": 10,
+  "params": {
     "uri": "file://lib/src/domain/repositories/product_repository.dart"
   }
+}
+```
+
+**Response:**
+```json
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "contents": [
+      {
+        "uri": "file://lib/src/domain/repositories/product_repository.dart",
+        "mimeType": "text/dart",
+        "text": "abstract class ProductRepository {\n  Future<Product> get(String id);\n  Future<List<Product>> getList();\n  Future<Product> create(Product product);\n  Future<Product> update(Product product);\n  Future<void> delete(String id);\n}"
+      }
+    ]
+  },
+  "id": 10
 }
 ```
 
@@ -190,8 +206,10 @@ When the `fca_generate` tool creates new files, the MCP server automatically sen
 ```
 
 This enables the agent to:
-- Automatically become aware of new files
-- Update its context with generated code
+- Automatically become aware of new files as they are created
+- Update its context with generated code without manual intervention
+- Call `resources/list` to see all available files in the project
+- Call `resources/read` to read the contents of specific files
 - Continue working with the generated files seamlessly
 
 ## Testing
