@@ -78,10 +78,11 @@ class FcaMcpServer {
         return await _callTool(
             id, request['params'] as Map<String, dynamic>? ?? {});
       case 'resources/list':
-        return await _listResources(id);
+        // Temporarily disabled to test timeout issues
+        return _error(id, -32601, 'resources/list is temporarily disabled');
       case 'resources/read':
-        return await _readResource(
-            id, request['params'] as Map<String, dynamic>? ?? {});
+        // Temporarily disabled to test timeout issues
+        return _error(id, -32601, 'resources/read is temporarily disabled');
       case 'shutdown':
         // Graceful shutdown
         return _success(id, {});
@@ -100,7 +101,7 @@ class FcaMcpServer {
         'protocolVersion': '2024-11-05',
         'capabilities': {
           'tools': {'listChanged': true},
-          'resources': {'subscribe': true, 'listChanged': true},
+          'resources': {}, // Temporarily disabled
           'prompts': {},
         },
         'serverInfo': {
