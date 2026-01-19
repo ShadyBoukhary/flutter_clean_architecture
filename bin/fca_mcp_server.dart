@@ -497,7 +497,7 @@ class FcaMcpServer {
 
       // Use a longer timeout for IDE restart scenarios, but return partial results
       final cached = await listingFuture.timeout(
-        Duration(seconds: 30),
+        const Duration(seconds: 30),
         onTimeout: () {
           // Return whatever we've collected so far (partial results)
           stderr.writeln(
