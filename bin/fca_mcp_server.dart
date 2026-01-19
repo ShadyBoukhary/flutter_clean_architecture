@@ -167,7 +167,7 @@ class FcaMcpServer {
     return {
       'name': 'fca_generate',
       'description':
-          'Generate Clean Architecture code for Flutter projects including UseCases, Repositories, Views, Presenters, Controllers, and Data layers',
+          'Generate Clean Architecture code for Flutter projects including UseCases, Repositories, Views, Presenters, Controllers, State objects, and Data layers. Use --state with --vpc for automatic state management, or --vpc alone for custom controller implementation.',
       'inputSchema': {
         'type': 'object',
         'properties': {
@@ -203,7 +203,8 @@ class FcaMcpServer {
           },
           'state': {
             'type': 'boolean',
-            'description': 'Generate State object',
+            'description':
+                'Generate State object with granular loading states (isGetting, isCreating, etc.). When enabled with --vpc, the Controller will use StatefulController mixin and automatically update state. When disabled, Controller methods are generated with empty handlers for custom implementation.',
           },
           'data': {
             'type': 'boolean',
