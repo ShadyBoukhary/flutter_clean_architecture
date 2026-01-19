@@ -110,6 +110,7 @@ Future<void> _handleGenerate(List<String> args) async {
     ..addFlag('controller', help: 'Generate Controller only', defaultsTo: false)
     ..addFlag('observer', help: 'Generate Observer', defaultsTo: false)
     ..addFlag('datasource', help: 'Generate DataSource only', defaultsTo: false)
+    ..addFlag('state', help: 'Generate State object', defaultsTo: false)
     ..addOption('output',
         abbr: 'o', help: 'Output directory', defaultsTo: 'lib/src')
     ..addOption('format', help: 'Output format: json,text', defaultsTo: 'text')
@@ -158,6 +159,7 @@ Future<void> _handleGenerate(List<String> args) async {
       generateObserver: results['observer'] == true,
       generateData: results['data'] == true,
       generateDataSource: results['datasource'] == true,
+      generateState: results['state'] == true,
     );
   }
 
@@ -246,6 +248,10 @@ void _handleSchema() {
         'type': 'boolean',
         'description': 'Generate View + Presenter + Controller',
       },
+      'state': {
+        'type': 'boolean',
+        'description': 'Generate State object',
+      },
     },
     'required': ['name'],
   };
@@ -332,6 +338,7 @@ VPC LAYER:
   --view                Generate View only
   --presenter           Generate Presenter only
   --controller          Generate Controller only
+  --state               Generate State object with granular loading states
   --observer            Generate Observer class
 
 INPUT/OUTPUT:
@@ -345,8 +352,8 @@ INPUT/OUTPUT:
   -q, --quiet           Minimal output
 
 EXAMPLES:
-  # Entity-based CRUD with VPC
-  fca generate Product --methods=get,getList,create,update,delete --repository --vpc
+  # Entity-based CRUD with VPC and State
+  fca generate Product --methods=get,getList,create,update,delete --repository --vpc --state
 
   # With data layer (repository impl + datasource)
   fca generate Product --methods=get,getList,create,update,delete --repository --data
@@ -410,6 +417,7 @@ class GeneratorConfig {
   final bool generateObserver;
   final bool generateData;
   final bool generateDataSource;
+  final bool generateState;
 
   GeneratorConfig({
     required this.name,
@@ -427,6 +435,7 @@ class GeneratorConfig {
     this.generateObserver = false,
     this.generateData = false,
     this.generateDataSource = false,
+    this.generateState = false,
   });
 
   factory GeneratorConfig.fromJson(Map<String, dynamic> json, String name) {
@@ -446,6 +455,7 @@ class GeneratorConfig {
       generateObserver: json['observer'] == true,
       generateData: json['data'] == true,
       generateDataSource: json['datasource'] == true,
+      generateState: json['state'] == true,
     );
   }
 
@@ -527,6 +537,11 @@ class CodeGenerator {
 
       if (config.generateVpc || config.generateView) {
         final file = await _generateView();
+        files.add(file);
+      }
+
+      if (config.generateState) {
+        final file = await _generateState();
         files.add(file);
       }
 
@@ -1047,6 +1062,243 @@ class _${viewName}State extends CleanViewState<$viewName, $controllerName> {
 ''';
 
     return _writeFile(filePath, content, 'view');
+  }
+
+  Future<GeneratedFile> _generateState() async {
+    final entityName = config.name;
+    final entitySnake = config.nameSnake;
+    final entityCamel = config.nameCamel;
+    final stateName = '${entityName}State';
+    final fileName = '${entitySnake}_state.dart';
+    final filePath =
+        path.join(outputDir, 'presentation', 'pages', entitySnake, fileName);
+
+    // Generate imports
+    final imports = <String>[
+      "import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';"
+    ];
+
+    // Add entity import if it exists
+    imports.add(
+        "import '../../../domain/entities/$entitySnake/$entitySnake.dart';");
+
+    // Generate state fields based on methods
+    final stateFields = <String>[];
+    final stateConstructorParams = <String>[];
+    final stateCopyWithParams = <String>[];
+
+    // Basic state fields
+    stateFields.add('  /// The list of $entityName entities');
+    stateFields.add('  final List<$entityName> ${entityCamel}List;');
+    stateConstructorParams.add('this.${entityCamel}List = const []');
+    stateCopyWithParams.add('List<$entityName>? ${entityCamel}List');
+
+    stateFields.add('  /// The current error, if any');
+    stateFields.add('  final AppFailure? error;');
+    stateConstructorParams.add('this.error');
+    stateCopyWithParams.add('AppFailure? error');
+    stateCopyWithParams.add('bool clearError = false');
+
+    // Add method-specific state fields with consistent naming
+    for (final method in config.methods) {
+      switch (method) {
+        case 'get':
+          stateFields.add('  /// Whether get operation is in progress');
+          stateFields.add('  final bool isGetting;');
+          stateConstructorParams.add('this.isGetting = false');
+          stateCopyWithParams.add('bool? isGetting');
+          break;
+        case 'getList':
+          stateFields.add('  /// Whether getList operation is in progress');
+          stateFields.add('  final bool isGettingList;');
+          stateConstructorParams.add('this.isGettingList = false');
+          stateCopyWithParams.add('bool? isGettingList');
+          break;
+        case 'create':
+          stateFields.add('  /// Whether create operation is in progress');
+          stateFields.add('  final bool isCreating;');
+          stateConstructorParams.add('this.isCreating = false');
+          stateCopyWithParams.add('bool? isCreating');
+          break;
+        case 'update':
+          stateFields.add('  /// Whether update operation is in progress');
+          stateFields.add('  final bool isUpdating;');
+          stateConstructorParams.add('this.isUpdating = false');
+          stateCopyWithParams.add('bool? isUpdating');
+          break;
+        case 'delete':
+          stateFields.add('  /// Whether delete operation is in progress');
+          stateFields.add('  final bool isDeleting;');
+          stateConstructorParams.add('this.isDeleting = false');
+          stateCopyWithParams.add('bool? isDeleting');
+          break;
+        case 'watch':
+          stateFields.add('  /// Whether watch operation is in progress');
+          stateFields.add('  final bool isWatching;');
+          stateConstructorParams.add('this.isWatching = false');
+          stateCopyWithParams.add('bool? isWatching');
+          break;
+        case 'watchList':
+          stateFields.add('  /// Whether watchList operation is in progress');
+          stateFields.add('  final bool isWatchingList;');
+          stateConstructorParams.add('this.isWatchingList = false');
+          stateCopyWithParams.add('bool? isWatchingList');
+          break;
+      }
+    }
+
+    // Generate copyWith method
+    final copyWithAssignments = <String>[];
+    for (final param in stateCopyWithParams) {
+      if (param.contains('clear')) {
+        final fieldName =
+            param.replaceAll('clear', '').replaceAll(' = false', '').trim();
+        copyWithAssignments.add(
+            '$fieldName: clear$fieldName ? null : ($fieldName ?? this.$fieldName),');
+      } else {
+        final fieldName = param.replaceAll('?', '').trim();
+        copyWithAssignments.add('$fieldName: $param ?? this.$fieldName,');
+      }
+    }
+
+    // Generate isLoading getter based on method-specific loading states
+    final loadingFields = <String>[];
+    for (final method in config.methods) {
+      switch (method) {
+        case 'get':
+          loadingFields.add('isGetting');
+          break;
+        case 'getList':
+          loadingFields.add('isGettingList');
+          break;
+        case 'create':
+          loadingFields.add('isCreating');
+          break;
+        case 'update':
+          loadingFields.add('isUpdating');
+          break;
+        case 'delete':
+          loadingFields.add('isDeleting');
+          break;
+        case 'watch':
+          loadingFields.add('isWatching');
+          break;
+        case 'watchList':
+          loadingFields.add('isWatchingList');
+          break;
+      }
+    }
+
+    final isLoadingGetter = loadingFields.isNotEmpty
+        ? '  /// Whether any operation is currently loading\n  bool get isLoading => ${loadingFields.join(' || ')};'
+        : '  /// Whether any operation is currently loading\n  bool get isLoading => false;';
+
+    final content = '''// Generated by fca
+// fca generate $entityName --methods=${config.methods.join(',')} --state
+
+${imports.join('\n')}
+
+/// Immutable state for $entityName
+class $stateName {
+${stateFields.join('\n')}
+
+  const $stateName({
+    ${stateConstructorParams.join(',\n    ')},
+  });
+
+  /// Create a copy of this state with the given fields replaced.
+  $stateName copyWith({
+    ${stateCopyWithParams.join(',\n    ')},
+  }) {
+    return $stateName(
+      ${entityCamel}List: ${entityCamel}List ?? this.${entityCamel}List,
+      error: clearError ? null : (error ?? this.error),${_generateMethodSpecificCopyWithAssignments(stateCopyWithParams)}
+    );
+  }
+
+  /// Whether any operation is currently loading
+  bool get isLoading => ${loadingFields.join(' || ')};
+
+  /// Whether there is an error to display
+  bool get hasError => error != null;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is $stateName &&
+          runtimeType == other.runtimeType &&
+          ${entityCamel}List == other.${entityCamel}List &&
+          error == other.error${_generateEqualityChecks(stateFields)});
+
+  @override
+  int get hashCode =>
+      ${entityCamel}List.hashCode ^
+      error.hashCode${_generateHashCodeFields(stateFields)};
+
+  @override
+  String toString() =>
+      '$stateName(${entityCamel}List: \${${entityCamel}List.length}, isLoading: \$isLoading, error: \$error)';
+}
+''';
+
+    return _writeFile(filePath, content, 'state');
+  }
+
+  /// Generate equality checks for method-specific fields
+  String _generateEqualityChecks(List<String> stateFields) {
+    final equalityChecks = <String>[];
+
+    for (final field in stateFields) {
+      if (field.contains('final bool') &&
+          !field.contains('isLoading') &&
+          !field.contains('error')) {
+        final fieldName = field.trim().split(' ').last.replaceAll(';', '');
+        equalityChecks.add(' && $fieldName == other.$fieldName');
+      }
+    }
+
+    return equalityChecks.isNotEmpty ? equalityChecks.join() : '';
+  }
+
+  /// Generate hashCode fields for method-specific fields
+  String _generateHashCodeFields(List<String> stateFields) {
+    final hashCodeFields = <String>[];
+
+    for (final field in stateFields) {
+      if (field.contains('final bool') &&
+          !field.contains('isLoading') &&
+          !field.contains('error')) {
+        final fieldName = field.trim().split(' ').last.replaceAll(';', '');
+        hashCodeFields.add('$fieldName.hashCode');
+      }
+    }
+
+    return hashCodeFields.isNotEmpty ? ' ^ ${hashCodeFields.join(' ^ ')}' : '';
+  }
+
+  /// Generate copyWith assignments for method-specific fields
+
+  String _generateMethodSpecificCopyWithAssignments(
+      List<String> copyWithParams) {
+    final assignments = <String>[];
+
+    for (final param in copyWithParams) {
+      // Skip basic fields and clearError parameter
+      if (param.contains('clearError')) continue;
+      if (param.contains('List<')) continue;
+      if (param.contains('isLoading') && !param.contains('clear')) continue;
+      if (param.contains('AppFailure') && !param.contains('clear')) continue;
+
+      // Extract field name by removing type annotation and nullable marker
+      // e.g., "bool? isGetting" -> "isGetting"
+      final parts = param.trim().split(' ');
+      final fieldName = parts.last.replaceAll('?', '').trim();
+      assignments.add('$fieldName: $fieldName ?? this.$fieldName,');
+    }
+
+    return assignments.isNotEmpty
+        ? '\n      ${assignments.join('\n      ')}'
+        : '';
   }
 
   Future<GeneratedFile> _generateObserver() async {
