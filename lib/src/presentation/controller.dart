@@ -9,6 +9,69 @@ import '../core/failure.dart';
 import '../core/result.dart';
 import '../domain/usecase.dart';
 
+/// Mixin for controllers that manage state.
+///
+/// This mixin provides state management capabilities to controllers.
+/// Use it with the [Controller] class to add type-safe state management.
+///
+/// ## Example
+/// ```dart
+/// class MyController extends Controller with StatefulController<MyState> {
+///   MyController() : super();
+///
+///   @override
+///   MyState createInitialState() => const MyState();
+///
+///   void someMethod() {
+///     print(viewState.someField);
+///     updateState(viewState.copyWith(someField: 'new value'));
+///   }
+/// }
+/// ```
+mixin StatefulController<S> on Controller {
+  /// The current state of this controller.
+  S? _internalState;
+
+  /// Get the current state.
+  ///
+  /// Throws [StateError] if [createInitialState] has not been called yet.
+  S get viewState {
+    if (_internalState == null) {
+      throw StateError(
+        'Controller $runtimeType has not been initialized. '
+        'Ensure createInitialState() returns a non-null value.',
+      );
+    }
+    return _internalState!;
+  }
+
+  /// Create the initial state for this controller.
+  ///
+  /// Override this method to provide the initial state.
+  /// This will be called once during controller initialization.
+  @protected
+  S createInitialState() => throw UnimplementedError(
+        'Controllers using StatefulController must override createInitialState()',
+      );
+
+  /// Update the state and refresh the UI.
+  ///
+  /// This method updates the internal state and calls [refreshUI()] to notify listeners.
+  @protected
+  void updateState(S newState) {
+    _internalState = newState;
+    refreshUI();
+  }
+
+  @override
+  @mustCallSuper
+  void initListeners() {
+    super.initListeners();
+    // Initialize state from the mixin
+    _internalState = createInitialState();
+  }
+}
+
 /// A Clean Architecture Controller.
 ///
 /// The [Controller] handles UI events, manages state, and coordinates
@@ -21,15 +84,13 @@ import '../domain/usecase.dart';
 /// - Lifecycle callbacks for Flutter widget lifecycle
 /// - Route awareness via [RouteAware]
 /// - Built-in logging
+/// - Optional state management via [StatefulController] mixin
 ///
-/// ## Example
+/// ## Example (without state)
 /// ```dart
 /// class ProductController extends Controller {
 ///   final GetProductUseCase _getProduct;
 ///   final GetAllProductsUseCase _getAllProducts;
-///
-///   ProductState _state = const ProductState();
-///   ProductState get state => _state;
 ///
 ///   ProductController({
 ///     required ProductRepository repository,
@@ -37,25 +98,41 @@ import '../domain/usecase.dart';
 ///        _getAllProducts = GetAllProductsUseCase(repository);
 ///
 ///   Future<void> loadProduct(String id) async {
-///     _setState(_state.copyWith(isLoading: true, clearError: true));
+///     final result = await execute(_getProduct, id);
+///     // Handle result...
+///   }
+/// }
+/// ```
+///
+/// ## Example (with state using StatefulController mixin)
+/// ```dart
+/// class ProductController extends Controller with StatefulController<ProductState> {
+///   final GetProductUseCase _getProduct;
+///   final GetAllProductsUseCase _getAllProducts;
+///
+///   ProductController({
+///     required ProductRepository repository,
+///   }) : _getProduct = GetProductUseCase(repository),
+///        _getAllProducts = GetAllProductsUseCase(repository);
+///
+///   @override
+///   ProductState createInitialState() => const ProductState();
+///
+///   Future<void> loadProduct(String id) async {
+///     updateState(viewState.copyWith(isGetting: true));
 ///
 ///     final result = await execute(_getProduct, id);
 ///
 ///     result.fold(
-///       (product) => _setState(_state.copyWith(
+///       (product) => updateState(viewState.copyWith(
 ///         product: product,
-///         isLoading: false,
+///         isGetting: false,
 ///       )),
-///       (failure) => _setState(_state.copyWith(
+///       (failure) => updateState(viewState.copyWith(
 ///         error: failure,
-///         isLoading: false,
+///         isGetting: false,
 ///       )),
 ///     );
-///   }
-///
-///   void _setState(ProductState newState) {
-///     _state = newState;
-///     refreshUI();
 ///   }
 /// }
 /// ```

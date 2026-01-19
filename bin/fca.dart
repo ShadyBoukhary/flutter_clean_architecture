@@ -974,19 +974,18 @@ ${presenterMethods.join('\n\n')}
         case 'get':
           if (withState) {
             methods.add('''
-  Future<void> get${entityName}(String id) async {
-    _updateState(viewState.copyWith(isGetting: true));
+  Future<void> get$entityName(String id) async {
+    updateState(viewState.copyWith(isGetting: true));
 
-    final result = await _presenter.get${entityName}(id);
+    final result = await _presenter.get$entityName(id);
 
     result.fold(
       (entity) {
-        // Update state with the fetched entity if needed
-        _updateState(viewState.copyWith(
+        updateState(viewState.copyWith(
           isGetting: false,
         ));
       },
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isGetting: false,
         error: failure,
       )),
@@ -998,16 +997,16 @@ ${presenterMethods.join('\n\n')}
           if (withState) {
             methods.add('''
   Future<void> get${entityName}List() async {
-    _updateState(viewState.copyWith(isGettingList: true));
+    updateState(viewState.copyWith(isGettingList: true));
 
     final result = await _presenter.get${entityName}List();
 
     result.fold(
-      (list) => _updateState(viewState.copyWith(
+      (list) => updateState(viewState.copyWith(
         isGettingList: false,
         ${entityCamel}List: list,
       )),
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isGettingList: false,
         error: failure,
       )),
@@ -1018,17 +1017,17 @@ ${presenterMethods.join('\n\n')}
         case 'create':
           if (withState) {
             methods.add('''
-  Future<void> create${entityName}($entityName $entityCamel) async {
-    _updateState(viewState.copyWith(isCreating: true));
+  Future<void> create$entityName($entityName $entityCamel) async {
+    updateState(viewState.copyWith(isCreating: true));
 
-    final result = await _presenter.create${entityName}($entityCamel);
+    final result = await _presenter.create$entityName($entityCamel);
 
     result.fold(
-      (created) => _updateState(viewState.copyWith(
+      (created) => updateState(viewState.copyWith(
         isCreating: false,
         ${entityCamel}List: [...viewState.${entityCamel}List, created],
       )),
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isCreating: false,
         error: failure,
       )),
@@ -1039,17 +1038,17 @@ ${presenterMethods.join('\n\n')}
         case 'update':
           if (withState) {
             methods.add('''
-  Future<void> update${entityName}($entityName $entityCamel) async {
-    _updateState(viewState.copyWith(isUpdating: true));
+  Future<void> update$entityName($entityName $entityCamel) async {
+    updateState(viewState.copyWith(isUpdating: true));
 
-    final result = await _presenter.update${entityName}($entityCamel);
+    final result = await _presenter.update$entityName($entityCamel);
 
     result.fold(
-      (updated) => _updateState(viewState.copyWith(
+      (updated) => updateState(viewState.copyWith(
         isUpdating: false,
         ${entityCamel}List: viewState.${entityCamel}List.map((e) => e.id == updated.id ? updated : e).toList(),
       )),
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isUpdating: false,
         error: failure,
       )),
@@ -1060,17 +1059,17 @@ ${presenterMethods.join('\n\n')}
         case 'delete':
           if (withState) {
             methods.add('''
-  Future<void> delete${entityName}(String id) async {
-    _updateState(viewState.copyWith(isDeleting: true));
+  Future<void> delete$entityName(String id) async {
+    updateState(viewState.copyWith(isDeleting: true));
 
-    final result = await _presenter.delete${entityName}(id);
+    final result = await _presenter.delete$entityName(id);
 
     result.fold(
-      (_) => _updateState(viewState.copyWith(
+      (_) => updateState(viewState.copyWith(
         isDeleting: false,
         ${entityCamel}List: viewState.${entityCamel}List.where((e) => e.id != id).toList(),
       )),
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isDeleting: false,
         error: failure,
       )),
@@ -1081,16 +1080,16 @@ ${presenterMethods.join('\n\n')}
         case 'watch':
           if (withState) {
             methods.add('''
-  void watch${entityName}(String id) {
-    _updateState(viewState.copyWith(isWatching: true));
+  void watch$entityName(String id) {
+    updateState(viewState.copyWith(isWatching: true));
 
-    _presenter.watch${entityName}(id).fold(
+    _presenter.watch$entityName(id).fold(
       (entity) {
-        _updateState(viewState.copyWith(
+        updateState(viewState.copyWith(
           isWatching: false,
         ));
       },
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isWatching: false,
         error: failure,
       )),
@@ -1102,14 +1101,14 @@ ${presenterMethods.join('\n\n')}
           if (withState) {
             methods.add('''
   void watch${entityName}List() {
-    _updateState(viewState.copyWith(isWatchingList: true));
+    updateState(viewState.copyWith(isWatchingList: true));
 
     _presenter.watch${entityName}List().fold(
-      (list) => _updateState(viewState.copyWith(
+      (list) => updateState(viewState.copyWith(
         isWatchingList: false,
         ${entityCamel}List: list,
       )),
-      (failure) => _updateState(viewState.copyWith(
+      (failure) => updateState(viewState.copyWith(
         isWatchingList: false,
         error: failure,
       )),
@@ -1143,33 +1142,22 @@ ${presenterMethods.join('\n\n')}
 
 ${imports.join('\n')}
 
-class $controllerName extends Controller {
+class $controllerName extends Controller${withState ? ' with StatefulController<$stateName>' : ''} {
   final $presenterName _presenter;
-${withState ? '''
-  $stateName _viewState = const $stateName();
-  $stateName get viewState => _viewState;
-''' : ''}
 
-  $controllerName(this._presenter);
+  $controllerName(this._presenter)${withState ? ' : super();' : ''} {}
 
 ${withState ? '''
   @override
-  void initListeners() {
-    // Initialize listeners if needed
-    super.initListeners();
-  }
-
-  void _updateState($stateName newState) {
-    _viewState = newState;
-    refreshUI();
-  }
+  $stateName createInitialState() => const $stateName();
 ''' : ''}
+${methods.join('\n')}
+
   @override
   void onDisposed() {
     _presenter.dispose();
     super.onDisposed();
   }
-${methods.join('\n')}
 }
 ''';
 
