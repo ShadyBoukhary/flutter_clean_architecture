@@ -972,14 +972,12 @@ ${presenterMethods.join('\n\n')}
     for (final method in config.methods) {
       switch (method) {
         case 'get':
-          if (withState) {
-            methods.add('''
-  Future<void> get$entityName(String id) async {
-    updateState(viewState.copyWith(isGetting: true));
+          methods.add('''
+  Future<void> get${entityName}(String id) async {
+${withState ? "    updateState(viewState.copyWith(isGetting: true));" : ""}
+    final result = await _presenter.get${entityName}(id);
 
-    final result = await _presenter.get$entityName(id);
-
-    result.fold(
+${withState ? '''    result.fold(
       (entity) {
         updateState(viewState.copyWith(
           isGetting: false,
@@ -989,19 +987,19 @@ ${presenterMethods.join('\n\n')}
         isGetting: false,
         error: failure,
       )),
-    );
+    );''' : '''    result.fold(
+      (entity) {},
+      (failure) {},
+    );'''}
   }''');
-          }
           break;
         case 'getList':
-          if (withState) {
-            methods.add('''
+          methods.add('''
   Future<void> get${entityName}List() async {
-    updateState(viewState.copyWith(isGettingList: true));
-
+${withState ? "    updateState(viewState.copyWith(isGettingList: true));" : ""}
     final result = await _presenter.get${entityName}List();
 
-    result.fold(
+${withState ? '''    result.fold(
       (list) => updateState(viewState.copyWith(
         isGettingList: false,
         ${entityCamel}List: list,
@@ -1010,19 +1008,19 @@ ${presenterMethods.join('\n\n')}
         isGettingList: false,
         error: failure,
       )),
-    );
+    );''' : '''    result.fold(
+      (list) {},
+      (failure) {},
+    );'''}
   }''');
-          }
           break;
         case 'create':
-          if (withState) {
-            methods.add('''
-  Future<void> create$entityName($entityName $entityCamel) async {
-    updateState(viewState.copyWith(isCreating: true));
+          methods.add('''
+  Future<void> create${entityName}($entityName $entityCamel) async {
+${withState ? "    updateState(viewState.copyWith(isCreating: true));" : ""}
+    final result = await _presenter.create${entityName}($entityCamel);
 
-    final result = await _presenter.create$entityName($entityCamel);
-
-    result.fold(
+${withState ? '''    result.fold(
       (created) => updateState(viewState.copyWith(
         isCreating: false,
         ${entityCamel}List: [...viewState.${entityCamel}List, created],
@@ -1031,19 +1029,19 @@ ${presenterMethods.join('\n\n')}
         isCreating: false,
         error: failure,
       )),
-    );
+    );''' : '''    result.fold(
+      (created) {},
+      (failure) {},
+    );'''}
   }''');
-          }
           break;
         case 'update':
-          if (withState) {
-            methods.add('''
-  Future<void> update$entityName($entityName $entityCamel) async {
-    updateState(viewState.copyWith(isUpdating: true));
+          methods.add('''
+  Future<void> update${entityName}($entityName $entityCamel) async {
+${withState ? "    updateState(viewState.copyWith(isUpdating: true));" : ""}
+    final result = await _presenter.update${entityName}($entityCamel);
 
-    final result = await _presenter.update$entityName($entityCamel);
-
-    result.fold(
+${withState ? '''    result.fold(
       (updated) => updateState(viewState.copyWith(
         isUpdating: false,
         ${entityCamel}List: viewState.${entityCamel}List.map((e) => e.id == updated.id ? updated : e).toList(),
@@ -1052,19 +1050,19 @@ ${presenterMethods.join('\n\n')}
         isUpdating: false,
         error: failure,
       )),
-    );
+    );''' : '''    result.fold(
+      (updated) {},
+      (failure) {},
+    );'''}
   }''');
-          }
           break;
         case 'delete':
-          if (withState) {
-            methods.add('''
-  Future<void> delete$entityName(String id) async {
-    updateState(viewState.copyWith(isDeleting: true));
+          methods.add('''
+  Future<void> delete${entityName}(String id) async {
+${withState ? "    updateState(viewState.copyWith(isDeleting: true));" : ""}
+    final result = await _presenter.delete${entityName}(id);
 
-    final result = await _presenter.delete$entityName(id);
-
-    result.fold(
+${withState ? '''    result.fold(
       (_) => updateState(viewState.copyWith(
         isDeleting: false,
         ${entityCamel}List: viewState.${entityCamel}List.where((e) => e.id != id).toList(),
@@ -1073,48 +1071,58 @@ ${presenterMethods.join('\n\n')}
         isDeleting: false,
         error: failure,
       )),
-    );
+    );''' : '''    result.fold(
+      (_) {},
+      (failure) {},
+    );'''}
   }''');
-          }
           break;
         case 'watch':
-          if (withState) {
-            methods.add('''
-  void watch$entityName(String id) {
-    updateState(viewState.copyWith(isWatching: true));
-
-    _presenter.watch$entityName(id).fold(
-      (entity) {
-        updateState(viewState.copyWith(
-          isWatching: false,
-        ));
-      },
-      (failure) => updateState(viewState.copyWith(
-        isWatching: false,
-        error: failure,
-      )),
+          methods.add('''
+  void watch${entityName}(String id) {
+${withState ? "    updateState(viewState.copyWith(isWatching: true));" : ""}
+    _presenter.watch${entityName}(id).listen(
+${withState ? '''      (result) {
+        result.fold(
+          (entity) => updateState(viewState.copyWith(isWatching: false)),
+          (failure) => updateState(viewState.copyWith(
+            isWatching: false,
+            error: failure,
+          )),
+        );
+      },''' : '''      (result) {
+        result.fold(
+          (entity) {},
+          (failure) {},
+        );
+      },'''}
     );
   }''');
-          }
           break;
         case 'watchList':
-          if (withState) {
-            methods.add('''
+          methods.add('''
   void watch${entityName}List() {
-    updateState(viewState.copyWith(isWatchingList: true));
-
-    _presenter.watch${entityName}List().fold(
-      (list) => updateState(viewState.copyWith(
-        isWatchingList: false,
-        ${entityCamel}List: list,
-      )),
-      (failure) => updateState(viewState.copyWith(
-        isWatchingList: false,
-        error: failure,
-      )),
+${withState ? "    updateState(viewState.copyWith(isWatchingList: true));" : ""}
+    _presenter.watch${entityName}List().listen(
+${withState ? '''      (result) {
+        result.fold(
+          (list) => updateState(viewState.copyWith(
+            isWatchingList: false,
+            ${entityCamel}List: list,
+          )),
+          (failure) => updateState(viewState.copyWith(
+            isWatchingList: false,
+            error: failure,
+          )),
+        );
+      },''' : '''      (result) {
+        result.fold(
+          (list) {},
+          (failure) {},
+        );
+      },'''}
     );
   }''');
-          }
           break;
       }
     }
@@ -1145,7 +1153,7 @@ ${imports.join('\n')}
 class $controllerName extends Controller${withState ? ' with StatefulController<$stateName>' : ''} {
   final $presenterName _presenter;
 
-  $controllerName(this._presenter)${withState ? ' : super();' : ''} {}
+  $controllerName(this._presenter)${withState ? ' : super();' : ';'}
 
 ${withState ? '''
   @override
