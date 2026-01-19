@@ -8,6 +8,8 @@
 /// 1. Creating the default Clean Architecture folder structure
 /// 2. Generating individual pages with their associated Controller, Presenter, and View files
 ///
+library;
+
 /// ## Usage Examples:
 /// ```bash
 /// # Create default architecture folders
