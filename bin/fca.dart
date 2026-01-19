@@ -1159,7 +1159,7 @@ ${withState ? '''
   @override
   $stateName createInitialState() => const $stateName();
 ''' : ''}
-${methods.join('\n')}
+${methods.join('\n\n')}
 
   @override
   void onDisposed() {
