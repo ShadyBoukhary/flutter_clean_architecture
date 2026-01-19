@@ -29,7 +29,8 @@ class ProductPresenter extends Presenter {
     _createProduct = registerUseCase(CreateProductUseCase(productRepository));
     _updateProduct = registerUseCase(UpdateProductUseCase(productRepository));
     _deleteProduct = registerUseCase(DeleteProductUseCase(productRepository));
-    _watchProductList = registerUseCase(WatchProductListUseCase(productRepository));
+    _watchProductList =
+        registerUseCase(WatchProductListUseCase(productRepository));
   }
 
   Future<Result<Product, AppFailure>> getProduct(String id) {

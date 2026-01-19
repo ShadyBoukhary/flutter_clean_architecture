@@ -973,9 +973,9 @@ ${presenterMethods.join('\n\n')}
       switch (method) {
         case 'get':
           methods.add('''
-  Future<void> get${entityName}(String id) async {
+  Future<void> get$entityName(String id) async {
 ${withState ? "    updateState(viewState.copyWith(isGetting: true));" : ""}
-    final result = await _presenter.get${entityName}(id);
+    final result = await _presenter.get$entityName(id);
 
 ${withState ? '''    result.fold(
       (entity) {
@@ -1016,9 +1016,9 @@ ${withState ? '''    result.fold(
           break;
         case 'create':
           methods.add('''
-  Future<void> create${entityName}($entityName $entityCamel) async {
+  Future<void> create$entityName($entityName $entityCamel) async {
 ${withState ? "    updateState(viewState.copyWith(isCreating: true));" : ""}
-    final result = await _presenter.create${entityName}($entityCamel);
+    final result = await _presenter.create$entityName($entityCamel);
 
 ${withState ? '''    result.fold(
       (created) => updateState(viewState.copyWith(
@@ -1037,9 +1037,9 @@ ${withState ? '''    result.fold(
           break;
         case 'update':
           methods.add('''
-  Future<void> update${entityName}($entityName $entityCamel) async {
+  Future<void> update$entityName($entityName $entityCamel) async {
 ${withState ? "    updateState(viewState.copyWith(isUpdating: true));" : ""}
-    final result = await _presenter.update${entityName}($entityCamel);
+    final result = await _presenter.update$entityName($entityCamel);
 
 ${withState ? '''    result.fold(
       (updated) => updateState(viewState.copyWith(
@@ -1058,9 +1058,9 @@ ${withState ? '''    result.fold(
           break;
         case 'delete':
           methods.add('''
-  Future<void> delete${entityName}(String id) async {
+  Future<void> delete$entityName(String id) async {
 ${withState ? "    updateState(viewState.copyWith(isDeleting: true));" : ""}
-    final result = await _presenter.delete${entityName}(id);
+    final result = await _presenter.delete$entityName(id);
 
 ${withState ? '''    result.fold(
       (_) => updateState(viewState.copyWith(
@@ -1079,9 +1079,9 @@ ${withState ? '''    result.fold(
           break;
         case 'watch':
           methods.add('''
-  void watch${entityName}(String id) {
+  void watch$entityName(String id) {
 ${withState ? "    updateState(viewState.copyWith(isWatching: true));" : ""}
-    _presenter.watch${entityName}(id).listen(
+    _presenter.watch$entityName(id).listen(
 ${withState ? '''      (result) {
         result.fold(
           (entity) => updateState(viewState.copyWith(isWatching: false)),
