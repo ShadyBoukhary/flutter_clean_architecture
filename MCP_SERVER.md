@@ -62,6 +62,20 @@ Add to your workspace settings (`.vscode/settings.json`) or MCP configuration:
   }
 }
 ```
+or in ZED settings:
+```json
+{
+  /// The name of your MCP server
+  "flutter-clean-architecture": {
+    /// The command which runs the MCP server
+    "command": "/usr/local/bin/dart",
+    /// The arguments to pass to the MCP server
+    "args": ["pub","global","run","flutter_clean_architecture:fca_mcp_server"],
+    /// The environment variables to set
+    "env": {}
+  }
+}
+```
 
 ## Available Tools
 

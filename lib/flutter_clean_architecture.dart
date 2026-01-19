@@ -1,3 +1,5 @@
+library;
+
 /// Flutter Clean Architecture
 ///
 /// A comprehensive Clean Architecture framework for Flutter applications
@@ -7,8 +9,8 @@
 ///
 /// This package provides the building blocks for implementing Clean Architecture
 /// in Flutter applications:
+
 ///
-/// - **UseCase**: Single-shot business operations returning `Result<T, AppFailure>`
 /// - **StreamUseCase**: Reactive operations that emit multiple values over time
 /// - **BackgroundUseCase**: CPU-intensive operations that run on a separate isolate
 /// - **Controller**: Manages UI state and coordinates with UseCases
@@ -104,7 +106,6 @@
 ///     showGenericError();
 /// }
 /// ```
-library flutter_clean_architecture;
 
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
