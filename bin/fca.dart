@@ -955,29 +955,221 @@ ${presenterMethods.join('\n\n')}
   Future<GeneratedFile> _generateController() async {
     final entityName = config.name;
     final entitySnake = config.nameSnake;
+    final entityCamel = config.nameCamel;
     final controllerName = '${entityName}Controller';
     final presenterName = '${entityName}Presenter';
+    final stateName = '${entityName}State';
     final fileName = '${entitySnake}_controller.dart';
     final filePath =
         path.join(outputDir, 'presentation', 'pages', entitySnake, fileName);
 
+    // Check if state generation is enabled
+    final withState = config.generateState;
+
+    // Generate methods based on configuration
+    final methods = <String>[];
+
+    for (final method in config.methods) {
+      switch (method) {
+        case 'get':
+          if (withState) {
+            methods.add('''
+  Future<void> get${entityName}(String id) async {
+    _updateState(viewState.copyWith(isGetting: true));
+
+    final result = await _presenter.get${entityName}(id);
+
+    result.fold(
+      (entity) {
+        // Update state with the fetched entity if needed
+        _updateState(viewState.copyWith(
+          isGetting: false,
+        ));
+      },
+      (failure) => _updateState(viewState.copyWith(
+        isGetting: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+        case 'getList':
+          if (withState) {
+            methods.add('''
+  Future<void> get${entityName}List() async {
+    _updateState(viewState.copyWith(isGettingList: true));
+
+    final result = await _presenter.get${entityName}List();
+
+    result.fold(
+      (list) => _updateState(viewState.copyWith(
+        isGettingList: false,
+        ${entityCamel}List: list,
+      )),
+      (failure) => _updateState(viewState.copyWith(
+        isGettingList: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+        case 'create':
+          if (withState) {
+            methods.add('''
+  Future<void> create${entityName}($entityName $entityCamel) async {
+    _updateState(viewState.copyWith(isCreating: true));
+
+    final result = await _presenter.create${entityName}($entityCamel);
+
+    result.fold(
+      (created) => _updateState(viewState.copyWith(
+        isCreating: false,
+        ${entityCamel}List: [...viewState.${entityCamel}List, created],
+      )),
+      (failure) => _updateState(viewState.copyWith(
+        isCreating: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+        case 'update':
+          if (withState) {
+            methods.add('''
+  Future<void> update${entityName}($entityName $entityCamel) async {
+    _updateState(viewState.copyWith(isUpdating: true));
+
+    final result = await _presenter.update${entityName}($entityCamel);
+
+    result.fold(
+      (updated) => _updateState(viewState.copyWith(
+        isUpdating: false,
+        ${entityCamel}List: viewState.${entityCamel}List.map((e) => e.id == updated.id ? updated : e).toList(),
+      )),
+      (failure) => _updateState(viewState.copyWith(
+        isUpdating: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+        case 'delete':
+          if (withState) {
+            methods.add('''
+  Future<void> delete${entityName}(String id) async {
+    _updateState(viewState.copyWith(isDeleting: true));
+
+    final result = await _presenter.delete${entityName}(id);
+
+    result.fold(
+      (_) => _updateState(viewState.copyWith(
+        isDeleting: false,
+        ${entityCamel}List: viewState.${entityCamel}List.where((e) => e.id != id).toList(),
+      )),
+      (failure) => _updateState(viewState.copyWith(
+        isDeleting: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+        case 'watch':
+          if (withState) {
+            methods.add('''
+  void watch${entityName}(String id) {
+    _updateState(viewState.copyWith(isWatching: true));
+
+    _presenter.watch${entityName}(id).fold(
+      (entity) {
+        _updateState(viewState.copyWith(
+          isWatching: false,
+        ));
+      },
+      (failure) => _updateState(viewState.copyWith(
+        isWatching: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+        case 'watchList':
+          if (withState) {
+            methods.add('''
+  void watch${entityName}List() {
+    _updateState(viewState.copyWith(isWatchingList: true));
+
+    _presenter.watch${entityName}List().fold(
+      (list) => _updateState(viewState.copyWith(
+        isWatchingList: false,
+        ${entityCamel}List: list,
+      )),
+      (failure) => _updateState(viewState.copyWith(
+        isWatchingList: false,
+        error: failure,
+      )),
+    );
+  }''');
+          }
+          break;
+      }
+    }
+
+    // Generate imports
+    final imports = <String>[];
+    imports.add(
+        "import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';");
+    imports.add("import '${entitySnake}_presenter.dart';");
+
+    if (withState) {
+      imports.add("import '${entitySnake}_state.dart';");
+    }
+
+    // Add entity import if methods use the entity type (create, update)
+    if (config.methods.any((m) => m == 'create' || m == 'update')) {
+      imports.add(
+          "import '../../../domain/entities/$entitySnake/$entitySnake.dart';");
+    }
+
+    // Generate class definition
     final content = '''
 // Generated by fca
-// fca generate $entityName --methods=${config.methods.join(',')} --vpc
+// fca generate $entityName --methods=${config.methods.join(',')} --vpc${withState ? ' --state' : ''}
 
-import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import '${entitySnake}_presenter.dart';
+${imports.join('\n')}
 
 class $controllerName extends Controller {
   final $presenterName _presenter;
+${withState ? '''
+  $stateName _viewState = const $stateName();
+  $stateName get viewState => _viewState;
+''' : ''}
 
   $controllerName(this._presenter);
 
+${withState ? '''
+  @override
+  void initListeners() {
+    // Initialize listeners if needed
+    super.initListeners();
+  }
+
+  void _updateState($stateName newState) {
+    _viewState = newState;
+    refreshUI();
+  }
+''' : ''}
   @override
   void onDisposed() {
     _presenter.dispose();
     super.onDisposed();
   }
+${methods.join('\n')}
 }
 ''';
 
