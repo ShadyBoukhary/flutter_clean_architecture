@@ -201,6 +201,10 @@ class FcaMcpServer {
             'description':
                 'Generate View, Presenter, and Controller (presentation layer)',
           },
+          'state': {
+            'type': 'boolean',
+            'description': 'Generate State object',
+          },
           'data': {
             'type': 'boolean',
             'description': 'Generate data layer (DataRepository + DataSource)',
@@ -355,6 +359,7 @@ class FcaMcpServer {
     }
     if (args['repository'] == true) cliArgs.add('--repository');
     if (args['vpc'] == true) cliArgs.add('--vpc');
+    if (args['state'] == true) cliArgs.add('--state');
     if (args['data'] == true) cliArgs.add('--data');
     if (args['datasource'] == true) cliArgs.add('--datasource');
     if (args['id_type'] != null) cliArgs.add('--id-type=${args['id_type']}');
