@@ -104,6 +104,8 @@ void main() {
 
       // Tap the checkbox
       await tester.tap(find.byType(Checkbox));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
       await tester.pumpAndSettle();
 
       // Stats should update
@@ -124,14 +126,20 @@ void main() {
       expect(find.text('Delete me'), findsOneWidget);
 
       // Swipe to delete
-      await tester.drag(find.text('Delete me'), const Offset(-500, 0));
-      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await tester.drag(find.text('Delete me'), const Offset(-500, 0));
+        await tester.pumpAndSettle(); // Wait for animation
 
-      // Todo should be gone
-      expect(find.text('Delete me'), findsNothing);
+        // Todo should be visually gone (removed by Dismissible)
+        expect(find.text('Delete me'), findsNothing);
 
-      // Should show empty state again
-      expect(find.text('No todos yet!'), findsOneWidget);
+        // Wait for the async delete operation to complete
+        await Future.delayed(const Duration(milliseconds: 300));
+        await tester.pumpAndSettle();
+
+        // Should show empty state again
+        expect(find.text('No todos yet!'), findsOneWidget);
+      });
     });
 
     testWidgets('should clear text field after adding todo',
