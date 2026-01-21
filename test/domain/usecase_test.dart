@@ -52,12 +52,13 @@ void main() {
             contains('Something went wrong'));
       });
 
-      test('wraps errors in UnknownFailure', () async {
+      test('wraps ArgumentError in ValidationFailure', () async {
         final useCase = _ThrowingErrorUseCase();
         final result = await useCase('input');
 
         expect(result, isFailure());
-        expect(result, isFailureOfType<UnknownFailure>());
+        expect(result, isFailureOfType<ValidationFailure>());
+        expect(result.getFailureOrNull()?.message, contains('Bad argument'));
       });
 
       test('preserves stackTrace on exception', () async {

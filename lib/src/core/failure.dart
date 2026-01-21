@@ -58,81 +58,100 @@ sealed class AppFailure implements Exception {
       return error;
     }
 
-    final message = error.toString();
-    final lowerMessage = message.toLowerCase();
-
-    // Network-related errors
-    if (_isNetworkError(lowerMessage)) {
-      return NetworkFailure(message, stackTrace: stackTrace, cause: error);
-    }
-
-    // Timeout errors
-    if (_isTimeoutError(lowerMessage)) {
-      return TimeoutFailure(message, stackTrace: stackTrace, cause: error);
-    }
-
-    // Not found errors
-    if (_isNotFoundError(lowerMessage)) {
-      return NotFoundFailure(message, stackTrace: stackTrace, cause: error);
-    }
-
-    // Unauthorized errors
-    if (_isUnauthorizedError(lowerMessage)) {
-      return UnauthorizedFailure(message, stackTrace: stackTrace, cause: error);
-    }
-
-    // Forbidden errors
-    if (_isForbiddenError(lowerMessage)) {
-      return ForbiddenFailure(message, stackTrace: stackTrace, cause: error);
-    }
-
-    // Server errors
-    if (_isServerError(lowerMessage)) {
-      return ServerFailure(message, stackTrace: stackTrace, cause: error);
-    }
-
-    // Default to unknown
-    return UnknownFailure(message, stackTrace: stackTrace, cause: error);
+    // Try each failure type's factory in order of specificity
+    return NetworkFailure.from(error, stackTrace) ??
+        TimeoutFailure.from(error, stackTrace) ??
+        NotFoundFailure.from(error, stackTrace) ??
+        UnauthorizedFailure.from(error, stackTrace) ??
+        ForbiddenFailure.from(error, stackTrace) ??
+        ValidationFailure.from(error, stackTrace) ??
+        ConflictFailure.from(error, stackTrace) ??
+        ServerFailure.from(error, stackTrace) ??
+        CacheFailure.from(error, stackTrace) ??
+        UnknownFailure.from(error, stackTrace);
   }
 
-  static bool _isNetworkError(String message) =>
-      message.contains('socketexception') ||
-      message.contains('connection refused') ||
-      message.contains('connection reset') ||
-      message.contains('connection closed') ||
-      message.contains('network is unreachable') ||
-      message.contains('no internet') ||
-      message.contains('no address associated') ||
-      message.contains('failed host lookup');
+  /// Create a server error failure
+  const factory AppFailure.server(
+    String message, {
+    int? statusCode,
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = ServerFailure;
 
-  static bool _isTimeoutError(String message) =>
-      message.contains('timeout') ||
-      message.contains('timed out') ||
-      message.contains('deadline exceeded');
+  /// Create a network failure
+  const factory AppFailure.network(
+    String message, {
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = NetworkFailure;
 
-  static bool _isNotFoundError(String message) =>
-      message.contains('404') ||
-      message.contains('not found') ||
-      message.contains('does not exist');
+  /// Create a cache failure
+  const factory AppFailure.cache(
+    String message, {
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = CacheFailure;
 
-  static bool _isUnauthorizedError(String message) =>
-      message.contains('401') ||
-      message.contains('unauthorized') ||
-      message.contains('unauthenticated') ||
-      message.contains('invalid token') ||
-      message.contains('token expired');
+  /// Create a validation failure
+  const factory AppFailure.validation(
+    String message, {
+    Map<String, List<String>>? fieldErrors,
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = ValidationFailure;
 
-  static bool _isForbiddenError(String message) =>
-      message.contains('403') || message.contains('forbidden');
+  /// Create a not found failure
+  const factory AppFailure.notFound(
+    String message, {
+    String? resourceId,
+    String? resourceType,
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = NotFoundFailure;
 
-  static bool _isServerError(String message) =>
-      message.contains('500') ||
-      message.contains('502') ||
-      message.contains('503') ||
-      message.contains('504') ||
-      message.contains('internal server error') ||
-      message.contains('bad gateway') ||
-      message.contains('service unavailable');
+  /// Create an unauthorized failure
+  const factory AppFailure.unauthorized(
+    String message, {
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = UnauthorizedFailure;
+
+  /// Create a forbidden failure
+  const factory AppFailure.forbidden(
+    String message, {
+    String? requiredPermission,
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = ForbiddenFailure;
+
+  /// Create a conflict failure
+  const factory AppFailure.conflict(
+    String message, {
+    String? conflictType,
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = ConflictFailure;
+
+  /// Create a timeout failure
+  const factory AppFailure.timeout(
+    String message, {
+    Duration? timeout,
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = TimeoutFailure;
+
+  /// Create a cancellation failure
+  const factory AppFailure.cancellation([
+    String message,
+  ]) = CancellationFailure;
+
+  /// Create an unknown failure
+  const factory AppFailure.unknown(
+    String message, {
+    StackTrace? stackTrace,
+    Object? cause,
+  }) = UnknownFailure;
 
   @override
   String toString() => '$runtimeType: $message';
@@ -153,6 +172,28 @@ final class ServerFailure extends AppFailure {
     super.cause,
   });
 
+  /// Factory that creates a ServerFailure if the error matches,
+  /// otherwise returns null
+  static ServerFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    // Check for HTTP status codes (must be followed by space, end of line, or common HTTP patterns)
+    final hasStatusCode =
+        RegExp(r'(^|\s)(500|502|503|504)(\s|:|$)').hasMatch(message);
+
+    if (hasStatusCode ||
+        message.contains('internal server error') ||
+        message.contains('bad gateway') ||
+        message.contains('service unavailable')) {
+      return ServerFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
+
   @override
   String toString() => statusCode != null
       ? 'ServerFailure($statusCode): $message'
@@ -169,6 +210,28 @@ final class NetworkFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates a NetworkFailure if the error matches,
+  /// otherwise returns null
+  static NetworkFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    if (message.contains('socketexception') ||
+        message.contains('connection refused') ||
+        message.contains('connection reset') ||
+        message.contains('connection closed') ||
+        message.contains('network is unreachable') ||
+        message.contains('no internet') ||
+        message.contains('no address associated') ||
+        message.contains('failed host lookup')) {
+      return NetworkFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 }
 
 /// Cache-related failures
@@ -181,6 +244,25 @@ final class CacheFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates a CacheFailure if the error matches,
+  /// otherwise returns null
+  static CacheFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    if (message.contains('cache') ||
+        message.contains('storage') ||
+        message.contains('database') ||
+        message.contains('hiveerror') ||
+        message.contains('shared preferences')) {
+      return CacheFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 }
 
 /// Validation failures
@@ -197,6 +279,25 @@ final class ValidationFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates a ValidationFailure if the error matches,
+  /// otherwise returns null
+  static ValidationFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    if (message.contains('invalid') ||
+        message.contains('validation') ||
+        message.contains('format exception') ||
+        message.contains('argument error') ||
+        message.contains('required field')) {
+      return ValidationFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 
   /// Check if a specific field has errors
   bool hasErrorFor(String field) => fieldErrors?.containsKey(field) ?? false;
@@ -234,6 +335,26 @@ final class NotFoundFailure extends AppFailure {
     super.cause,
   });
 
+  /// Factory that creates a NotFoundFailure if the error matches,
+  /// otherwise returns null
+  static NotFoundFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    // Check for HTTP status code 404 (must be a standalone number)
+    final hasStatusCode = RegExp(r'(^|\s)404(\s|:|$)').hasMatch(message);
+
+    if (hasStatusCode ||
+        message.contains('not found') ||
+        message.contains('does not exist')) {
+      return NotFoundFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
+
   @override
   String toString() {
     if (resourceType != null && resourceId != null) {
@@ -253,6 +374,28 @@ final class UnauthorizedFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates an UnauthorizedFailure if the error matches,
+  /// otherwise returns null
+  static UnauthorizedFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    // Check for HTTP status code 401 (must be a standalone number)
+    final hasStatusCode = RegExp(r'(^|\s)401(\s|:|$)').hasMatch(message);
+
+    if (hasStatusCode ||
+        message.contains('unauthorized') ||
+        message.contains('unauthenticated') ||
+        message.contains('invalid token') ||
+        message.contains('token expired')) {
+      return UnauthorizedFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 }
 
 /// Forbidden failures (403 HTTP errors)
@@ -269,6 +412,24 @@ final class ForbiddenFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates a ForbiddenFailure if the error matches,
+  /// otherwise returns null
+  static ForbiddenFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    // Check for HTTP status code 403 (must be a standalone number)
+    final hasStatusCode = RegExp(r'(^|\s)403(\s|:|$)').hasMatch(message);
+
+    if (hasStatusCode || message.contains('forbidden')) {
+      return ForbiddenFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 }
 
 /// Conflict failures (409 HTTP errors)
@@ -285,6 +446,27 @@ final class ConflictFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates a ConflictFailure if the error matches,
+  /// otherwise returns null
+  static ConflictFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    // Check for HTTP status code 409 (must be a standalone number)
+    final hasStatusCode = RegExp(r'(^|\s)409(\s|:|$)').hasMatch(message);
+
+    if (hasStatusCode ||
+        message.contains('conflict') ||
+        message.contains('duplicate') ||
+        message.contains('already exists')) {
+      return ConflictFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 }
 
 /// Timeout failures
@@ -300,6 +482,23 @@ final class TimeoutFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that creates a TimeoutFailure if the error matches,
+  /// otherwise returns null
+  static TimeoutFailure? from(Object error, StackTrace? stackTrace) {
+    final message = error.toString().toLowerCase();
+
+    if (message.contains('timeout') ||
+        message.contains('timed out') ||
+        message.contains('deadline exceeded')) {
+      return TimeoutFailure(
+        error.toString(),
+        stackTrace: stackTrace,
+        cause: error,
+      );
+    }
+    return null;
+  }
 
   @override
   String toString() {
@@ -333,6 +532,16 @@ final class UnknownFailure extends AppFailure {
     super.stackTrace,
     super.cause,
   });
+
+  /// Factory that always creates an UnknownFailure
+  /// This is the fallback when no other failure type matches
+  static UnknownFailure from(Object error, StackTrace? stackTrace) {
+    return UnknownFailure(
+      error.toString(),
+      stackTrace: stackTrace,
+      cause: error,
+    );
+  }
 }
 
 /// Extension to convert exceptions to failures
