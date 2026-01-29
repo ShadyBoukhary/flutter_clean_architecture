@@ -4,7 +4,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import '../../../data/repositories/data_users_repository.dart';
 
 class HomePage extends CleanView {
-  const HomePage({Key? key, this.title = ""}) : super(key: key);
+  const HomePage({super.key, this.title = ""});
 
   final String title;
 

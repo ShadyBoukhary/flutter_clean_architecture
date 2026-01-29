@@ -1,5 +1,6 @@
 import '../../../domain/usecases/get_user_future_usecase.dart';
 import '../../../domain/usecases/get_user_usecase.dart';
+import '../../../domain/repositories/users_repository.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
     as clean;
 
@@ -13,7 +14,7 @@ class HomePresenter extends clean.Presenter {
 
   final GetUserUseCase getUserUseCase;
   final GetUserFutureUseCase getUserFutureUseCase;
-  HomePresenter(usersRepo)
+  HomePresenter(UsersRepository usersRepo)
       : getUserUseCase = GetUserUseCase(usersRepo),
         getUserFutureUseCase = GetUserFutureUseCase(usersRepo);
 
@@ -49,8 +50,8 @@ class _GetUserUseCaseObserver extends clean.Observer<GetUserUseCaseResponse> {
   }
 
   @override
-  void onError(e) {
-    presenter.getUserOnError?.call(e);
+  void onError(Object error) {
+    presenter.getUserOnError?.call(error);
   }
 
   @override

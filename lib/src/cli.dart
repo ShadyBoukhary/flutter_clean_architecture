@@ -1,24 +1,17 @@
-/// Flutter Clean Architecture CLI Tool
-///
-/// This file contains the command-line interface for the Flutter Clean Architecture package.
-/// It provides developers with a convenient way to scaffold Clean Architecture components
-/// in their Flutter projects, following Uncle Bob's Clean Architecture principles.
-///
-/// The CLI supports two main operations:
-/// 1. Creating the default Clean Architecture folder structure
-/// 2. Generating individual pages with their associated Controller, Presenter, and View files
-///
-/// ## Usage Examples:
-/// ```bash
-/// # Create default architecture folders
-/// flutter pub run flutter_clean_architecture:cli create
-///
-/// # Create a specific page
-/// flutter pub run flutter_clean_architecture:cli create --page user_profile
-///
-/// # Show help
-/// flutter pub run flutter_clean_architecture:cli --help
-/// ```
+// Flutter Clean Architecture CLI Tool
+//
+// This file contains the command-line interface for the Flutter Clean Architecture package.
+// It provides developers with a convenient way to scaffold Clean Architecture components
+// in their Flutter projects, following Uncle Bob's Clean Architecture principles.
+//
+// The CLI supports two main operations:
+// 1. Creating the default Clean Architecture folder structure
+// 2. Generating individual pages with their associated Controller, Presenter, and View files
+//
+// Usage examples:
+// - flutter pub run flutter_clean_architecture:cli create
+// - flutter pub run flutter_clean_architecture:cli create --page user_profile
+// - flutter pub run flutter_clean_architecture:cli --help
 
 import 'dart:io';
 

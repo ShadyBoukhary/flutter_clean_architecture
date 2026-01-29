@@ -76,7 +76,7 @@ abstract class Observer<T> {
 
   void onNext(T? response);
   void onComplete();
-  void onError(e);
+  void onError(Object error);
 }
 
 class _CallbackObserver<T> implements Observer<T> {
@@ -103,7 +103,7 @@ class _CallbackObserver<T> implements Observer<T> {
   }
 
   @override
-  void onError(e) {
-    _onError?.call(e);
+  void onError(Object error) {
+    _onError?.call(error);
   }
 }

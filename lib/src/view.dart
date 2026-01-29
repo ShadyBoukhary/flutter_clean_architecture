@@ -56,9 +56,9 @@ typedef ViewBuilder = Widget Function(BuildContext context);
 /// ```
 ///
 /// You can optionally set globally new default values for breakpoints. To do so, just check on [FlutterCleanArchitecture.setDefaultViewBreakpoints]
-abstract class ResponsiveViewState<Page extends CleanView,
-    Con extends Controller> extends CleanViewState<Page, Con> {
-  ResponsiveViewState(Con controller) : super(controller);
+abstract class ResponsiveViewState<ViewPage extends CleanView,
+    Con extends Controller> extends CleanViewState<ViewPage, Con> {
+  ResponsiveViewState(super.controller);
 
   /// To be implemented by the developer which will build on [Watch ViewPort].
   /// The default breakpoint value is less than [300]
@@ -126,8 +126,8 @@ abstract class ResponsiveViewState<Page extends CleanView,
 ///     }
 ///
 /// ```
-abstract class CleanViewState<Page extends CleanView, Con extends Controller>
-    extends State<Page> {
+abstract class CleanViewState<ViewPage extends CleanView,
+    Con extends Controller> extends State<ViewPage> {
   final GlobalKey<State<StatefulWidget>> globalKey =
       GlobalKey<State<StatefulWidget>>();
   final Con _controller;
@@ -137,7 +137,7 @@ abstract class CleanViewState<Page extends CleanView, Con extends Controller>
   /// Implement the [Widget] you want to be displayed on [CleanView]
   Widget get view;
 
-  CleanViewState(this._controller) {
+  CleanViewState(Con controller) : _controller = controller {
     _controller.initController(globalKey);
     WidgetsBinding?.instance // ignore: invalid_null_aware_operator
         .addObserver(_controller); // ignore:unnecessary_non_null_assertion

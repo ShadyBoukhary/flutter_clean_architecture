@@ -1,5 +1,6 @@
 import './home_presenter.dart';
 import '../../../domain/entities/user.dart';
+import '../../../domain/repositories/users_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 
@@ -10,7 +11,7 @@ class HomeController extends Controller {
   User? get user => _user; // data used by the View
   final HomePresenter homePresenter;
   // Presenter should always be initialized this way
-  HomeController(usersRepo)
+  HomeController(UsersRepository usersRepo)
       : _counter = 0,
         homePresenter = HomePresenter(usersRepo),
         super();

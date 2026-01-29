@@ -1,5 +1,3 @@
-library flutter_clean_architecture;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/src/controller.dart';
 import 'package:logging/logging.dart';
