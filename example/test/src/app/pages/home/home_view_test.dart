@@ -49,8 +49,8 @@ void main() {
       home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
     ));
     expect(find.byKey(const Key('homePage')), findsOneWidget);
-    await tester.tap(
-        find.widgetWithText(ElevatedButton, 'Get User (FutureUseCase)'));
+    await tester
+        .tap(find.widgetWithText(ElevatedButton, 'Get User (FutureUseCase)'));
     await tester.pump();
     var counterFinder = find.text('John Smith, 18');
     expect(counterFinder, findsOneWidget);
@@ -63,8 +63,8 @@ void main() {
       home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
     ));
     expect(find.byKey(const Key('homePage')), findsOneWidget);
-    await tester.tap(find.widgetWithText(
-        ElevatedButton, 'Get User Error (FutureUseCase)'));
+    await tester.tap(
+        find.widgetWithText(ElevatedButton, 'Get User Error (FutureUseCase)'));
     await tester.pump();
     var counterFinder = find.text('No element');
     expect(counterFinder, findsOneWidget);
