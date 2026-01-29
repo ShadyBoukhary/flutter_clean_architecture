@@ -30,13 +30,41 @@ void main() {
   });
 
   testWidgets(
-      'Given Get User Button when click then display John Smith, 18 text',
+      'Given Get User Error Button when click then display No element text',
       (tester) async {
     await tester.pumpWidget(const MaterialApp(
       home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
     ));
     expect(find.byKey(const Key('homePage')), findsOneWidget);
     await tester.tap(find.widgetWithText(ElevatedButton, 'Get User Error'));
+    await tester.pump();
+    var counterFinder = find.text('No element');
+    expect(counterFinder, findsOneWidget);
+  });
+
+  testWidgets(
+      'Given Get User (FutureUseCase) Button when click then display John Smith, 18 text',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
+    ));
+    expect(find.byKey(const Key('homePage')), findsOneWidget);
+    await tester.tap(
+        find.widgetWithText(ElevatedButton, 'Get User (FutureUseCase)'));
+    await tester.pump();
+    var counterFinder = find.text('John Smith, 18');
+    expect(counterFinder, findsOneWidget);
+  });
+
+  testWidgets(
+      'Given Get User Error (FutureUseCase) Button when click then display No element text',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+      home: HomePage(key: Key('homePage'), title: 'Flutter Demo Home Page'),
+    ));
+    expect(find.byKey(const Key('homePage')), findsOneWidget);
+    await tester.tap(find.widgetWithText(
+        ElevatedButton, 'Get User Error (FutureUseCase)'));
     await tester.pump();
     var counterFinder = find.text('No element');
     expect(counterFinder, findsOneWidget);

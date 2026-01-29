@@ -33,6 +33,22 @@ void main() {
         expect(observer.error, false);
       });
     });
+
+    test('FutureUseCase onNext and onDone.', () async {
+      var observer = FutureUseCaseObserver();
+      await SuccessFutureUseCase().execute(observer);
+      expect(observer.value, 42);
+      expect(observer.done, true);
+      expect(observer.error, false);
+    });
+
+    test('FutureUseCase .onError.', () async {
+      var observer = FutureUseCaseObserver();
+      await ErrorFutureUseCase().execute(observer);
+      expect(observer.value, null);
+      expect(observer.done, false);
+      expect(observer.error, true);
+    });
   });
 }
 
@@ -68,5 +84,40 @@ class CounterUseCaseObserver extends Observer<int> {
   void onNext(int? number) {
     this.number++;
     expect(number, this.number);
+  }
+}
+
+class SuccessFutureUseCase extends FutureUseCase<int, void> {
+  @override
+  Future<int> buildUseCaseFuture(void params) async {
+    return 42;
+  }
+}
+
+class ErrorFutureUseCase extends FutureUseCase<int, void> {
+  @override
+  Future<int> buildUseCaseFuture(void params) async {
+    throw Error();
+  }
+}
+
+class FutureUseCaseObserver extends Observer<int> {
+  int? value;
+  bool done = false;
+  bool error = false;
+
+  @override
+  void onComplete() {
+    done = true;
+  }
+
+  @override
+  void onError(e) {
+    error = true;
+  }
+
+  @override
+  void onNext(int? response) {
+    value = response;
   }
 }

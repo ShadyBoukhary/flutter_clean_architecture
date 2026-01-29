@@ -35,10 +35,29 @@ class HomeController extends Controller {
       _user = null;
       refreshUI(); // Refreshes the UI manually
     };
+
+    homePresenter.getUserFutureOnNext = (User user) {
+      logger.log(logger.level, user.toString());
+      _user = user;
+      refreshUI(); // Refreshes the UI manually
+    };
+    homePresenter.getUserFutureOnComplete = () {
+      logger.log(logger.level, 'User retrieved (FutureUseCase)');
+    };
+    homePresenter.getUserFutureOnError = (e) {
+      logger.log(logger.level, 'Could not retrieve user (FutureUseCase).');
+      ScaffoldMessenger.of(getContext())
+          .showSnackBar(SnackBar(content: Text(e.message)));
+      _user = null;
+      refreshUI(); // Refreshes the UI manually
+    };
   }
 
   void getUser() => homePresenter.getUser('test-uid');
   void getUserwithError() => homePresenter.getUser('test-uid231243');
+  void getUserFuture() => homePresenter.getUserFuture('test-uid');
+  void getUserFutureWithError() =>
+      homePresenter.getUserFuture('test-uid231243');
 
   void buttonPressed() {
     _counter++;

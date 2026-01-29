@@ -1,3 +1,4 @@
+import '../../../domain/usecases/get_user_future_usecase.dart';
 import '../../../domain/usecases/get_user_usecase.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart'
     as clean;
@@ -6,14 +7,25 @@ class HomePresenter extends clean.Presenter {
   Function? getUserOnNext;
   Function? getUserOnComplete;
   Function? getUserOnError;
+  Function? getUserFutureOnNext;
+  Function? getUserFutureOnComplete;
+  Function? getUserFutureOnError;
 
   final GetUserUseCase getUserUseCase;
-  HomePresenter(usersRepo) : getUserUseCase = GetUserUseCase(usersRepo);
+  final GetUserFutureUseCase getUserFutureUseCase;
+  HomePresenter(usersRepo)
+      : getUserUseCase = GetUserUseCase(usersRepo),
+        getUserFutureUseCase = GetUserFutureUseCase(usersRepo);
 
   void getUser(String uid) {
     // execute getUseruserCase
     getUserUseCase.execute(
         _GetUserUseCaseObserver(this), GetUserUseCaseParams(uid));
+  }
+
+  void getUserFuture(String uid) {
+    getUserFutureUseCase.execute(
+        _GetUserFutureUseCaseObserver(this), GetUserFutureUseCaseParams(uid));
   }
 
   @override
@@ -38,5 +50,25 @@ class _GetUserUseCaseObserver extends clean.Observer<GetUserUseCaseResponse> {
   @override
   void onNext(response) {
     presenter.getUserOnNext?.call(response?.user);
+  }
+}
+
+class _GetUserFutureUseCaseObserver
+    extends clean.Observer<GetUserFutureUseCaseResponse> {
+  final HomePresenter presenter;
+  _GetUserFutureUseCaseObserver(this.presenter);
+  @override
+  void onComplete() {
+    presenter.getUserFutureOnComplete?.call();
+  }
+
+  @override
+  void onError(e) {
+    presenter.getUserFutureOnError?.call(e);
+  }
+
+  @override
+  void onNext(response) {
+    presenter.getUserFutureOnNext?.call(response?.user);
   }
 }

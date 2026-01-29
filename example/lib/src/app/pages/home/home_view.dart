@@ -70,6 +70,28 @@ class HomePageState extends CleanViewState<HomePage, HomeController> {
                   );
                 },
               ),
+              ControlledWidgetBuilder<HomeController>(
+                builder: (context, controller) {
+                  return ElevatedButton(
+                    onPressed: controller.getUserFuture,
+                    child: const Text(
+                      'Get User (FutureUseCase)',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              ),
+              ControlledWidgetBuilder<HomeController>(
+                builder: (context, controller) {
+                  return ElevatedButton(
+                    onPressed: controller.getUserFutureWithError,
+                    child: const Text(
+                      'Get User Error (FutureUseCase)',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
