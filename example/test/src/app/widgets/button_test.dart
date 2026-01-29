@@ -27,9 +27,7 @@ void main() {
 }
 
 class TestPage extends clean.CleanView {
-  const TestPage({
-    Key? key,
-  }) : super(key: key);
+  const TestPage({super.key});
 
   @override
   TestPageState createState() => TestPageState();

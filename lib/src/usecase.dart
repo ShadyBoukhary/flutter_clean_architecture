@@ -165,3 +165,36 @@ abstract class CompletableUseCase<Params> extends UseCase<void, Params?> {
   @override
   Future<Stream<void>> buildUseCaseStream(Params? params);
 }
+
+/// A streamlined [UseCase] for single-shot requests that don't need streams.
+/// It executes a single [Future] and maps the result to [Observer] callbacks.
+abstract class FutureUseCase<T, Params> {
+  late Logger _logger;
+  Logger get logger => _logger;
+
+  FutureUseCase() {
+    _logger = Logger(runtimeType.toString());
+  }
+
+  /// Builds the [Future] to be awaited. [Params] is required by the [UseCase]
+  /// to retrieve the appropriate data from the repository.
+  Future<T?> buildUseCaseFuture(Params? params);
+
+  /// Executes a single-shot use case and triggers [Observer] callbacks.
+  Future<void> execute(Observer<T> observer, [Params? params]) async {
+    try {
+      final result = await buildUseCaseFuture(params);
+      observer.onNext(result);
+      observer.onComplete();
+    } catch (e) {
+      observer.onError(e);
+    }
+  }
+}
+
+/// A streamlined [UseCase] that performs a task without returning a value.
+abstract class CompletableFutureUseCase<Params>
+    extends FutureUseCase<void, Params?> {
+  @override
+  Future<void> buildUseCaseFuture(Params? params);
+}

@@ -1,4 +1,5 @@
 import 'package:example/src/domain/usecases/get_user_usecase.dart';
+import 'package:example/src/domain/usecases/get_user_future_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:example/src/domain/repositories/users_repository.dart';
@@ -42,6 +43,32 @@ void main() {
     }
     expect(observer.status['result'], 'failed');
   });
+
+  test(
+      'Given getUserFutureUseCase when Parameters user UUID does exist return successfull',
+      () async {
+    GetUserFutureUseCase getUserFutureUseCase;
+    _FutureObserver observer;
+    getUserFutureUseCase = GetUserFutureUseCase(MockGetUser());
+    observer = _FutureObserver();
+    await getUserFutureUseCase.execute(
+        observer, GetUserFutureUseCaseParams('1000-2000-5600'));
+    expect(observer.status['result'], 'success');
+    expect(observer.status['done'], true);
+  });
+
+  test(
+      'Given getUserFutureUseCase when Parameters user UUID does not exist return failed',
+      () async {
+    GetUserFutureUseCase getUserFutureUseCase;
+    _FutureObserver observer;
+    getUserFutureUseCase = GetUserFutureUseCase(MockGetUser());
+    observer = _FutureObserver();
+    await getUserFutureUseCase.execute(
+        observer, GetUserFutureUseCaseParams('22222'));
+    expect(observer.status['result'], 'failed');
+    expect(observer.status['done'], false);
+  });
 }
 
 class _Observer implements Observer<GetUserUseCaseResponse> {
@@ -59,6 +86,25 @@ class _Observer implements Observer<GetUserUseCaseResponse> {
   @override
   void onError(e) {
     status['progress'] = 'done';
+    status['result'] = 'failed';
+  }
+}
+
+class _FutureObserver implements Observer<GetUserFutureUseCaseResponse> {
+  final status = {'result': '', 'done': false};
+  @override
+  void onNext(response) {
+    expect(GetUserFutureUseCaseResponse, response.runtimeType);
+    status['result'] = 'success';
+  }
+
+  @override
+  void onComplete() {
+    status['done'] = true;
+  }
+
+  @override
+  void onError(e) {
     status['result'] = 'failed';
   }
 }

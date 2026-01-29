@@ -4,7 +4,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import '../../../data/repositories/data_users_repository.dart';
 
 class HomePage extends CleanView {
-  const HomePage({Key? key, this.title = ""}) : super(key: key);
+  const HomePage({super.key, this.title = ""});
 
   final String title;
 
@@ -65,6 +65,28 @@ class HomePageState extends CleanViewState<HomePage, HomeController> {
                     onPressed: controller.getUserwithError,
                     child: const Text(
                       'Get User Error',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              ),
+              ControlledWidgetBuilder<HomeController>(
+                builder: (context, controller) {
+                  return ElevatedButton(
+                    onPressed: controller.getUserFuture,
+                    child: const Text(
+                      'Get User (FutureUseCase)',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                },
+              ),
+              ControlledWidgetBuilder<HomeController>(
+                builder: (context, controller) {
+                  return ElevatedButton(
+                    onPressed: controller.getUserFutureWithError,
+                    child: const Text(
+                      'Get User Error (FutureUseCase)',
                       style: TextStyle(color: Colors.white),
                     ),
                   );

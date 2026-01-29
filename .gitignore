@@ -10,3 +10,5 @@ ios/Flutter/Generated.xcconfig
 ios/Runner/GeneratedPluginRegistrant.*
 .vscode/
 example/coverage/
+example/ios/Flutter/flutter_export_environment.sh
+example/ios/Flutter/ephemeral/
