@@ -1,6 +1,6 @@
 name: flutter_clean_architecture
 description: A Flutter package that implements the Clean Architecture by Uncle Bob in Flutter. It provides Views, Controllers, Presenters, Observers, and UseCases.
-version: 6.1.0
+version: 6.2.0
 homepage: https://github.com/ShadyBoukhary/flutter_clean_architecture
 
 environment:

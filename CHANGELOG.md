@@ -1,3 +1,9 @@
+## [6.2.0] - Thursday, January 29th, 2026
+- Added FutureUseCase/CompletableFutureUseCase for single-shot use cases
+- Added Observer.fromCallbacks shortcut for stream and future use cases
+- Updated example app and tests to cover FutureUseCase
+- Updated dependencies
+
 ## [6.1.0] - Tuesday, October 28th, 2025
 - Introduced CLI functionality
 
