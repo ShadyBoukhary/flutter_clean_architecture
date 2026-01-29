@@ -66,7 +66,44 @@
 ///       }
 /// ```
 abstract class Observer<T> {
+  Observer();
+
+  factory Observer.fromCallbacks({
+    void Function(T? response)? onNext,
+    void Function()? onComplete,
+    void Function(Object error)? onError,
+  }) = _CallbackObserver<T>;
+
   void onNext(T? response);
   void onComplete();
   void onError(e);
+}
+
+class _CallbackObserver<T> implements Observer<T> {
+  final void Function(T? response)? _onNext;
+  final void Function()? _onComplete;
+  final void Function(Object error)? _onError;
+
+  _CallbackObserver({
+    void Function(T? response)? onNext,
+    void Function()? onComplete,
+    void Function(Object error)? onError,
+  })  : _onNext = onNext,
+        _onComplete = onComplete,
+        _onError = onError;
+
+  @override
+  void onNext(T? response) {
+    _onNext?.call(response);
+  }
+
+  @override
+  void onComplete() {
+    _onComplete?.call();
+  }
+
+  @override
+  void onError(e) {
+    _onError?.call(e);
+  }
 }

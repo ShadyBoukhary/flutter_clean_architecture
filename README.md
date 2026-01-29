@@ -433,9 +433,6 @@ class LoginPresenter extends clean.Presenter {
 /// The [Observer] used to observe the `Stream` of the [LoginUseCase]
 class _LoginUseCaseObserver extends clean.Observer<void>{
 
-  // The above presenter
-  // This is not optimal, but it is a workaround due to dart limitations. Dart does
-  // not support inner classes or anonymous classes.
   final LoginPresenter loginPresenter;
 
   _LoginUseCaseObserver(this.loginPresenter);
@@ -460,6 +457,19 @@ class _LoginUseCaseObserver extends clean.Observer<void>{
   }
 }
 
+```
+##### Observer shortcuts
+Use `Observer.fromCallbacks(...)` to avoid creating an `Observer` class while keeping the same `execute(...)` flow.
+
+```dart
+loginUseCase.execute(
+  clean.Observer.fromCallbacks(
+    onNext: (_) => loginOnNext?.call(),
+    onComplete: () => loginOnComplete?.call(),
+    onError: (e) => loginOnError?.call(e),
+  ),
+  LoginUseCaseParams(email, password),
+);
 ```
 #### UseCase
 ```dart
@@ -500,6 +510,34 @@ class LoginUseCaseParams {
     final String email;
     final String password;
     LoginUseCaseParams(this.email, this.password);
+}
+```
+#### FutureUseCase
+For single-shot requests that do not need streams (e.g. login, logout), use `FutureUseCase`
+or `CompletableFutureUseCase`. The execution flow and `Observer<T>` callbacks stay the same.
+
+```dart
+import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+
+class LoginUseCase extends CompletableFutureUseCase<LoginUseCaseParams> {
+  final AuthenticationRepository _authenticationRepository;
+
+  LoginUseCase(this._authenticationRepository);
+
+  @override
+  Future<void> buildUseCaseFuture(LoginUseCaseParams? params) async {
+    await _authenticationRepository.authenticate(
+      email: params!.email,
+      password: params.password,
+    );
+    logger.finest('LoginUseCase successful.');
+  }
+}
+
+class LoginUseCaseParams {
+  final String email;
+  final String password;
+  LoginUseCaseParams(this.email, this.password);
 }
 ```
 ##### Background UseCase

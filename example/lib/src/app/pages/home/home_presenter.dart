@@ -25,7 +25,12 @@ class HomePresenter extends clean.Presenter {
 
   void getUserFuture(String uid) {
     getUserFutureUseCase.execute(
-        _GetUserFutureUseCaseObserver(this), GetUserFutureUseCaseParams(uid));
+        clean.Observer.fromCallbacks(
+          onNext: (response) => getUserFutureOnNext?.call(response?.user),
+          onComplete: () => getUserFutureOnComplete?.call(),
+          onError: (e) => getUserFutureOnError?.call(e),
+        ),
+        GetUserFutureUseCaseParams(uid));
   }
 
   @override
@@ -34,6 +39,7 @@ class HomePresenter extends clean.Presenter {
   }
 }
 
+// alternative way to implement Observer
 class _GetUserUseCaseObserver extends clean.Observer<GetUserUseCaseResponse> {
   final HomePresenter presenter;
   _GetUserUseCaseObserver(this.presenter);
@@ -50,25 +56,5 @@ class _GetUserUseCaseObserver extends clean.Observer<GetUserUseCaseResponse> {
   @override
   void onNext(response) {
     presenter.getUserOnNext?.call(response?.user);
-  }
-}
-
-class _GetUserFutureUseCaseObserver
-    extends clean.Observer<GetUserFutureUseCaseResponse> {
-  final HomePresenter presenter;
-  _GetUserFutureUseCaseObserver(this.presenter);
-  @override
-  void onComplete() {
-    presenter.getUserFutureOnComplete?.call();
-  }
-
-  @override
-  void onError(e) {
-    presenter.getUserFutureOnError?.call(e);
-  }
-
-  @override
-  void onNext(response) {
-    presenter.getUserFutureOnNext?.call(response?.user);
   }
 }
